@@ -1,6 +1,6 @@
 require('dotenv').config()
 const express = require('express')
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 1234
 const cors = require('cors')
 const sequelize = require('./Database/database')
 const userRouter = require('./route/userRouter')
@@ -8,13 +8,12 @@ const userRouter = require('./route/userRouter')
 
 const app = express()
 app.use(express.json())
+app.use(userRouter);
+
 app.use(cors())
-
-app.use(userRouter)
-
-app.use('/', (req, res) => {
-  res.send('Connected to Backend Server')
-});
+//app.use('/', (req, res) => {
+  //res.send('Connected to Backend Server')
+//});
 // console.log("hello");
 
 
@@ -30,6 +29,6 @@ const Startserver = async ()=>{
 Startserver();
 
 app.listen(PORT,()=>{
-    console.log(`Server is running on PORT: ${PORT} yeahhhhh boiii`);
+    console.log(`Server is running on PORT: ${PORT}`);
     
 })

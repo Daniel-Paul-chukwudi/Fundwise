@@ -1,10 +1,11 @@
 const express = require('express')
 const {register,getAllUsers,login,changeRole,forgotPassword,resetPassword} = require("../Controller/userController")
 const {checkLogin,checkAdmin} = require('../Middleware/authentication')
+const { signUp } = require('../Controller/userControllers')
 
 const router = express.Router()
 
-router.post('/user',register)
+router.post('/user',signUp)
 
 router.get('/user',checkLogin,checkAdmin,getAllUsers)
 

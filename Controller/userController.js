@@ -88,6 +88,41 @@ exports.changeRole = async(req,res)=>{
 
 }
 
+exports.verifyOtp = async (req, res, next) => {
+  const { email, otp } = req.body;
+
+  try {
+    // Find user by email
+    const user = await userModel.findOne({ where: { email: email.toLowerCase() } });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    //  Check OTP
+    if (user.otp !== otp) {
+      return res.status(400).json({ message: 'Invalid OTP' });
+    }
+
+    //  Check expiry
+    if (new Date(user.otpExpiredAt) < new Date()) {
+      return res.status(400).json({ message: 'OTP expired. Please request a new one.' });
+    }
+
+    //  Update verification
+    await user.update({
+      isVerified: true,
+      otp: null,
+      otpExpiredAt: null,
+    });
+
+    return res.status(200).json({ message: 'Email verified successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
 exports.forgotPassword = async (req,res) => {
     try {
       const {email} = req.body

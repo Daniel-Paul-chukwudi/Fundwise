@@ -17,6 +17,9 @@ module.exports = {
       email: {
         type: Sequelize.STRING
       },
+      phoneNumber:{
+        type: Sequelize.STRING
+      },
       password: {
         type: Sequelize.STRING
       },
@@ -27,8 +30,37 @@ module.exports = {
         type: Sequelize.BOOLEAN
       },
       role: {
-        type:Sequelize.ENUM(['talent','investor','admin']),
+        type: Sequelize.ENUM('talent','investor'),
         allowNull: false
+      },
+      kyc:{
+        type: Sequelize.TEXT,
+        get() {
+        const raw = this.getDataValue('amenities');
+        try {
+          return raw ? JSON.parse(raw) : {};
+        } catch (e) {
+          return {};
+        }
+       }
+      },
+      businesses:{
+        type: Sequelize.TEXT,
+        get() {
+        const raw = this.getDataValue('amenities');
+        try {
+          return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+          return [];
+        }
+       }
+      },
+      otp:{
+        type: Sequelize.INTEGER
+      },
+      otpExpiredAt:{
+        allowNull: false,
+        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,

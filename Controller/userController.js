@@ -4,23 +4,44 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const {verify,forgotPassword} = require('../Middleware/emailTemplates')
 const sendEmail = require('../Middleware/Bmail')
+const investorModel = require('../models/investor')
+const axios = require('axios')
 
 
 exports.register = async (req,res)=>{
-    console.log("connected");
+    // console.log("connected");
     try {
-        const {firstName,lastName,email,password}= req.body
+        const {firstName,lastName,phoneNumber,email,password,confirmPassword,role}= req.body
         
         
-       const user = await userModel.create({
+        const user = new userModel({
             firstName,
             lastName,
             email,
-            password
-        }) 
+            password, 
+            phoneNumber,
+            role
+        })
+        await user.save()
+        
+        const token = jwt.sign({id:user.dataValues.id},process.env.JWT_SECRET)
+        // console.log(user.dataValues.role);
+        
+        if(user.dataValues.role === "investor"){
+            await investorModel.create({
+                firstName,
+                lastName,
+                email,
+                password,
+                phoneNumber,
+            }) 
+
+        }
         res.status(201).json({
             message:"Created successfully",
-            data: user
+            data: user,
+            token,
+            entry
         })
 
     } catch (error) {
@@ -31,7 +52,7 @@ exports.register = async (req,res)=>{
     }
 };
 
-exports.getAllUsers = async (req,res)=>{
+exports.getAll = async (req,res)=>{
     try {
         const users = await userModel.findAll()
 
@@ -121,8 +142,6 @@ exports.verifyOtp = async (req, res, next) => {
   }
 };
 
-
-
 exports.forgotPassword = async (req,res) => {
     try {
       const {email} = req.body
@@ -192,3 +211,24 @@ exports.resetPassword = async (req,res) => {
         })
     }
 };
+
+exports.googleAuthLogin = async (req, res)=> {
+  try {
+    const token = await jwt.sign({
+      id: req.user._id,
+      email: req.user.email,
+      isAdmin: req.user.isAdmin
+    }, process.env.JWT_SECRET, {expiresIn: '1hr'})
+    // res.redirect('/')
+
+    res.status(200).json({
+      message: 'Login successful',
+      data: req.user.fullName,
+      token
+    })
+  } catch (error) {
+     res.status(500).json({
+      message: "Error logging with Google: " + error.mesaage
+    })
+  }
+}

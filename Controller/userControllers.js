@@ -1,26 +1,36 @@
 require('dotenv').config()
 const userModel = require('../models/user')
 const jwt = require('jsonwebtoken')
+const {verify,forgotPassword}= require('../Middleware/emailTemplates')
+const sendEmail = require('../Middleware/Bmail')
+const bcrypt = require('bcrypt')
 
 
 
 exports.signUp = async (req, res, next) => {
-  const { firstName, lastName, phoneNumber, role, email, password } = req.body
-
   try {
-    const user = await userModel.findOne({ email: email.toLowerCase() })
-    if (user) {
-      return res.status(404).json({
+    const { firstName, lastName, phoneNumber, role, email, password,confirmPassword } = req.body
+    const user = await userModel.findOne({where:{ email: email.toLowerCase() }})
+    // console.log(user);
+    
+    if (user !== null) {
+      return res.status(403).json({
         message: 'User already exists, Log in to your account',
+      })
+      // return next(createError(404, "User not found"));
+    }
+    if(password !== confirmPassword){
+      return res.status(403).json({
+        message:"Passwords dont match"
       })
     }
 
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt)
 
-    const otp = Math.round(Math.random() * 1e4)
+    const otp = Math.round(Math.random() * 1e6)//6 digits
       .toString()
-      .padStart(4, '0')
+      .padStart(6, '0')
 
     const newUser = new userModel({
       firstName,
@@ -28,35 +38,116 @@ exports.signUp = async (req, res, next) => {
       phoneNumber,
       password: hashedPassword,
       role,
-      email,
+      email:email.toLowerCase(),
       otp: otp,
-      otpExpiredAt: Date.now() + 1000 * 60,
+      otpExpiredAt: Date.now() + 1000 * 300,//5mins
     })
     const savedUser = await newUser.save()
 
-    
-    const emailOptions = {
-      email: newUser.email,
-      subject: 'Sign up successful',
-      html: signUpTemplate(otp, newUser.firstName),
+    const verifyMail = {
+      email:newUser.email,
+      subject:`Please verify your email ${newUser.firstName}`,
+      html:verify(newUser.firstName,newUser.otp)//email template 
     }
+    sendEmail(verifyMail)
 
-    emailSender(emailOptions)
 
     return res.status(201).json({
       message: 'User created successfully',
       data: savedUser,
+
     })
   } catch (error) {
     next(error)
   }
 }
 
+exports.verifyOtp = async (req, res, next) => {
+  try {
+    const { email, otp } = req.body;
+    // Find user by email
+    const user = await userModel.findOne({ where: { email: email.toLowerCase() } });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    //  Check OTP
+    if (user.otp !== otp) {
+      return res.status(400).json({ message: 'Invalid OTP' });
+    }
+
+    //  Check expiry
+    // if (user.otpExpiredAt < new Date()) {
+    //   return res.status(400).json({ message: 'OTP expired. Please request a new one.' });
+    // }
+
+    //  Update verification
+    await user.update({
+      isVerified: true,
+      otp: null,
+      otpExpiredAt: null,
+    });
+
+    return res.status(200).json({ 
+      message: 'Email verified successfully',
+      data:user });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.loginUser = async (req, res, next) => {
+  
+  // if (!email) {
+    //   return res.status(400).json({ message: 'Email required' });
+    // }
+    // if (!password) {
+      //   return res.status(400).json({ message: 'Password required' });
+      // }
+      
+      try {
+        const { email, password } = req.body;
+    // Find user in SQL database
+    const user = await userModel.findOne({ where: { email: email.toLowerCase() } });
+    if (!user) {
+      return res.status(404).json({ 
+        message: 'User not found' });
+    }
+    if(user.isVerified === false){
+      return res.status(401).json({
+        message:"Please verify your account"
+      })
+    }
+    
+    //  Compare password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Incorrect password' });
+    }
+    
+    // Generate JWT
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+    
+    // Return response
+    return res.status(200).json({
+      message: 'Login successful',
+      token,
+      
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 exports.resendOtp = async (req, res, next) => {
   const { email } = req.body
 
   try {
-    const user = await userModel.findOne({ email: email.toLowerCase() })
+    const user = await userModel.findOne({where:{ email: email.toLowerCase() }})
     if (!user) {
       return res.status(404).json({
         message: 'User not found',
@@ -85,51 +176,10 @@ exports.resendOtp = async (req, res, next) => {
   }
 }
 
-exports.loginUser = async (req, res, next) => {
-  const { email, password } = req.body;
-
-  if (!email) {
-    return res.status(400).json({ message: 'Email required' });
-  }
-  if (!password) {
-    return res.status(400).json({ message: 'Password required' });
-  }
-
-  try {
-    // Find user in SQL database
-    const user = await userModel.findOne({ where: { email: email.toLowerCase() } });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    //  Compare password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Incorrect password' });
-    }
-
-    // Generate JWT
-    const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
-    );
-
-    // Return response
-    return res.status(200).json({
-      message: 'Login successful',
-      token,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-
 exports.changePassword = async (req, res, next) => {
   const { id } = req.user; // comes from the JWT middleware
   const { oldPassword, newPassword, confirmPassword } = req.body;
-
+  
   try {
     //Find user in SQL database
     const user = await userModel.findByPk(id);
@@ -157,17 +207,142 @@ exports.changePassword = async (req, res, next) => {
     //Hash and save the new password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
-
+    
     user.password = hashedPassword;
     await user.save();
-
+    
     // v21
     // Return success message
     return res.status(200).json({
       message: "Password changed successfully",
+      data:user
     });
   } catch (error) {
     console.error("Change password error:", error);
     next(error);
   }
 };
+
+exports.forgotPassword = async (req,res) => {
+    try {
+      const {email} = req.body
+      const user = await userModel.findOne({where:{email}});
+      if (!user) {
+        return res.status(404).json({
+            message:'user not found'
+        })
+      }
+      const token = jwt.sign({id:user.id}, process.env.JWT_SECRET,{
+        expiresIn:'10m',
+      });
+      const link = `${req.protocol}://${req.get('host')}/reset-password/${token}`;
+   
+       await sendEmail({email,
+        subject:'Password reset',
+        html:forgotPassword(link,user.firstName)});
+      
+        res.status(200).json({
+        message:'password reset email sent successfully',link
+        })
+
+    } catch (error) {
+    res.status(500).json({
+        message:'internal server errror',
+        error:error.message
+    })
+    }
+}
+
+exports.resetPassword = async (req,res) => {
+  try {
+      const {token} = req.params;
+    const {newPassword, confirmPassword} = req.body;
+    if (newPassword !== confirmPassword) {
+      return res.status(404).json({
+          message:'passwords do not match'
+      });
+    } 
+     const decoded = jwt.verify(token, process.env.JWT_SECRET)
+     if(decoded === null){
+      return res.status(403).json({
+          message:"invalid token or token expired",
+          error:error
+      })
+     }
+
+    const user = await userModel.findOne({where:{id:decoded.id}});
+    if (!user) {
+      return res.status(404).json({
+          message:'user not found'
+      });
+    }
+    const salt = await bcrypt.genSalt(10);
+    const hash = await  bcrypt.hash(newPassword, salt);
+
+    await user.update({password:hash})
+
+      res.status(200).json({
+          message:'password reset successful, try and login again',
+          data:user
+      });
+  }catch(error){
+      res.status(500).json({
+          message:'internal server error',
+          error:error.message
+      })
+  }
+};
+exports.getAll = async (req,res)=>{
+    try {
+        const users = await userModel.findAll()
+
+        res.status(200).json({
+            message:"All users in the database",
+            data: users
+        })
+        
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal server error",
+            error: error.message
+        })
+    }
+};
+
+exports.getOne = async(req,res)=>{
+  try {
+        const id  = req.params.id
+        const user = await userModel.findByPk(id)
+
+        res.status(200).json({
+            message:"The user in the database",
+            data: user
+        })
+        
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal server error",
+            error: error.message
+        })
+    }
+}
+
+exports.deleteUser = async (req,res)=>{
+  try {
+    const {email} = req.body
+    const user = await userModel.destroy({where:{email:email.toLowerCase()}})
+    if(user === null){
+      return res.status(404).json({
+        message:"the guy no dey DB"
+      })
+    }
+    res.status(200).json({
+      message:"i don commot am"
+    })
+  } catch (error) {
+    res.status(500).json({
+            message: "Internal server error",
+            error: error.message
+        })
+  }
+}

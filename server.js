@@ -37,7 +37,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: 'http://localhost:3000',
+      url: 'https://trustforge.onrender.com',
       description: 'production server',
     },
     {

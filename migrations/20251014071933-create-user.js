@@ -56,7 +56,7 @@ module.exports = {
        }
       },
       otp:{
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       otpExpiredAt:{
         allowNull: false,

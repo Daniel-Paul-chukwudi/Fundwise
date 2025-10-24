@@ -68,10 +68,10 @@ User.init(
        }
       },
       otp:{
-        type: DataTypes.INTEGER
+        type: DataTypes.STRING
       },
       otpExpiredAt:{
-        type: DataTypes.INTEGER
+        type: DataTypes.BIGINT
       }
   },
   {

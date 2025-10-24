@@ -4,23 +4,44 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const {verify,forgotPassword} = require('../Middleware/emailTemplates')
 const sendEmail = require('../Middleware/Bmail')
+const investorModel = require('../models/investor')
+const axios = require('axios')
 
 
 exports.register = async (req,res)=>{
-    console.log("connected");
+    // console.log("connected");
     try {
-        const {firstName,lastName,email,password}= req.body
+        const {firstName,lastName,phoneNumber,email,password,confirmPassword,role}= req.body
         
         
-       const user = await userModel.create({
+        const user = new userModel({
             firstName,
             lastName,
             email,
-            password
-        }) 
+            password, 
+            phoneNumber,
+            role
+        })
+        await user.save()
+        
+        const token = jwt.sign({id:user.dataValues.id},process.env.JWT_SECRET)
+        // console.log(user.dataValues.role);
+        
+        if(user.dataValues.role === "investor"){
+            await investorModel.create({
+                firstName,
+                lastName,
+                email,
+                password,
+                phoneNumber,
+            }) 
+
+        }
         res.status(201).json({
             message:"Created successfully",
-            data: user
+            data: user,
+            token,
+            entry
         })
 
     } catch (error) {
@@ -31,7 +52,7 @@ exports.register = async (req,res)=>{
     }
 };
 
-exports.getAllUsers = async (req,res)=>{
+exports.getAll = async (req,res)=>{
     try {
         const users = await userModel.findAll()
 
@@ -87,6 +108,39 @@ exports.changeRole = async(req,res)=>{
     }
 
 }
+
+exports.verifyOtp = async (req, res, next) => {
+  const { email, otp } = req.body;
+
+  try {
+    // Find user by email
+    const user = await userModel.findOne({ where: { email: email.toLowerCase() } });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    //  Check OTP
+    if (user.otp !== otp) {
+      return res.status(400).json({ message: 'Invalid OTP' });
+    }
+
+    //  Check expiry
+    if (new Date(user.otpExpiredAt) < new Date()) {
+      return res.status(400).json({ message: 'OTP expired. Please request a new one.' });
+    }
+
+    //  Update verification
+    await user.update({
+      isVerified: true,
+      otp: null,
+      otpExpiredAt: null,
+    });
+
+    return res.status(200).json({ message: 'Email verified successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
 
 exports.forgotPassword = async (req,res) => {
     try {
@@ -157,3 +211,24 @@ exports.resetPassword = async (req,res) => {
         })
     }
 };
+
+exports.googleAuthLogin = async (req, res)=> {
+  try {
+    const token = await jwt.sign({
+      id: req.user._id,
+      email: req.user.email,
+      isAdmin: req.user.isAdmin
+    }, process.env.JWT_SECRET, {expiresIn: '1hr'})
+    // res.redirect('/')
+
+    res.status(200).json({
+      message: 'Login successful',
+      data: req.user.fullName,
+      token
+    })
+  } catch (error) {
+     res.status(500).json({
+      message: "Error logging with Google: " + error.mesaage
+    })
+  }
+}

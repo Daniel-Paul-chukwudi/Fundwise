@@ -1,5 +1,5 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
-const sequelize = require('../Database/database')
+const sequelize = require('../Database/database');
 
 class User extends Model {}
 
@@ -23,9 +23,10 @@ User.init(
         type: DataTypes.STRING,
         allowNull:false,
         unique:true,
-        validate:{
-          isEmail:true
-        }
+      },
+      phoneNumber:{
+        type:DataTypes.STRING,
+        allowNull:false
       },
       password: {
         type: DataTypes.STRING,
@@ -40,34 +41,43 @@ User.init(
         defaultValue:false
       },
       role: {
-        type:DataTypes.ENUM('talent','investor','admin'),
+        type: DataTypes.ENUM('talent','investor'),
         allowNull: false,
         defaultValue:"talent"
+      },
+      kyc:{
+        type: Sequelize.TEXT,
+        get() {
+        const raw = this.getDataValue('amenities');
+        try {
+          return raw ? JSON.parse(raw) : {};
+        } catch (e) {
+          return {};
+        }
+       }
+      },
+      businesses:{
+        type: Sequelize.TEXT,
+        get() {
+        const raw = this.getDataValue('amenities');
+        try {
+          return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+          return [];
+        }
+       }
+      },
+      otp:{
+        type: DataTypes.INTEGER
+      },
+      otpExpiredAt:{
+        type: DataTypes.INTEGER
       }
   },
   {
-    // Other model options go here
-    sequelize, // We need to pass the connection instance
-    modelName: 'Users', // We need to choose the model name
+    sequelize, 
+    modelName: 'Users', 
     timestamps:true,
-    defaultScope:{
-      attributes:{exclude:['password']}
-    },
-    scopes:{
-      withPassword:{attributes:{}}
-    },
-    hooks:{
-      beforeCreate:(user) =>{
-        if(user.email){
-          user.email = user.email.toLowerCase()
-        }
-      },
-      beforeUpdate: (user) =>{
-        if (user.email) {
-        user.email = user.email.toLowerCase();  
-        }
-      }
-    }
   }
 );
 

@@ -1,9 +1,9 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
 const sequelize = require('../Database/database');
 
-class like extends Model {}
+class view extends Model {}
 
-like.init(
+view.init(
   {
     id: {
         allowNull: false,
@@ -24,9 +24,9 @@ like.init(
   },
   {
     sequelize, 
-    modelName: 'likes', 
+    modelName: 'views', 
     timestamps:true,
   }
 );
 
-module.exports = like
+module.exports = view 

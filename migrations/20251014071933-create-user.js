@@ -30,12 +30,15 @@ module.exports = {
         type: Sequelize.BOOLEAN
       },
       role: {
-        type: Sequelize.ENUM('talent','investor'),
+        type: Sequelize.ENUM('businessOwner','investor'),
         allowNull: false
       },
       subscribed:{
         type: Sequelize.BOOLEAN,
         allowNull:false,
+      },
+      viewAllocation:{
+        type: Sequelize.INTEGER,
       },
       otp:{
         type: Sequelize.STRING

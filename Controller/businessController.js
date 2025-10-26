@@ -4,6 +4,8 @@ const businessModel = require('../models/business')
 const userModel = require('../models/user')
 const jwt = require('jsonwebtoken')
 const JWT_SECRET = process.env.JWT_SECRET
+const likeModel = require('../models/like')
+const viewModel = require('../models/view')
 
 exports.createBusiness= async(req,res)=>{
     try {
@@ -45,17 +47,35 @@ exports.createBusiness= async(req,res)=>{
 exports.likeBusiness = async (req,res)=>{
     try {
         const {businessId} = req.body
-
+        const {id} = req.user
+        console.log(id);
+        
         const business = await businessModel.findOne({where:{id:businessId}})
-        business.likeCount += 1
-        await business.save()
-
-        res.status(200).json({
+        const likeCheck = await likeModel.findOne({where:{userId:id,businessId:businessId}})
+        console.log(likeCheck);
+        
+        if(likeCheck){
+            business.likeCount -= 1
+            await business.save()
+            await likeModel.destroy({where:{userId:id,businessId:businessId}})
+            return res.status(200).json({
+                message:"unliked succesfully",
+                data: business,
+                businesslikes:business.likeCount
+            })
+        }else{
+            const like = await likeModel.create({
+                userId:id,
+                businessId
+            })
+            business.likeCount += 1
+            await business.save()
+            return res.status(200).json({
             message:"liked succesfully",
             data: business,
             businesslikes:business.likeCount
         })
-
+        }
 
     } catch (error) {
         res.status(500).json({
@@ -68,16 +88,51 @@ exports.likeBusiness = async (req,res)=>{
 exports.viewBusiness = async (req,res)=>{
     try {
         const {businessId} = req.body
+        const {id} = req.user
+
+        const user = await userModel.findByPk(id)
 
         const business = await businessModel.findOne({where:{id:businessId}})
-        business.viewCount += 1
-        await business.save()
-
-        res.status(200).json({
+        const viewCheck = await viewModel.findOne({where:{userId:id,businessId:businessId}})
+        
+        if (user.subscribed !== true) {
+            res.status(401).json({
+                message:`hello ${user.firstName} your subscription has expired`
+            })
+        }else if(viewCheck){
+            return res.status(200).json({
+                message:"viewed succesfully",
+                data: business,
+                businesslikes:business.viewCount
+            })
+        }else if(user.viewAllocation === 1){
+            business.viewCount += 1
+            await business.save()
+            user.subscribed = false
+            user.viewAllocation -= 1
+            await user.save()
+            return res.status(200).json({
             message:"viewed succesfully",
             data: business,
             businessviews:business.viewCount
         })
+        
+        }else{
+            
+            const view = await viewModel.create({
+                userId:id,
+                businessId
+            })
+            business.viewCount += 1
+            await business.save()
+            user.viewAllocation -= 1
+            await user.save()
+            return res.status(200).json({
+            message:"viewed succesfully",
+            data: business,
+            businessviews:business.viewCount
+        })
+        }
 
 
     } catch (error) {

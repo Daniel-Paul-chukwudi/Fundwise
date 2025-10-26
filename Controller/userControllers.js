@@ -43,8 +43,12 @@ exports.signUp = async (req, res, next) => {
       otp: otp,
       otpExpiredAt:new Date(Date.now() + 1000 * 60 * 2).getSeconds()
     })
+    console.log(newUser);
+    
 
     await newUser.save()
+    // console.log(newUser.dataValues);
+    
 
     const verifyMail = {
       email:newUser.email,
@@ -69,7 +73,7 @@ exports.verifyOtp = async (req, res, next) => {
     const { email, otp } = req.body;
     // Find user by email
     const user = await userModel.findOne({ where: { email: email.toLowerCase() } });
-    console.log("user:", user);
+    // console.log("user:", user);
     
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -79,6 +83,7 @@ exports.verifyOtp = async (req, res, next) => {
     if (new Date(Date.now() + 1000 * 60 * 2).getSeconds() > user.otpExpiredAt) {
       return res.status(400).json({ message: 'OTP Expired' });
     }
+    
     
     if (user.otp !== otp) {
       return res.status(400).json({ message: 'Invalid OTP' });
@@ -94,7 +99,8 @@ exports.verifyOtp = async (req, res, next) => {
     await user.save();
     return res.status(200).json({ 
       message: 'Email verified successfully',
-      data:user });
+      data:user 
+    });
   } catch (error) {
     next(error);
   }
@@ -346,20 +352,43 @@ exports.getOne = async(req,res)=>{
 exports.deleteUser = async (req,res)=>{
   try {
     const {email} = req.body
-    const user = await userModel.destroy({where:{email:email.toLowerCase()}})
-    if(user === null){
+    const user = await userModel.findOne({where:{email:email.toLowerCase()}})
+    if(!user){
       return res.status(404).json({
         message:"the guy no dey DB"
       })
-    }
-    res.status(200).json({
+    }else{
+      await businessModel.destroy({where:{businessOwner:user.id}})
+      user.destroy()
+      res.status(200).json({
       message:"i don commot am"
-    })
+    })}
   } catch (error) {
     res.status(500).json({
-            message: "Internal server error",
-            error: error.message
-        })
+      message: "Internal server error",
+      error: error.message
+    })
+  }
+}
+
+exports.subscriptionBypass = async (req,res)=>{
+  try {
+    const {id} = req.body
+    const user = await userModel.findByPk(id)
+
+    user.subscribed = true 
+    user.viewAllocation = 1
+    await user.save()
+    res.status(200).json({
+      message:"stuff",
+      data:user
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message
+    })
   }
 }
 

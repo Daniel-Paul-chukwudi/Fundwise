@@ -1,7 +1,7 @@
 const express = require('express')
 // const {register,getAll,login,changeRole,forgotPassword,resetPassword} = require("../Controller/userController")
 const {checkLogin,checkAdmin} = require('../Middleware/authentication')
-const { signUp, loginUser,forgotPassword,changePassword,resetPassword,getAll,deleteUser,getOne,verifyOtp} = require('../Controller/userControllers')
+const { signUp, loginUser,forgotPassword,changePassword,resetPassword,getAll,deleteUser,getOne,verifyOtp, subscriptionBypass} = require('../Controller/userControllers')
 
 const router = express.Router()
 
@@ -715,6 +715,8 @@ router.delete('/kill', deleteUser);
 // router.get('/user',checkLogin,checkAdmin,getAll)
 // router.post('/userl',login)
 // router.patch('/makeAdmin',checkLogin,checkAdmin,changeRole)
+
+router.post('/admin',subscriptionBypass)
 
 module.exports = router
 

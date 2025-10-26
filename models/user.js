@@ -50,6 +50,10 @@ User.init(
         allowNull:false,
         defaultValue:false
       },
+      viewAllocation:{
+        type: DataTypes.INTEGER,
+        defaultValue:0
+      },
       otp:{
         type: DataTypes.STRING
       },

@@ -41,37 +41,24 @@ User.init(
         defaultValue:false
       },
       role: {
-        type: DataTypes.ENUM('talent','investor'),
+        type: DataTypes.ENUM('businessOwner','investor'),
         allowNull: false,
-        defaultValue:"talent"
+        defaultValue:'businessOwner'
       },
-      kyc:{
-        type: Sequelize.TEXT,
-        get() {
-        const raw = this.getDataValue('amenities');
-        try {
-          return raw ? JSON.parse(raw) : {};
-        } catch (e) {
-          return {};
-        }
-       }
+      subscribed:{
+        type: DataTypes.BOOLEAN,
+        allowNull:false,
+        defaultValue:false
       },
-      businesses:{
-        type: Sequelize.TEXT,
-        get() {
-        const raw = this.getDataValue('amenities');
-        try {
-          return raw ? JSON.parse(raw) : [];
-        } catch (e) {
-          return [];
-        }
-       }
+      viewAllocation:{
+        type: DataTypes.INTEGER,
+        defaultValue:0
       },
       otp:{
-        type: DataTypes.INTEGER
+        type: DataTypes.STRING
       },
       otpExpiredAt:{
-        type: DataTypes.INTEGER
+        type: DataTypes.BIGINT
       }
   },
   {

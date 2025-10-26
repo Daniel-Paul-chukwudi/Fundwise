@@ -1,5 +1,6 @@
 require('dotenv').config()
 const userModel = require('../models/user')
+const businessModel = require('../models/business')
 const jwt = require('jsonwebtoken')
 const {verify,forgotPassword}= require('../Middleware/emailTemplates')
 const sendEmail = require('../Middleware/Bmail')
@@ -19,7 +20,7 @@ exports.signUp = async (req, res, next) => {
       })
       // return next(createError(404, "User not found"));
     }
-    if(password !== confirmPassword){
+    if(password !== confirmPassword){   
       return res.status(403).json({
         message:"Passwords dont match"
       })
@@ -40,9 +41,14 @@ exports.signUp = async (req, res, next) => {
       role,
       email:email.toLowerCase(),
       otp: otp,
-      otpExpiredAt: Date.now() + 1000 * 300,//5mins
+      otpExpiredAt:new Date(Date.now() + 1000 * 60 * 2).getSeconds()
     })
-    const savedUser = await newUser.save()
+    console.log(newUser);
+    
+
+    await newUser.save()
+    // console.log(newUser.dataValues);
+    
 
     const verifyMail = {
       email:newUser.email,
@@ -54,7 +60,7 @@ exports.signUp = async (req, res, next) => {
 
     return res.status(201).json({
       message: 'User created successfully',
-      data: savedUser,
+      data: newUser,
 
     })
   } catch (error) {
@@ -67,49 +73,46 @@ exports.verifyOtp = async (req, res, next) => {
     const { email, otp } = req.body;
     // Find user by email
     const user = await userModel.findOne({ where: { email: email.toLowerCase() } });
+    // console.log("user:", user);
+    
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
     //  Check OTP
+    if (new Date(Date.now() + 1000 * 60 * 2).getSeconds() > user.otpExpiredAt) {
+      return res.status(400).json({ message: 'OTP Expired' });
+    }
+    
+    
     if (user.otp !== otp) {
       return res.status(400).json({ message: 'Invalid OTP' });
     }
 
-    //  Check expiry
-    // if (user.otpExpiredAt < new Date()) {
-    //   return res.status(400).json({ message: 'OTP expired. Please request a new one.' });
-    // }
-
     //  Update verification
-    await user.update({
-      isVerified: true,
+    Object.assign(user, {
       otp: null,
       otpExpiredAt: null,
+      isVerified: true
     });
 
+    await user.save();
     return res.status(200).json({ 
       message: 'Email verified successfully',
-      data:user });
+      data:user 
+    });
   } catch (error) {
     next(error);
   }
 };
 
 exports.loginUser = async (req, res, next) => {
-  
-  // if (!email) {
-    //   return res.status(400).json({ message: 'Email required' });
-    // }
-    // if (!password) {
-      //   return res.status(400).json({ message: 'Password required' });
-      // }
       
       try {
         const { email, password } = req.body;
     // Find user in SQL database
     const user = await userModel.findOne({ where: { email: email.toLowerCase() } });
-    if (!user) {
+    if (user === null) {
       return res.status(404).json({ 
         message: 'User not found' });
     }
@@ -156,7 +159,8 @@ exports.resendOtp = async (req, res, next) => {
 
     const newOtp = Math.floor(1000 + Math.random() * 9000).toString()
     user.otp = newOtp
-    user.otpExpiredAt = Date.now() + 2 * 60 * 1000
+    otpExpiredAt: new Date(Date.now() + 1000 * 60 * 2) // 2 minutes later
+
 
     await user.save()
 
@@ -292,12 +296,14 @@ exports.resetPassword = async (req,res) => {
       })
   }
 };
+
 exports.getAll = async (req,res)=>{
     try {
         const users = await userModel.findAll()
 
         res.status(200).json({
             message:"All users in the database",
+            count:users.length,
             data: users
         })
         
@@ -314,9 +320,25 @@ exports.getOne = async(req,res)=>{
         const id  = req.params.id
         const user = await userModel.findByPk(id)
 
+        const businesses = await businessModel.findAll({where:{businessOwner:id}})
+        let totalLikes = 0
+        let totalViews = 0
+        businesses.forEach((x)=>{
+          totalLikes += x.likeCount
+          totalViews += x.viewCount
+        })
+        const response = {
+          user,
+          businesscount:businesses.length,
+          totalLikes,
+          totalViews,
+          businesses
+        }
+
+
         res.status(200).json({
             message:"The user in the database",
-            data: user
+            data: response
         })
         
     } catch (error) {
@@ -330,19 +352,43 @@ exports.getOne = async(req,res)=>{
 exports.deleteUser = async (req,res)=>{
   try {
     const {email} = req.body
-    const user = await userModel.destroy({where:{email:email.toLowerCase()}})
-    if(user === null){
+    const user = await userModel.findOne({where:{email:email.toLowerCase()}})
+    if(!user){
       return res.status(404).json({
         message:"the guy no dey DB"
       })
-    }
-    res.status(200).json({
+    }else{
+      await businessModel.destroy({where:{businessOwner:user.id}})
+      user.destroy()
+      res.status(200).json({
       message:"i don commot am"
-    })
+    })}
   } catch (error) {
     res.status(500).json({
-            message: "Internal server error",
-            error: error.message
-        })
+      message: "Internal server error",
+      error: error.message
+    })
   }
 }
+
+exports.subscriptionBypass = async (req,res)=>{
+  try {
+    const {id} = req.body
+    const user = await userModel.findByPk(id)
+
+    user.subscribed = true 
+    user.viewAllocation = 1
+    await user.save()
+    res.status(200).json({
+      message:"stuff",
+      data:user
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message
+    })
+  }
+}
+

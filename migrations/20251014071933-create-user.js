@@ -30,33 +30,18 @@ module.exports = {
         type: Sequelize.BOOLEAN
       },
       role: {
-        type: Sequelize.ENUM('talent','investor'),
+        type: Sequelize.ENUM('businessOwner','investor'),
         allowNull: false
       },
-      kyc:{
-        type: Sequelize.TEXT,
-        get() {
-        const raw = this.getDataValue('amenities');
-        try {
-          return raw ? JSON.parse(raw) : {};
-        } catch (e) {
-          return {};
-        }
-       }
+      subscribed:{
+        type: Sequelize.BOOLEAN,
+        allowNull:false,
       },
-      businesses:{
-        type: Sequelize.TEXT,
-        get() {
-        const raw = this.getDataValue('amenities');
-        try {
-          return raw ? JSON.parse(raw) : [];
-        } catch (e) {
-          return [];
-        }
-       }
+      viewAllocation:{
+        type: Sequelize.INTEGER,
       },
       otp:{
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       otpExpiredAt:{
         allowNull: false,

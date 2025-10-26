@@ -27,6 +27,12 @@ business.init(
         type: DataTypes.STRING,
         allowNull:false
       },
+      likeCount:{
+        type: DataTypes.INTEGER,
+      },
+      viewCount:{
+        type: DataTypes.INTEGER
+      },
       businessOwner:{
         type: DataTypes.UUID,
         allowNull:false,
@@ -39,16 +45,5 @@ business.init(
     timestamps:true,
   }
 );
-
-// Users.hasMany(business,{
-//   foreignKey:"businessOwner",
-//   as:"businesses",
-//   onDelete:"CASCADE",
-//   onUpdate:"CASCADE"
-// })
-// business.belongsTo(Users,{
-//   foreignKey:'businessOwner',
-//   as:'businessOwner'
-// })
 
 module.exports = business 

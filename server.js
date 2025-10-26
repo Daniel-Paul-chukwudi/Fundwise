@@ -74,6 +74,12 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(userRouter);
 app.use(businessRouter);
+app.use((error, req, res, next)=>{
+  if (error) {
+    res.send(error.message)
+  }
+  next()
+})
 const Startserver = async ()=>{ 
   try {
     await sequelize.authenticate();

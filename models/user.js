@@ -51,10 +51,10 @@ User.init(
         defaultValue:false
       },
       otp:{
-        type: DataTypes.INTEGER
+        type: DataTypes.STRING
       },
       otpExpiredAt:{
-        type: DataTypes.INTEGER
+        type: DataTypes.BIGINT
       }
   },
   {

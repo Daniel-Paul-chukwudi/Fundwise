@@ -20,7 +20,7 @@ exports.signUp = async (req, res, next) => {
       })
       // return next(createError(404, "User not found"));
     }
-    if(password !== confirmPassword){
+    if(password !== confirmPassword){   
       return res.status(403).json({
         message:"Passwords dont match"
       })
@@ -41,9 +41,10 @@ exports.signUp = async (req, res, next) => {
       role,
       email:email.toLowerCase(),
       otp: otp,
-      otpExpiredAt: Date.now() + 1000 * 300,//5mins
+      otpExpiredAt:new Date(Date.now() + 1000 * 60 * 2).getSeconds()
     })
-    const savedUser = await newUser.save()
+
+    await newUser.save()
 
     const verifyMail = {
       email:newUser.email,
@@ -55,7 +56,7 @@ exports.signUp = async (req, res, next) => {
 
     return res.status(201).json({
       message: 'User created successfully',
-      data: savedUser,
+      data: newUser,
 
     })
   } catch (error) {
@@ -68,27 +69,29 @@ exports.verifyOtp = async (req, res, next) => {
     const { email, otp } = req.body;
     // Find user by email
     const user = await userModel.findOne({ where: { email: email.toLowerCase() } });
+    console.log("user:", user);
+    
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
     //  Check OTP
+    if (new Date(Date.now() + 1000 * 60 * 2).getSeconds() > user.otpExpiredAt) {
+      return res.status(400).json({ message: 'OTP Expired' });
+    }
+    
     if (user.otp !== otp) {
       return res.status(400).json({ message: 'Invalid OTP' });
     }
 
-    //  Check expiry
-    // if (user.otpExpiredAt < new Date()) {
-    //   return res.status(400).json({ message: 'OTP expired. Please request a new one.' });
-    // }
-
     //  Update verification
-    await user.update({
-      isVerified: true,
+    Object.assign(user, {
       otp: null,
       otpExpiredAt: null,
+      isVerified: true
     });
 
+    await user.save();
     return res.status(200).json({ 
       message: 'Email verified successfully',
       data:user });
@@ -157,7 +160,8 @@ exports.resendOtp = async (req, res, next) => {
 
     const newOtp = Math.floor(1000 + Math.random() * 9000).toString()
     user.otp = newOtp
-    user.otpExpiredAt = Date.now() + 2 * 60 * 1000
+    otpExpiredAt: new Date(Date.now() + 1000 * 60 * 2) // 2 minutes later
+
 
     await user.save()
 

@@ -101,19 +101,12 @@ exports.verifyOtp = async (req, res, next) => {
 };
 
 exports.loginUser = async (req, res, next) => {
-  
-  // if (!email) {
-    //   return res.status(400).json({ message: 'Email required' });
-    // }
-    // if (!password) {
-      //   return res.status(400).json({ message: 'Password required' });
-      // }
       
       try {
         const { email, password } = req.body;
     // Find user in SQL database
     const user = await userModel.findOne({ where: { email: email.toLowerCase() } });
-    if (!user) {
+    if (user === null) {
       return res.status(404).json({ 
         message: 'User not found' });
     }
@@ -297,6 +290,7 @@ exports.resetPassword = async (req,res) => {
       })
   }
 };
+
 exports.getAll = async (req,res)=>{
     try {
         const users = await userModel.findAll()

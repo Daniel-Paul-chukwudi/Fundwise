@@ -1,234 +1,234 @@
-// require('dotenv').config()
-// const userModel = require('../models/user')
-// const jwt = require('jsonwebtoken')
-// const bcrypt = require('bcrypt')
-// const {verify,forgotPassword} = require('../Middleware/emailTemplates')
-// const sendEmail = require('../Middleware/Bmail')
-// const investorModel = require('../models/investor')
-// const axios = require('axios')
+require('dotenv').config()
+const userModel = require('../models/user')
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
+const {verify,forgotPassword} = require('../Middleware/emailTemplates')
+const sendEmail = require('../Middleware/Bmail')
+const investorModel = require('../models/investor')
+const axios = require('axios')
 
 
-// exports.register = async (req,res)=>{
-//     // console.log("connected");
-//     try {
-//         const {firstName,lastName,phoneNumber,email,password,confirmPassword,role}= req.body
+exports.register = async (req,res)=>{
+    // console.log("connected");
+    try {
+        const {firstName,lastName,phoneNumber,email,password,confirmPassword,role}= req.body
         
         
-//         const user = new userModel({
-//             firstName,
-//             lastName,
-//             email,
-//             password, 
-//             phoneNumber,
-//             role
-//         })
-//         await user.save()
+        const user = new userModel({
+            firstName,
+            lastName,
+            email,
+            password, 
+            phoneNumber,
+            role
+        })
+        await user.save()
         
-//         const token = jwt.sign({id:user.dataValues.id},process.env.JWT_SECRET)
-//         // console.log(user.dataValues.role);
+        const token = jwt.sign({id:user.dataValues.id},process.env.JWT_SECRET)
+        // console.log(user.dataValues.role);
         
-//         if(user.dataValues.role === "investor"){
-//             await investorModel.create({
-//                 firstName,
-//                 lastName,
-//                 email,
-//                 password,
-//                 phoneNumber,
-//             }) 
+        if(user.dataValues.role === "investor"){
+            await investorModel.create({
+                firstName,
+                lastName,
+                email,
+                password,
+                phoneNumber,
+            }) 
 
-//         }
-//         res.status(201).json({
-//             message:"Created successfully",
-//             data: user,
-//             token,
-//             entry
-//         })
+        }
+        res.status(201).json({
+            message:"Created successfully",
+            data: user,
+            token,
+            entry
+        })
 
-//     } catch (error) {
-//         res.status(500).json({
-//             message: "Internal server error",
-//             error: error.message
-//         })
-//     }
-// };
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal server error",
+            error: error.message
+        })
+    }
+};
 
-// exports.getAll = async (req,res)=>{
-//     try {
-//         const users = await userModel.findAll()
+exports.getAll = async (req,res)=>{
+    try {
+        const users = await userModel.findAll()
 
-//         res.status(200).json({
-//             message:"All users in the database",
-//             data: users
-//         })
+        res.status(200).json({
+            message:"All users in the database",
+            data: users
+        })
         
-//     } catch (error) {
-//         res.status(500).json({
-//             message: "Internal server error",
-//             error: error.message
-//         })
-//     }
-// };
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal server error",
+            error: error.message
+        })
+    }
+};
 
-// exports.login = async(req,res)=>{
-//     try {
-//         const {email,password}= req.body
-//         const user = await userModel.findOne({where:{email:email.toLowerCase()}})
+exports.login = async(req,res)=>{
+    try {
+        const {email,password}= req.body
+        const user = await userModel.findOne({where:{email:email.toLowerCase()}})
 
-//         const token = jwt.sign({id:user.id},process.env.JWT_SECRET,{expiresIn:"10m"})
+        const token = jwt.sign({id:user.id},process.env.JWT_SECRET,{expiresIn:"10m"})
 
-//         res.status(200).json({
-//             message:`welcome ${user.firstName} we are happy to see you`,
-//             data: token
-//         })
+        res.status(200).json({
+            message:`welcome ${user.firstName} we are happy to see you`,
+            data: token
+        })
 
-//     } catch (error) {
-//         res.status(500).json({
-//             message: "Internal server error",
-//             error: error.message
-//         })
-//     }
-// }
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal server error",
+            error: error.message
+        })
+    }
+}
 
-// exports.changeRole = async(req,res)=>{
-//     try {
-//         const {email} = req.body
-//         const user = await userModel.findOne({where:{email:email}})
-//         const updated = await user.update({role:"admin"})
+exports.changeRole = async(req,res)=>{
+    try {
+        const {email} = req.body
+        const user = await userModel.findOne({where:{email:email}})
+        const updated = await user.update({role:"admin"})
 
-//         res.status(200).json({
-//             message:`Adminerized`,
-//             data: user,updated
-//         })
+        res.status(200).json({
+            message:`Adminerized`,
+            data: user,updated
+        })
 
-//     } catch (error) {
-//         res.status(500).json({
-//             message: "Internal server error",
-//             error: error.message
-//         })
-//     }
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal server error",
+            error: error.message
+        })
+    }
 
-// }
+}
 
-// exports.verifyOtp = async (req, res, next) => {
-//   const { email, otp } = req.body;
+exports.verifyOtp = async (req, res, next) => {
+  const { email, otp } = req.body;
 
-//   try {
-//     // Find user by email
-//     const user = await userModel.findOne({ where: { email: email.toLowerCase() } });
-//     if (!user) {
-//       return res.status(404).json({ message: 'User not found' });
-//     }
+  try {
+    // Find user by email
+    const user = await userModel.findOne({ where: { email: email.toLowerCase() } });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
-//     //  Check OTP
-//     if (user.otp !== otp) {
-//       return res.status(400).json({ message: 'Invalid OTP' });
-//     }
+    //  Check OTP
+    if (user.otp !== otp) {
+      return res.status(400).json({ message: 'Invalid OTP' });
+    }
 
-//     //  Check expiry
-//     if (new Date(user.otpExpiredAt) < new Date()) {
-//       return res.status(400).json({ message: 'OTP expired. Please request a new one.' });
-//     }
+    //  Check expiry
+    if (new Date(user.otpExpiredAt) < new Date()) {
+      return res.status(400).json({ message: 'OTP expired. Please request a new one.' });
+    }
 
-//     //  Update verification
-//     await user.update({
-//       isVerified: true,
-//       otp: null,
-//       otpExpiredAt: null,
-//     });
+    //  Update verification
+    await user.update({
+      isVerified: true,
+      otp: null,
+      otpExpiredAt: null,
+    });
 
-//     return res.status(200).json({ message: 'Email verified successfully' });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+    return res.status(200).json({ message: 'Email verified successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
 
-// exports.forgotPassword = async (req,res) => {
-//     try {
-//       const {email} = req.body
-//       const user = await userModel.findOne({where:{email}});
-//       if (!user) {
-//         return res.status(404).json({
-//             message:'user not found'
-//         })
-//       }
-//       const token = jwt.sign({id:user.id}, process.env.JWT_SECRET,{
-//         expiresIn:'10m',
-//       });
-//       const link = `${req.protocol}://${req.get('host')}/reset-password/${token}`;
+exports.forgotPassword = async (req,res) => {
+    try {
+      const {email} = req.body
+      const user = await userModel.findOne({where:{email}});
+      if (!user) {
+        return res.status(404).json({
+            message:'user not found'
+        })
+      }
+      const token = jwt.sign({id:user.id}, process.env.JWT_SECRET,{
+        expiresIn:'10m',
+      });
+      const link = `${req.protocol}://${req.get('host')}/reset-password/${token}`;
    
-//        await sendEmail({email,
-//         subject:'Password reset',
-//         html:forgotPassword(link,user.firstName)});
+       await sendEmail({email,
+        subject:'Password reset',
+        html:forgotPassword(link,user.firstName)});
       
-//         res.status(200).json({
-//         message:'password reset email sent successfully',link
-//         })
+        res.status(200).json({
+        message:'password reset email sent successfully',link
+        })
 
-//     } catch (error) {
-//     res.status(500).json({
-//         message:'internal server errror',
-//         error:error.message
-//     })
-//     }
-// }
+    } catch (error) {
+    res.status(500).json({
+        message:'internal server errror',
+        error:error.message
+    })
+    }
+}
 
-// exports.resetPassword = async (req,res) => {
-//     try {
-//         const {token} = req.params;
-//       const {password, confirmPassword} = req.body;
-//       if (password !== confirmPassword) {
-//         return res.status(404).json({
-//             message:'passwords do not match'
-//         });
-//       } 
-//        const decoded = jwt.verify(token, process.env.JWT_SECRET)
-//     //    if(decoded === null){
-//     //     return res.status(403).json({
-//     //         message:"invalid token or token expired",
-//     //         error:error
-//     //     })
-//        //}
+exports.resetPassword = async (req,res) => {
+    try {
+        const {token} = req.params;
+      const {password, confirmPassword} = req.body;
+      if (password !== confirmPassword) {
+        return res.status(404).json({
+            message:'passwords do not match'
+        });
+      } 
+       const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    //    if(decoded === null){
+    //     return res.status(403).json({
+    //         message:"invalid token or token expired",
+    //         error:error
+    //     })
+       //}
     
-//         const user = await userModel.findOne({where:{id:decoded.id}});
-//         if (!user) {
-//             return res.status(404).json({
-//                 message:'user not found'
-//             });
-//         }
-//         const salt = await bcrypt.genSalt(10);
-//         const hash = await  bcrypt.hash(password, salt);
+        const user = await userModel.findOne({where:{id:decoded.id}});
+        if (!user) {
+            return res.status(404).json({
+                message:'user not found'
+            });
+        }
+        const salt = await bcrypt.genSalt(10);
+        const hash = await  bcrypt.hash(password, salt);
 
-//         await user.update({password:hash})
+        await user.update({password:hash})
 
-//         res.status(200).json({
-//             message:'password reset successful',
-//             data:user
-//         });
-//     }catch(error){
-//         res.status(500).json({
-//             message:'internal server error',
-//             error:error.message
-//         })
-//     }
-// };
+        res.status(200).json({
+            message:'password reset successful',
+            data:user
+        });
+    }catch(error){
+        res.status(500).json({
+            message:'internal server error',
+            error:error.message
+        })
+    }
+};
 
-// exports.googleAuthLogin = async (req, res)=> {
-//   try {
-//     const token = await jwt.sign({
-//       id: req.user._id,
-//       email: req.user.email,
-//       isAdmin: req.user.isAdmin
-//     }, process.env.JWT_SECRET, {expiresIn: '1hr'})
-//     // res.redirect('/')
+exports.googleAuthLogin = async (req, res)=> {
+  try {
+    const token = await jwt.sign({
+      id: req.user._id,
+      email: req.user.email,
+      isAdmin: req.user.isAdmin
+    }, process.env.JWT_SECRET, {expiresIn: '1hr'})
+    // res.redirect('/')
 
-//     res.status(200).json({
-//       message: 'Login successful',
-//       data: req.user.fullName,
-//       token
-//     })
-//   } catch (error) {
-//      res.status(500).json({
-//       message: "Error logging with Google: " + error.mesaage
-//     })
-//   }
-// }
+    res.status(200).json({
+      message: 'Login successful',
+      data: req.user.fullName,
+      token
+    })
+  } catch (error) {
+     res.status(500).json({
+      message: "Error logging with Google: " + error.mesaage
+    })
+  }
+}

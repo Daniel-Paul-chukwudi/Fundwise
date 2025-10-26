@@ -24,6 +24,12 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull:false
       },
+      likeCount:{
+        type: Sequelize.INTEGER,
+      },
+      viewCount:{
+        type: Sequelize.INTEGER,
+      },
       businessOwner:{
         type: Sequelize.UUID,
         allowNull:false,

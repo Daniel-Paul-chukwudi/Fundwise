@@ -1,10 +1,12 @@
-const {createBusiness,getBusiness,getByCategory,updateB,getOneById, deleteB} = require('../Controller/businessController')
+const {createBusiness,getBusiness,getByCategory,updateB,getOneById, deleteB,likeBusiness} = require('../Controller/businessController')
 const {checkLogin} = require('../Middleware/authentication')
 const express = require('express')
 const router = express.Router()
 
 
 router.post('/pitch',checkLogin,createBusiness)
+
+router.post('/like',likeBusiness)
 
 router.get('/businesses',getBusiness)
 

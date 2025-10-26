@@ -33,27 +33,9 @@ module.exports = {
         type: Sequelize.ENUM('talent','investor'),
         allowNull: false
       },
-      kyc:{
-        type: Sequelize.TEXT,
-        get() {
-        const raw = this.getDataValue('amenities');
-        try {
-          return raw ? JSON.parse(raw) : {};
-        } catch (e) {
-          return {};
-        }
-       }
-      },
-      businesses:{
-        type: Sequelize.TEXT,
-        get() {
-        const raw = this.getDataValue('amenities');
-        try {
-          return raw ? JSON.parse(raw) : [];
-        } catch (e) {
-          return [];
-        }
-       }
+      subscribed:{
+        type: Sequelize.BOOLEAN,
+        allowNull:false,
       },
       otp:{
         type: Sequelize.INTEGER

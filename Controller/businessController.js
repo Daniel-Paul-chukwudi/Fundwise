@@ -27,24 +27,58 @@ exports.createBusiness= async(req,res)=>{
             description,
             category,
         }
-        const ventures = user.businesses
-        console.log("ventures",ventures);
-        ventures.push(newbusiness)
-        
-        
-        // await user.update({businesses:user.businesses})
-        // const updatedUser = await userModel.update({businesses:ventures},{
-        //     where:{email:user.email}
-        // })
-
-        
-
         res.status(201).json({
             message:"created successfully",
             data:business.dataValues,
-            updatedUser,
-            user
+            user,
+            busy:user.businesses
         })
+
+    } catch (error) {
+        res.status(500).json({
+            message:"internal server error",
+            error:error.message
+        })
+    }
+}
+
+exports.likeBusiness = async (req,res)=>{
+    try {
+        const {businessId} = req.body
+
+        const business = await businessModel.findOne({where:{id:businessId}})
+        business.likeCount += 1
+        await business.save()
+
+        res.status(200).json({
+            message:"liked succesfully",
+            data: business,
+            businesslikes:business.likeCount
+        })
+
+
+    } catch (error) {
+        res.status(500).json({
+            message:"internal server error",
+            error:error.message
+        })
+    }
+}
+
+exports.viewBusiness = async (req,res)=>{
+    try {
+        const {businessId} = req.body
+
+        const business = await businessModel.findOne({where:{id:businessId}})
+        business.viewCount += 1
+        await business.save()
+
+        res.status(200).json({
+            message:"viewed succesfully",
+            data: business,
+            businessviews:business.viewCount
+        })
+
 
     } catch (error) {
         res.status(500).json({

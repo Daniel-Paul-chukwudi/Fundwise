@@ -1,5 +1,6 @@
 require('dotenv').config()
 const userModel = require('../models/user')
+const businessModel = require('../models/business')
 const jwt = require('jsonwebtoken')
 const {verify,forgotPassword}= require('../Middleware/emailTemplates')
 const sendEmail = require('../Middleware/Bmail')
@@ -298,6 +299,7 @@ exports.getAll = async (req,res)=>{
 
         res.status(200).json({
             message:"All users in the database",
+            count:users.length,
             data: users
         })
         
@@ -314,9 +316,25 @@ exports.getOne = async(req,res)=>{
         const id  = req.params.id
         const user = await userModel.findByPk(id)
 
+        const businesses = await businessModel.findAll({where:{businessOwner:id}})
+        let totalLikes = 0
+        let totalViews = 0
+        businesses.forEach((x)=>{
+          totalLikes += x.likeCount
+          totalViews += x.viewCount
+        })
+        const response = {
+          user,
+          businesscount:businesses.length,
+          totalLikes,
+          totalViews,
+          businesses
+        }
+
+
         res.status(200).json({
             message:"The user in the database",
-            data: user
+            data: response
         })
         
     } catch (error) {
@@ -346,3 +364,4 @@ exports.deleteUser = async (req,res)=>{
         })
   }
 }
+

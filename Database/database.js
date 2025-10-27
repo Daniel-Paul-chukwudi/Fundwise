@@ -6,9 +6,14 @@ const pass =process.env.SQL_PASSWORD
 const host = process.env.SQL_HOST
 const Uname = process.env.SQL_USERNAME
 const dialect = process.env.SQL_DIALECT
-const sequelize = new Sequelize(db, Uname, pass, {
-  host: host ,
-  dialect: dialect 
+// const sequelize = new Sequelize(db, Uname, pass, {
+//   host: host ,
+//   dialect: dialect 
+// });
+
+const sequelize = new Sequelize("trustforge", "root", "root", {
+  host: "localhost" ,
+  dialect: "mysql" 
 });
 
 module.exports = sequelize 

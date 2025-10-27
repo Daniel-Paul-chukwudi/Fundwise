@@ -59,3 +59,30 @@ exports.checkAdmin = async (req,res,next)=>{
         })
     }
 }
+
+exports.checkSubscription = async (req,res,next)=>{
+    try {
+        const data = req.user
+        const user = await userModel.findByPk(data.id)
+
+        if(user === null){
+            return res.status(404).json({
+                message:"user not found"
+            })
+        }else{
+            if(user.subscribed ===  false ){
+                return res.status(404).json({
+                message:"You are subscribtion expired pls subscribe to continue"
+                })
+            }else{
+                next()
+            }
+        }
+
+    } catch (error) {
+        res.status(500).json({
+            message:"internal server error",
+            error: error.message
+        })
+    }
+}

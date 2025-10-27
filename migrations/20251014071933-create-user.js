@@ -17,6 +17,9 @@ module.exports = {
       email: {
         type: Sequelize.STRING
       },
+      phoneNumber:{
+        type: Sequelize.STRING
+      },
       password: {
         type: Sequelize.STRING
       },
@@ -27,8 +30,22 @@ module.exports = {
         type: Sequelize.BOOLEAN
       },
       role: {
-        type:Sequelize.ENUM(['talent','investor','admin']),
+        type: Sequelize.ENUM('businessOwner','investor'),
         allowNull: false
+      },
+      subscribed:{
+        type: Sequelize.BOOLEAN,
+        allowNull:false,
+      },
+      viewAllocation:{
+        type: Sequelize.INTEGER,
+      },
+      otp:{
+        type: Sequelize.STRING
+      },
+      otpExpiredAt:{
+        allowNull: false,
+        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,

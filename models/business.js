@@ -1,63 +1,49 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
 const sequelize = require('../Database/database');
 
-class Business extends Model {}
+class business extends Model {}
 
-Business.init(
+business.init(
   {
-    businessName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-      validate: {
-        isEmail: true,
+    id: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4
       },
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    isVerified: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
-    isGoogle: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
-    role: {
-      type: DataTypes.ENUM('talent', 'business', 'admin'),
-      allowNull: false,
-      defaultValue: 'business',
-    },
+      businessName: {
+        type: DataTypes.STRING,
+        allowNull:false
+      },
+      fundGoal: {
+        type: DataTypes.INTEGER,
+        allowNull:false
+      },
+      description:{
+        type: DataTypes.STRING,
+        allowNull:false
+      },
+      category:{
+        type: DataTypes.STRING,
+        allowNull:false
+      },
+      likeCount:{
+        type: DataTypes.INTEGER,
+      },
+      viewCount:{
+        type: DataTypes.INTEGER
+      },
+      businessOwner:{
+        type: DataTypes.UUID,
+        allowNull:false,
+      }
+
   },
   {
-    sequelize, // Pass the connection instance
-    modelName: 'Business', // Model name (capitalized convention)
-    timestamps: true,
-    defaultScope: {
-      attributes: { exclude: ['password'] },
-    },
-    scopes: {
-      withPassword: { attributes: {} },
-    },
-    hooks: {
-      beforeCreate: (user) => {
-        if (user.email) {
-          user.email = user.email.toLowerCase();
-        }
-      },
-      beforeUpdate: (user) => {
-        if (user.email) {
-          user.email = user.email.toLowerCase();
-        }
-      },
-    },
+    sequelize, 
+    modelName: 'businesses', 
+    timestamps:true,
   }
 );
 
-module.exports = Business;
+module.exports = business 

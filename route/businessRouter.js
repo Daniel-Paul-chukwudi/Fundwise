@@ -1,4 +1,4 @@
-const {createBusiness,getBusiness,getByCategory,updateB,getOneById, deleteB,likeBusiness,viewBusiness} = require('../Controller/businessController')
+const {createBusiness,getBusiness,getByCategory,updateB,getOneById, deleteB,likeBusiness,viewBusiness,saveBusiness} = require('../Controller/businessController')
 const {checkLogin,checkSubscription,checkAdmin} = require('../Middleware/authentication')
 const express = require('express')
 const router = express.Router()
@@ -11,6 +11,8 @@ router.post('/pitch',checkLogin,createBusiness)
 router.post('/like',checkLogin,likeBusiness)
 
 router.post('/view',checkLogin,viewBusiness)
+
+router.post('/save',checkLogin,saveBusiness)
 
 router.get('/businesses',getBusiness)
 

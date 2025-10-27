@@ -1,6 +1,7 @@
 require('dotenv').config()
 const userModel = require('../models/user')
 const businessModel = require('../models/business')
+const saveModel = require('../models/save')
 const jwt = require('jsonwebtoken')
 const {verify,forgotPassword}= require('../Middleware/emailTemplates')
 const sendEmail = require('../Middleware/Bmail')
@@ -167,10 +168,10 @@ exports.resendOtp = async (req, res, next) => {
     const emailOptions = {
       email: user.email,
       subject: 'OTP Resent',
-      html: resendOtpTemplate(newOtp, user.firstName),
+      html: verify(newOtp, user.firstName),
     }
 
-    await emailSender(emailOptions)
+    await sendEmail(emailOptions)
 
     res.status(200).json({
       message: 'OTP resent successfully',
@@ -242,7 +243,7 @@ exports.forgotPassword = async (req,res) => {
       const link = `${req.protocol}://${req.get('host')}/reset-password/${token}`;
    
        await sendEmail({email,
-        subject:'Password reset',
+        subject:'Password reset link',
         html:forgotPassword(link,user.firstName)});
       
         res.status(200).json({
@@ -319,7 +320,9 @@ exports.getOne = async(req,res)=>{
   try {
         const id  = req.params.id
         const user = await userModel.findByPk(id)
-
+        const savedBusinesses = await saveModel.findAll({where:{userId:id}})
+        // console.log(savedBusinesses);
+        
         const businesses = await businessModel.findAll({where:{businessOwner:id}})
         let totalLikes = 0
         let totalViews = 0
@@ -332,6 +335,7 @@ exports.getOne = async(req,res)=>{
           businesscount:businesses.length,
           totalLikes,
           totalViews,
+          savedBusinesses,
           businesses
         }
 

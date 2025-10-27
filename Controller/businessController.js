@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken')
 const JWT_SECRET = process.env.JWT_SECRET
 const likeModel = require('../models/like')
 const viewModel = require('../models/view')
+const saveModel = require('../models/save')
 
 exports.createBusiness= async(req,res)=>{
     try {
@@ -48,11 +49,11 @@ exports.likeBusiness = async (req,res)=>{
     try {
         const {businessId} = req.body
         const {id} = req.user
-        console.log(id);
+        // console.log(id);
         
         const business = await businessModel.findOne({where:{id:businessId}})
         const likeCheck = await likeModel.findOne({where:{userId:id,businessId:businessId}})
-        console.log(likeCheck);
+        // console.log(likeCheck);
         
         if(likeCheck){
             business.likeCount -= 1
@@ -134,6 +135,40 @@ exports.viewBusiness = async (req,res)=>{
         })
         }
 
+
+    } catch (error) {
+        res.status(500).json({
+            message:"internal server error",
+            error:error.message
+        })
+    }
+}
+
+exports.saveBusiness = async (req,res)=>{
+    try {
+        const {businessId} = req.body
+        const {id} = req.user
+        
+        const business = await businessModel.findOne({where:{id:businessId}})
+        const saveCheck = await saveModel.findOne({where:{userId:id,businessId:businessId}})
+        
+        if(saveCheck){
+            await saveModel.destroy({where:{userId:id,businessId:businessId}})
+            return res.status(200).json({
+                message:"unsaved succesfully",
+                data: business,
+            })
+        }else{
+            const save = await saveModel.create({
+                userId:id,
+                businessId
+            })
+
+            return res.status(200).json({
+            message:"saved succesfully",
+            data: business,
+        })
+        }
 
     } catch (error) {
         res.status(500).json({

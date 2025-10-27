@@ -5,9 +5,9 @@ const pass =process.env.SQL_PASSWORD
 const host = process.env.SQL_HOST
 module.exports = {
   "development": {
-    "username": Uname,
-    "password": pass,
-    "database": db,
+    "username": "root",
+    "password": "root",
+    "database": "trustforge",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },

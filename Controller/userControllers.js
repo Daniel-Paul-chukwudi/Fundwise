@@ -41,6 +41,7 @@ exports.signUp = async (req, res, next) => {
       role,
       email:email.toLowerCase(),
       otp: otp,
+      
       otpExpiredAt:new Date(Date.now() + 1000 * 60 * 2).getSeconds()
     })
     console.log(newUser);

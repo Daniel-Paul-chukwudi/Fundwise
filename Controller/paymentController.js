@@ -65,10 +65,65 @@ exports.initializeSubscriptionPaymentBusiness = async (req, res) => {
   }
 };
 
+exports.verifyPayment = async (req, res) => {
+  try {
+    const { reference } = req.query;
+    console.log(reference);
+    
+    const payment = await paymentModel.findOne({where:{reference}})
+    console.log(payment);
+    
+    if (payment === null) {
+      return res.status(404).json({
+        message: 'Payment not found'
+      })
+    }
+    const { data } = await axios.get(`https://api.korapay.com/merchant/api/v1/charges/${reference}`, {
+      headers: {
+        Authorization: `Bearer ${process.env.KORA_SECRET_KEY}`
+      }
+    })
+
+    console.log(data)
+    if (data?.status === true && data?.data?.status === "success") {
+      payment.status = 'Successful'
+      await payment.save();
+      res.status(200).json({
+        message: 'Payment Verified Successfully'
+      })
+    } else{
+      payment.status = 'Failed'
+      await payment.save();
+      res.status(200).json({
+        message: 'Payment Failed'
+      })
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error verifying payment: ' + error.message
+    })
+  }
+};
+
+exports.getAll = async (req,res)=>{
+    try {
+       const payments = await paymentModel.findAll()
+       res.status(200).json({
+        message:"all payments",
+        data:payments
+       })
+    } catch (error) {
+        res.status(500).json({
+            message:"internal server error",
+            error:error.message
+        })
+    }
+}
+
 exports.webHook = async (req, res) => {
   try {
     const { event , data } = req.body;
-    const payment = await paymentModel.findOne({ reference:data.reference });
+    const payment = await paymentModel.findOne({where:{ reference:data.reference }});
     if (payment === null) {
       return res.status(404).json({
         message: 'Payment not found'
@@ -79,11 +134,28 @@ exports.webHook = async (req, res) => {
     //     Authorization: `Bearer ${process.env.KORAPAY_SECRET_KEY}`
     //   }
     // })
+    // data example
+    // {
+    // reference: 'TF-9gequ4em9mk6-BO',
+    // payment_reference: 'TF-9gequ4em9mk6-BO',
+    // currency: 'NGN',
+    // amount: 10044,
+    // fee: 140.36,
+    // payment_method: 'card',
+    // status: 'success'
+    // }
 
-    console.log(data)
+    // console.log(data)
     if ( event === "charge.success") {
       payment.status = 'Successful'
       await payment.save();
+
+      const user = await userModel.findByPk(payment.userId)
+      user.subscribed = true
+    //   user.viewAllocation = 10
+        user.save()
+
+
       res.status(200).json({
         message: 'Payment Verified Successfully'
       })

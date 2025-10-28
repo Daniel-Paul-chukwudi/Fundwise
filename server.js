@@ -76,6 +76,8 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(userRouter);
 app.use(businessRouter);
+app.use(investorRouter);
+app.use(paymentRouter);
 app.use((error, req, res, next)=>{
   if (error) {
     res.send(error.message)

@@ -11,8 +11,12 @@ meeting.init(
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4
       },
-      
-      
+      host:{
+        type: DataTypes.UUID
+      },
+      guest:{
+        type: DataTypes.UUID
+      },
       meetingTitle: {
         type: DataTypes.STRING,
         allowNull:false,
@@ -28,19 +32,19 @@ meeting.init(
       },
       meetingType:{
         type: DataTypes.STRING,
-        
       },
       note:{
         type: DataTypes.STRING,
-        
       },
+      meetingStatus:{
+        type: DataTypes.ENUM('Awaiting Approval','Approved and Upcoming','Concluded')
+      }
       
       
   },
   {
     sequelize, 
-    modelName: 'meetings',
-    tableName:  'meetings', 
+    modelName: 'meetings', 
     timestamps:true,
   }
 );

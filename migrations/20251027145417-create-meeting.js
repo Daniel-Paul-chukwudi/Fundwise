@@ -8,29 +8,34 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.UUID
       },
-      
-      
+      host:{
+        type: Sequelize.UUID
+      },
+      guest:{
+        type: Sequelize.UUID
+      }, 
       meetingTitle: {
-              type: Sequelize.STRING,
-              allowNull:false,
-              unique:true,
-            },
-            date:{
-              type:Sequelize.STRING,
-              allowNull:false
-            },
-            time: {
-              type: Sequelize.STRING,
-              allowNull:false
-            },
-            meetingType:{
-              type: Sequelize.STRING,
-              
-            },
-            note:{
-              type: Sequelize.STRING,
-              
-            },
+        type: Sequelize.STRING,
+        allowNull:false,
+        unique:true,
+      },
+      date:{
+        type:Sequelize.STRING,
+        allowNull:false
+      },
+      time: {
+        type: Sequelize.STRING,
+        allowNull:false
+      },
+      meetingType:{
+        type: Sequelize.STRING,
+      },
+      note:{
+        type: Sequelize.STRING,
+      },
+      meetingStatus:{
+        type: Sequelize.ENUM('Awaiting Approval','Approved and Upcoming','Concluded')
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

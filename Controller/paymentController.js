@@ -3,6 +3,7 @@ const otpGen = require('otp-generator')
 const businessModel = require('../models/business')
 const axios = require('axios')
 const paymentModel = require('../models/payment')
+const investorModel = require('../models/investor')
 
 
 exports.initializeSubscriptionPaymentBusiness = async (req, res) => {
@@ -64,6 +65,69 @@ exports.initializeSubscriptionPaymentBusiness = async (req, res) => {
     })
   }
 };
+
+exports.initializeInvestementPaymentInvestor = async (req, res) => {
+  try {
+      const { id } = req.user;
+      const user = await investorModel.findByPk(id);
+      const code = await otpGen.generate(12, { upperCaseAlphabets: false, lowerCaseAlphabets: true, digits: true, specialChars: false })
+      const ref = `TF-${code}-ININ`
+      const {price,businessId} = req.body
+      
+
+    if (user === null) {
+      return res.status(404).json({
+        message: 'User not found'
+      })
+    }
+
+    const paymentData = {
+      amount: price,
+      currency: 'NGN',
+      reference: ref,
+      customer: {
+        email: user.email,
+        name: `${user.firstName} ${user.lastName}`
+      }
+    }
+
+    const { data } = await axios.post('https://api.korapay.com/merchant/api/v1/charges/initialize', paymentData, {
+      headers: {
+        Authorization: `Bearer ${process.env.KORA_SECRET_KEY}`
+      }
+    });
+
+    const payment = new paymentModel({
+      userId: id,
+      paymentType:'subscription',
+      reference: ref,
+      price,
+      userType:"Investor",
+      businessId
+    });
+
+    if (data?.status === true) {
+      await payment.save();
+    }
+
+    res.status(200).json({
+      message: 'Payment Initialized successfuly',
+      data: {
+        reference: data?.data?.reference,
+        url: data?.data?.checkout_url
+      },
+      payment,
+      paymentData
+    })
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error initializing payment: ' + error.message,
+      error: error.response?.data
+    })
+  }
+};
+
+
 
 exports.verifyPayment = async (req, res) => {
   try {

@@ -40,7 +40,6 @@ investor.init(
         type: DataTypes.BOOLEAN,
         defaultValue:false
       },
-      
       subscribed:{
         type: DataTypes.BOOLEAN,
         allowNull:false,

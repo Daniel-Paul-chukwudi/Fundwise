@@ -1,12 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { 
-  createMeeting, 
-  getAllMeetings, 
-  getMeetingById, 
-  updateMeeting, 
-  deleteMeeting 
-} = require('../Controller/meetingController');
+const {getAllMeetings,getMeetingById,updateMeeting,deleteMeeting, createMeetingInvestor,approveMeeting} = require('../Controller/meetingController');
+const {checkInvestorLogin, checkLogin} = require('../Middleware/authentication')
 
 /**
  * @swagger
@@ -52,7 +47,9 @@ const {
  *       500:
  *         description: Server error
  */
-router.post('/meeting', createMeeting);
+router.post('/meeting',checkInvestorLogin, createMeetingInvestor);
+
+router.post('/approve-meeting',checkLogin,approveMeeting)
 
 /**
  * @swagger

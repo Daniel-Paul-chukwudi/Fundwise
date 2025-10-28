@@ -68,16 +68,11 @@ exports.signUp = async (req, res, next) => {
       password: hashedPassword,
       email:email.toLowerCase(),
       otp: otp,
-      
       otpExpiredAt:new Date(Date.now() + 1000 * 60 * 2).getSeconds()
     })
-    console.log(newUser);
-    
-
+    // console.log(newUser);
     await newUser.save()
     // console.log(newUser.dataValues);
-    
-
     const verifyMail = {
       email:newUser.email,
       subject:`Please verify your email ${newUser.firstName}`,
@@ -135,8 +130,7 @@ exports.verifyOtp = async (req, res, next) => {
 };
 
 exports.logininvestor = async (req, res, next) => {
-      
-      try {
+    try {
         const { email, password } = req.body;
     // Find user in SQL database
     const user = await investorModel.findOne({ where: { email: email.toLowerCase() } });
@@ -175,9 +169,8 @@ exports.logininvestor = async (req, res, next) => {
 };
 
 exports.resendOtp = async (req, res, next) => {
-  const { email } = req.body
-
   try {
+    const { email } = req.body
     const user = await userModel.findOne({where:{ email: email.toLowerCase() }})
     if (!user) {
       return res.status(404).json({
@@ -187,9 +180,7 @@ exports.resendOtp = async (req, res, next) => {
 
     const newOtp = Math.floor(1000 + Math.random() * 9000).toString()
     user.otp = newOtp
-    otpExpiredAt: new Date(Date.now() + 1000 * 60 * 2) // 2 minutes later
-
-
+    user.otpExpiredAt = new Date(Date.now() + 1000 * 60 * 2) // 2 minutes later
     await user.save()
 
     const emailOptions = {
@@ -202,6 +193,7 @@ exports.resendOtp = async (req, res, next) => {
 
     res.status(200).json({
       message: 'OTP resent successfully',
+      newOtp
     })
   } catch (error) {
     next(error)
@@ -209,10 +201,9 @@ exports.resendOtp = async (req, res, next) => {
 }
 
 exports.changePassword = async (req, res, next) => {
-  const { id } = req.user; // comes from the JWT middleware
-  const { oldPassword, newPassword, confirmPassword } = req.body;
-  
   try {
+    const { id } = req.user; // comes from the JWT middleware
+    const { oldPassword, newPassword, confirmPassword } = req.body;
     //Find user in SQL database
     const user = await investorModel.findByPk(id);
     if (!user) {
@@ -351,17 +342,14 @@ exports.getOne = async(req,res)=>{
         // console.log(savedBusinesses);
         
         
-        
         const response = {
           user,
-          
           savedBusinesses,
-          
         }
 
 
         res.status(200).json({
-            message:"The user in the database",
+            message:"The investor in the database",
             data: response
         })
         

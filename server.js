@@ -7,6 +7,7 @@ const sequelize = require('./Database/database')
 const userRouter = require('./route/userRouter')
 const businessRouter = require('./route/businessRouter')
 const investorRouter = require ('./route/investorRouter')
+const meetingRouter = require("./route/meetingRouter")
 const swaggerJSDoc = require('swagger-jsdoc')
 const swaggerUi  = require('swagger-ui-express')
 
@@ -76,6 +77,7 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(userRouter);
 app.use(businessRouter);
 app.use(investorRouter)
+app.use(meetingRouter)
 app.use((error, req, res, next)=>{
   if (error) {
     res.send(error.message)

@@ -11,4 +11,9 @@ const sequelize = new Sequelize(db, Uname, pass, {
   dialect: dialect 
 });
 
+// const sequelize = new Sequelize("trustforge", "root", "root", {
+//   host: "localhost" ,
+//   dialect: "mysql" 
+// });
+
 module.exports = sequelize 

@@ -2,16 +2,18 @@ require('dotenv').config()
 const userModel = require('../models/user')
 const businessModel = require('../models/business')
 const saveModel = require('../models/save')
+const meetingModel = require('../models/meeting')
 const jwt = require('jsonwebtoken')
 const {verify,forgotPassword}= require('../Middleware/emailTemplates')
 const sendEmail = require('../Middleware/Bmail')
 const bcrypt = require('bcrypt')
+const { where } = require('sequelize')
 
 
 
 exports.signUp = async (req, res, next) => {
   try {
-    const { firstName, lastName, phoneNumber, role, email, password,confirmPassword } = req.body
+    const { firstName, lastName, phoneNumber, email, password,confirmPassword } = req.body
     const user = await userModel.findOne({where:{ email: email.toLowerCase() }})
     // console.log(user);
     
@@ -39,14 +41,11 @@ exports.signUp = async (req, res, next) => {
       lastName,
       phoneNumber,
       password: hashedPassword,
-      role,
       email:email.toLowerCase(),
       otp: otp,
       otpExpiredAt:new Date(Date.now() + 1000 * 60 * 2).getSeconds()
     })
-    console.log(newUser);
-    
-
+    // console.log(newUser);
     await newUser.save()
     // console.log(newUser.dataValues);
     
@@ -320,7 +319,7 @@ exports.getOne = async(req,res)=>{
   try {
         const id  = req.params.id
         const user = await userModel.findByPk(id)
-        const savedBusinesses = await saveModel.findAll({where:{userId:id}})
+        // const savedBusinesses = await saveModel.findAll({where:{userId:id}})
         // console.log(savedBusinesses);
         
         const businesses = await businessModel.findAll({where:{businessOwner:id}})
@@ -330,13 +329,16 @@ exports.getOne = async(req,res)=>{
           totalLikes += x.likeCount
           totalViews += x.viewCount
         })
+        const meetings = []
+        meetings.push(await meetingModel.findAll({where:{host:id}}))
+        meetings.push(await meetingModel.findAll({where:{guest:id}}))
         const response = {
           user,
           businesscount:businesses.length,
           totalLikes,
           totalViews,
-          savedBusinesses,
-          businesses
+          businesses,
+          meetings
         }
 
 

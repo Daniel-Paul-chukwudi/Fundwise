@@ -2,6 +2,7 @@ require('dotenv').config()
 const userModel = require('../models/user')
 const jwt = require('jsonwebtoken')
 const investorModel = require("../models/investor")
+const meetingModel = require("../models/meeting")
 exports.checkLogin = async (req,res,next)=>{
     try {
         const token = req.headers.authorization?.split(' ')[1];
@@ -119,3 +120,6 @@ exports.checkInvestorLogin  = async (req,res,next)=>{
         })
     }
 }
+
+
+

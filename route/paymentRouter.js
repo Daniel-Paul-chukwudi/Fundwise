@@ -1,9 +1,9 @@
-const {initializeSubscriptionPaymentBusiness,initializeInvestementPaymentInvestor,webHook,verifyPayment, getAll} = require('../Controller/paymentController')
+const {initializeInvestementPaymentInvestor,webHook,verifyPayment, getAll, initializeSubscriptionPaymentInvestor} = require('../Controller/paymentController')
 const {checkLogin, checkInvestorLogin} = require('../Middleware/authentication')
 
 const router = require('express').Router()
 
-router.post('/makePaymentBusiness',checkLogin, initializeSubscriptionPaymentBusiness)
+router.post('/subscribeInvestor',checkLogin, initializeSubscriptionPaymentInvestor)
 
 router.post('/makeInvestment',checkInvestorLogin,initializeInvestementPaymentInvestor)
 

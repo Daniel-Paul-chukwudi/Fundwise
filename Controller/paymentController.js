@@ -6,18 +6,18 @@ const paymentModel = require('../models/payment')
 const investorModel = require('../models/investor')
 
 
-exports.initializeSubscriptionPaymentBusiness = async (req, res) => {
+exports.initializeSubscriptionPaymentInvestor = async (req, res) => {
   try {
       const { id } = req.user;
-      const user = await userModel.findByPk(id);
+      const user = await investorModel.findByPk(id);
       const code = await otpGen.generate(12, { upperCaseAlphabets: false, lowerCaseAlphabets: true, digits: true, specialChars: false })
-      const ref = `TF-${code}-BO`
+      const ref = `TF-${code}-INS`
       const {price} = req.body
       
 
     if (user === null) {
       return res.status(404).json({
-        message: 'User not found'
+        message: 'Investor not found'
       })
     }
 
@@ -42,7 +42,7 @@ exports.initializeSubscriptionPaymentBusiness = async (req, res) => {
       paymentType:'subscription',
       reference: ref,
       price,
-      userType:"businessOwner"
+      userType:"Investor"
     });
 
     if (data?.status === true) {
@@ -99,7 +99,7 @@ exports.initializeInvestementPaymentInvestor = async (req, res) => {
 
     const payment = new paymentModel({
       userId: id,
-      paymentType:'subscription',
+      paymentType:'Investment',
       reference: ref,
       price,
       userType:"Investor",
@@ -214,7 +214,7 @@ exports.webHook = async (req, res) => {
       payment.status = 'Successful'
       await payment.save();
 
-      const user = await userModel.findByPk(payment.userId)
+      const user = await investorModel.findByPk(payment.userId)
       user.subscribed = true
     //   user.viewAllocation = 10
         user.save()

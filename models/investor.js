@@ -53,7 +53,7 @@ investor.init(
         type: DataTypes.STRING
       },
       otpExpiredAt:{
-        type: DataTypes.BIGINT
+        type: DataTypes.INTEGER
       }
   },
   {

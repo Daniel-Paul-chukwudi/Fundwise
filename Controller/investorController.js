@@ -103,9 +103,9 @@ exports.verifyOtp = async (req, res, next) => {
     }
 
     //  Check OTP
-    if (new Date(Date.now() + 1000 * 60 * 2).getSeconds() > user.otpExpiredAt) {
-      return res.status(400).json({ message: 'OTP Expired' });
-    }
+    // if (new Date(Date.now() + 1000 * 60 * 2).getSeconds() > user.otpExpiredAt) {
+    //   return res.status(400).json({ message: 'OTP Expired' });
+    // }
     
     
     if (user.otp !== otp) {

@@ -9,12 +9,16 @@ const router = express.Router()
  * @swagger
  * /investor:
  *   post:
- *     summary: Register a new user
- *     description: Creates a new user account, hashes the password, generates an OTP for email verification, and sends a verification email.
+ *     summary: Register a new investor
+ *     description: >
+ *       Creates a new investor account.  
+ *       Validates that the email does not already exist, hashes the password, generates a 6-digit OTP,  
+ *       and sends a verification email for account activation.
  *     tags:
- *       - investors
+ *       - Investors
  *     requestBody:
  *       required: true
+ *       description: Investor registration details
  *       content:
  *         application/json:
  *           schema:
@@ -30,27 +34,30 @@ const router = express.Router()
  *               firstName:
  *                 type: string
  *                 example: Daniel
+ *                 description: Investor's first name
  *               lastName:
  *                 type: string
  *                 example: Saul
+ *                 description: Investor's last name
  *               phoneNumber:
  *                 type: string
- *                 example: "08123456789"
+ *                 example: "+2348123456789"
+ *                 description: Investor's phone number
  *               email:
  *                 type: string
- *                 format: email
- *                 example: danielsaul@example.com
+ *                 example: danielsaul@email.com
+ *                 description: Investor's email address (must be unique)
  *               password:
  *                 type: string
- *                 format: password
- *                 example: myStrongPassword123
+ *                 example: StrongPass@123
+ *                 description: Investor's password (will be hashed before saving)
  *               confirmPassword:
  *                 type: string
- *                 format: password
- *                 example: myStrongPassword123
+ *                 example: StrongPass@123
+ *                 description: Must match the password field
  *     responses:
  *       201:
- *         description: User successfully registered and verification email sent.
+ *         description: Investor registered successfully
  *         content:
  *           application/json:
  *             schema:
@@ -58,13 +65,13 @@ const router = express.Router()
  *               properties:
  *                 message:
  *                   type: string
- *                   example: User created successfully
+ *                   example: investor created successfully
  *                 data:
  *                   type: object
  *                   properties:
  *                     id:
  *                       type: string
- *                       example: 6710b7e3b61a2f15b6ac0219
+ *                       example: 3c9d1b1e-1234-4a67-a8a7-16e12c4b7a9d
  *                     firstName:
  *                       type: string
  *                       example: Daniel
@@ -73,12 +80,18 @@ const router = express.Router()
  *                       example: Saul
  *                     email:
  *                       type: string
- *                       example: danielsaul@example.com
- *                     role:
+ *                       example: danielsaul@email.com
+ *                     phoneNumber:
  *                       type: string
- *                       example: user
+ *                       example: "+2348123456789"
+ *                     otp:
+ *                       type: string
+ *                       example: "584210"
+ *                     otpExpiredAt:
+ *                       type: string
+ *                       example: "2025-10-07T10:15:00Z"
  *       403:
- *         description: Validation error or duplicate user.
+ *         description: Email already exists or password mismatch
  *         content:
  *           application/json:
  *             schema:
@@ -86,15 +99,9 @@ const router = express.Router()
  *               properties:
  *                 message:
  *                   type: string
- *                   examples:
- *                     userExists:
- *                       summary: Duplicate email
- *                       value: User already exists, Log in to your account
- *                     passwordMismatch:
- *                       summary: Password mismatch
- *                       value: Passwords dont match
+ *                   example: investor already exists, Log in to your account
  *       500:
- *         description: Internal server error while creating user.
+ *         description: Internal server error during registration
  *         content:
  *           application/json:
  *             schema:
@@ -102,9 +109,10 @@ const router = express.Router()
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Error creating user
+ *                   example: Internal server error
  */
 router.post('/investor', signUp);
+
 
 /**
  * @swagger
@@ -236,12 +244,15 @@ router.get('/investor/:id', getOne);
  * @swagger
  * /investorl:
  *   post:
- *     summary: User login
- *     description: Authenticates a user with email and password, returning a JWT token upon success.
+ *     summary: Login an existing investor
+ *     description: >
+ *       Authenticates an investor by verifying their email and password.  
+ *       Ensures the account is verified before granting access, and returns a signed JWT token upon success.
  *     tags:
- *       - Authentication
+ *       - Investors
  *     requestBody:
  *       required: true
+ *       description: Investor login credentials
  *       content:
  *         application/json:
  *           schema:
@@ -252,15 +263,15 @@ router.get('/investor/:id', getOne);
  *             properties:
  *               email:
  *                 type: string
- *                 format: email
- *                 example: danielsaul@example.com
+ *                 example: danielsaul@email.com
+ *                 description: Registered email address of the investor
  *               password:
  *                 type: string
- *                 format: password
- *                 example: MySecurePassword123!
+ *                 example: StrongPass@123
+ *                 description: Investor’s account password
  *     responses:
  *       200:
- *         description: Login successful — JWT token returned.
+ *         description: Login successful
  *         content:
  *           application/json:
  *             schema:
@@ -273,7 +284,7 @@ router.get('/investor/:id', getOne);
  *                   type: string
  *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
  *       400:
- *         description: Incorrect password.
+ *         description: Incorrect password
  *         content:
  *           application/json:
  *             schema:
@@ -283,7 +294,7 @@ router.get('/investor/:id', getOne);
  *                   type: string
  *                   example: Incorrect password
  *       401:
- *         description: Account not verified.
+ *         description: Account not verified
  *         content:
  *           application/json:
  *             schema:
@@ -293,7 +304,7 @@ router.get('/investor/:id', getOne);
  *                   type: string
  *                   example: Please verify your account
  *       404:
- *         description: User not found in the database.
+ *         description: Investor not found
  *         content:
  *           application/json:
  *             schema:
@@ -301,9 +312,9 @@ router.get('/investor/:id', getOne);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: User not found
+ *                   example: investor not found
  *       500:
- *         description: Server error during login process.
+ *         description: Internal server error during login
  *         content:
  *           application/json:
  *             schema:
@@ -315,17 +326,20 @@ router.get('/investor/:id', getOne);
  */
 router.post('/investorl', logininvestor);
 
+
 /**
  * @swagger
  * /verifyInvestor:
  *   post:
- *     summary: Verify user email using OTP
- *     description: Verifies a user's email address by validating the OTP sent to their email. If valid, the user's account is marked as verified.
+ *     summary: Verify investor email using OTP
+ *     description: >
+ *       Verifies an investor’s email address by validating the OTP sent to their email.  
+ *       Once verified, the investor's account status is updated to `isVerified: true`.
  *     tags:
- *       - Authentication
+ *       - Investors
  *     requestBody:
  *       required: true
- *       description: User's email and OTP code for verification
+ *       description: Email and OTP details for verification
  *       content:
  *         application/json:
  *           schema:
@@ -336,11 +350,12 @@ router.post('/investorl', logininvestor);
  *             properties:
  *               email:
  *                 type: string
- *                 format: email
- *                 example: johndoe@example.com
+ *                 example: danielsaul@email.com
+ *                 description: Investor’s registered email address
  *               otp:
  *                 type: string
- *                 example: "123456"
+ *                 example: "482913"
+ *                 description: 6-digit OTP sent to the investor’s email
  *     responses:
  *       200:
  *         description: Email verified successfully
@@ -356,22 +371,22 @@ router.post('/investorl', logininvestor);
  *                   type: object
  *                   properties:
  *                     id:
- *                       type: string
- *                       example: "a1b2c3d4e5"
+ *                       type: integer
+ *                       example: 12
  *                     firstName:
  *                       type: string
- *                       example: John
+ *                       example: Daniel
  *                     lastName:
  *                       type: string
- *                       example: Doe
+ *                       example: Saul
  *                     email:
  *                       type: string
- *                       example: johndoe@example.com
+ *                       example: danielsaul@email.com
  *                     isVerified:
  *                       type: boolean
  *                       example: true
  *       400:
- *         description: Invalid OTP or expired OTP
+ *         description: Invalid OTP
  *         content:
  *           application/json:
  *             schema:
@@ -381,7 +396,7 @@ router.post('/investorl', logininvestor);
  *                   type: string
  *                   example: Invalid OTP
  *       404:
- *         description: User not found
+ *         description: Investor not found
  *         content:
  *           application/json:
  *             schema:
@@ -391,7 +406,7 @@ router.post('/investorl', logininvestor);
  *                   type: string
  *                   example: User not found
  *       500:
- *         description: Internal server error
+ *         description: Internal server error during verification
  *         content:
  *           application/json:
  *             schema:
@@ -399,9 +414,10 @@ router.post('/investorl', logininvestor);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Internal server error during OTP verification
+ *                   example: Internal server error
  */
 router.post('/verifyInvestor', verifyOtp);
+
 
 
 /**

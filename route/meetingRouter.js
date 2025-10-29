@@ -89,49 +89,6 @@ const {checkInvestorLogin, checkLogin} = require('../Middleware/authentication')
  *                 guestName:
  *                   type: string
  *                   example: Sarah Daniels
- *       400:
- *         description: Bad request (e.g. meeting title already exists)
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Meeting title already exists
- *       401:
- *         description: Unauthorized (missing or expired token)
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Please login again to continue
- *       404:
- *         description: Investor not found or authentication failed
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Authentication Failed: investor not found
- *       500:
- *         description: Internal server error or unexpected failure
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Error creating meeting
- *                 error:
- *                   type: string
- *                   example: Internal server error details
  */
 router.post('/meeting', checkInvestorLogin, createMeetingInvestor);
 

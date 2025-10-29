@@ -36,10 +36,6 @@ const router = express.Router()
  *               phoneNumber:
  *                 type: string
  *                 example: "08123456789"
- *               role:
- *                 type: string
- *                 enum: [user, admin]
- *                 example: user
  *               email:
  *                 type: string
  *                 format: email
@@ -406,7 +402,6 @@ router.post('/userl', loginUser);
  *                   example: Internal server error during OTP verification
  */
 router.post('/verify', verifyOtp);
-
 
 /**
  * @swagger

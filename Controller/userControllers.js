@@ -2,25 +2,27 @@ require('dotenv').config()
 const userModel = require('../models/user')
 const businessModel = require('../models/business')
 const saveModel = require('../models/save')
+const meetingModel = require('../models/meeting')
 const jwt = require('jsonwebtoken')
 const {verify,forgotPassword}= require('../Middleware/emailTemplates')
 const sendEmail = require('../Middleware/Bmail')
 const bcrypt = require('bcrypt')
+const { where } = require('sequelize')
 
 
 
 exports.signUp = async (req, res, next) => {
   try {
-    const { firstName, lastName, phoneNumber, role, email, password,confirmPassword } = req.body
+    const { firstName, lastName, phoneNumber, email, password,confirmPassword } = req.body
     const user = await userModel.findOne({where:{ email: email.toLowerCase() }})
     // console.log(user);
     
-    if (user !== null) {
-      return res.status(403).json({
-        message: 'User already exists, Log in to your account',
-      })
+    // if (user !== null) {
+    //   return res.status(403).json({
+    //     message: 'User already exists, Log in to your account',
+    //   })
       // return next(createError(404, "User not found"));
-    }
+    //}
     if(password !== confirmPassword){   
       return res.status(403).json({
         message:"Passwords dont match"
@@ -39,15 +41,13 @@ exports.signUp = async (req, res, next) => {
       lastName,
       phoneNumber,
       password: hashedPassword,
-      role,
       email:email.toLowerCase(),
       otp: otp,
-      
-      otpExpiredAt:new Date(Date.now() + 1000 * 60 * 2).getSeconds()
+      otpExpiredAt:Date.now() + (1000 * 120)
     })
     console.log(newUser);
     
-
+    //Date.now() + 1000 * 120
     await newUser.save()
     // console.log(newUser.dataValues);
     
@@ -80,11 +80,20 @@ exports.verifyOtp = async (req, res, next) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+    // console.log("current",new Date(Date.now() + 1000 * 60 * 2));
+    console.log("user current",user.otpExpiredAt);
+    console.log("new date",(Date.now() + (1000 * 120)));
+    // console.log(Date.now());
+    // console.log(Date.now()+1000*120);
+    // console.log(Date.now()+(1000*120));
 
+    
+    
+    
     //  Check OTP
-    if (new Date(Date.now() + 1000 * 60 * 2).getSeconds() > user.otpExpiredAt) {
-      return res.status(400).json({ message: 'OTP Expired' });
-    }
+    // if ((Date.now() + (1000 * 120)) > user.otpExpiredAt) {
+    //   return res.status(400).json({ message: 'OTP Expired' });
+    // }
     
     
     if (user.otp !== otp) {
@@ -321,7 +330,7 @@ exports.getOne = async(req,res)=>{
   try {
         const id  = req.params.id
         const user = await userModel.findByPk(id)
-        const savedBusinesses = await saveModel.findAll({where:{userId:id}})
+        // const savedBusinesses = await saveModel.findAll({where:{userId:id}})
         // console.log(savedBusinesses);
         
         const businesses = await businessModel.findAll({where:{businessOwner:id}})
@@ -331,13 +340,16 @@ exports.getOne = async(req,res)=>{
           totalLikes += x.likeCount
           totalViews += x.viewCount
         })
+        const meetings = []
+        meetings.push(await meetingModel.findAll({where:{host:id}}))
+        meetings.push(await meetingModel.findAll({where:{guest:id}}))
         const response = {
           user,
           businesscount:businesses.length,
           totalLikes,
           totalViews,
-          savedBusinesses,
-          businesses
+          businesses,
+          meetings
         }
 
 

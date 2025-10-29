@@ -40,7 +40,6 @@ investor.init(
         type: DataTypes.BOOLEAN,
         defaultValue:false
       },
-      
       subscribed:{
         type: DataTypes.BOOLEAN,
         allowNull:false,
@@ -54,7 +53,7 @@ investor.init(
         type: DataTypes.STRING
       },
       otpExpiredAt:{
-        type: DataTypes.BIGINT
+        type: DataTypes.INTEGER
       }
   },
   {

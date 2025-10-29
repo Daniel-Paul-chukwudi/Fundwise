@@ -5,18 +5,35 @@ module.exports = {
     await queryInterface.createTable('payments', {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.UUID
       },
-      firstName: {
-        type: Sequelize.STRING
+      userId: {
+        type: Sequelize.UUID,
+        allowNull:false
       },
-      lastName: {
-        type: Sequelize.STRING
+      businessId:{
+        type: Sequelize.UUID
       },
-      email: {
+      paymentType:{
+        type: Sequelize.ENUM('subscription','investment'),
+        
+      },
+      userType:{
+        type: Sequelize.ENUM('businessOwner','investor'),
+        
+      },
+      price: {
+        type: Sequelize.INTEGER,
+      
+      },
+      reference: {
         type: Sequelize.STRING
+        
+      },
+      status: {
+        type: Sequelize.ENUM('Pending', 'Successful', 'Failed'),
+        defaultValue: 'Pending'
       },
       createdAt: {
         allowNull: false,

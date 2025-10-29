@@ -29,8 +29,6 @@ module.exports = {
       isGoogle:{
         type: Sequelize.BOOLEAN
       },
-      
-      
       subscribed:{
         type: Sequelize.BOOLEAN,
         allowNull:false,

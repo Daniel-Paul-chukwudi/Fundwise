@@ -15,8 +15,11 @@ payment.init(
         type: DataTypes.UUID,
         allowNull:false
       },
+      businessId:{
+        type: DataTypes.UUID
+      },
       paymentType:{
-        type: DataTypes.ENUM('subscribtion','investment'),
+        type: DataTypes.ENUM('subscription','investment'),
         
       },
       userType:{

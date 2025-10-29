@@ -3,152 +3,147 @@ const router = express.Router();
 const {getAllMeetings,getMeetingById,updateMeeting,deleteMeeting, createMeetingInvestor,approveMeeting} = require('../Controller/meetingController');
 const {checkInvestorLogin, checkLogin} = require('../Middleware/authentication')
 
-/**
- * @swagger
- * tags:
- *   name: Meetings
- *   description: API endpoints for managing meetings
- */
 
 /**
  * @swagger
  * /meeting:
  *   post:
- *     summary: Create a new meeting
- *     tags: [Meetings]
+ *     summary: Create a new meeting (Investor-initiated)
+ *     description: Allows an authenticated investor to create a meeting with a business owner. A valid JWT token is required in the Authorization header.
+ *     tags:
+ *       - Meetings
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
+ *       description: Meeting details to be created
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - meetingTitle
+ *               - date
+ *               - time
+ *               - meetingType
+ *               - guest
  *             properties:
  *               meetingTitle:
  *                 type: string
+ *                 example: Investment Discussion
  *               date:
  *                 type: string
+ *                 format: date
+ *                 example: 2025-10-15
  *               time:
  *                 type: string
+ *                 example: 14:00
  *               meetingType:
  *                 type: string
+ *                 example: Virtual
  *               note:
  *                 type: string
- *             example:
- *               meetingTitle: Project Discussion
- *               date: 2025-10-28
- *               time: 3:00 PM
- *               meetingType: Online
- *               note: Discussing project updates
+ *                 example: Discuss potential funding opportunities.
+ *               guest:
+ *                 type: string
+ *                 description: The user ID of the business owner invited to the meeting.
+ *                 example: "72f4b01e-b3b2-4a88-8a23-fb021df8b9a5"
  *     responses:
  *       201:
  *         description: Meeting created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Meeting created successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: 3e5d7f00-84bc-11ef-9bcb-0a0027000001
+ *                     meetingTitle:
+ *                       type: string
+ *                       example: Investment Discussion
+ *                     date:
+ *                       type: string
+ *                       example: 2025-10-15
+ *                     time:
+ *                       type: string
+ *                       example: 14:00
+ *                     meetingType:
+ *                       type: string
+ *                       example: Virtual
+ *                     note:
+ *                       type: string
+ *                       example: Discuss potential funding opportunities.
+ *                     meetingStatus:
+ *                       type: string
+ *                       example: Awaiting Approval
+ *                 hostName:
+ *                   type: string
+ *                   example: John Doe
+ *                 guestName:
+ *                   type: string
+ *                   example: Sarah Daniels
  *       400:
- *         description: Validation error
+ *         description: Bad request (e.g. meeting title already exists)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Meeting title already exists
+ *       401:
+ *         description: Unauthorized (missing or expired token)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Please login again to continue
+ *       404:
+ *         description: Investor not found or authentication failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Authentication Failed: investor not found
  *       500:
- *         description: Server error
+ *         description: Internal server error or unexpected failure
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error creating meeting
+ *                 error:
+ *                   type: string
+ *                   example: Internal server error details
  */
-router.post('/meeting',checkInvestorLogin, createMeetingInvestor);
+router.post('/meeting', checkInvestorLogin, createMeetingInvestor);
+
 
 router.post('/approve-meeting',checkLogin,approveMeeting)
 
-/**
- * @swagger
- * /meetings:
- *   get:
- *     summary: Get all meetings
- *     tags: [Meetings]
- *     responses:
- *       200:
- *         description: Successfully fetched all meetings
- *       500:
- *         description: Server error
- */
 router.get('/meetings', getAllMeetings);
 
-/**
- * @swagger
- * /meeting/{id}:
- *   get:
- *     summary: Get a single meeting by ID
- *     tags: [Meetings]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: Meeting ID
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Meeting found
- *       404:
- *         description: Meeting not found
- *       500:
- *         description: Server error
- */
 router.get('/meeting/:id', getMeetingById);
 
-/**
- * @swagger
- * /meeting/{id}:
- *   patch:
- *     summary: Update a meeting
- *     tags: [Meetings]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: Meeting ID
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               meetingTitle:
- *                 type: string
- *               date:
- *                 type: string
- *               time:
- *                 type: string
- *               meetingType:
- *                 type: string
- *               note:
- *                 type: string
- *     responses:
- *       200:
- *         description: Meeting updated successfully
- *       404:
- *         description: Meeting not found
- *       500:
- *         description: Server error
- */
 router.patch('/meeting/:id', updateMeeting);
 
-/**
- * @swagger
- * /meeting/{id}:
- *   delete:
- *     summary: Delete a meeting
- *     tags: [Meetings]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: Meeting ID
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Meeting deleted successfully
- *       404:
- *         description: Meeting not found
- *       500:
- *         description: Server error
- */
 router.delete('/meeting/:id', deleteMeeting);
 
 module.exports = router;

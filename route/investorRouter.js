@@ -7,12 +7,12 @@ const router = express.Router()
 
 /**
  * @swagger
- * /user:
+ * /investor:
  *   post:
  *     summary: Register a new user
  *     description: Creates a new user account, hashes the password, generates an OTP for email verification, and sends a verification email.
  *     tags:
- *       - Users
+ *       - investors
  *     requestBody:
  *       required: true
  *       content:
@@ -36,10 +36,6 @@ const router = express.Router()
  *               phoneNumber:
  *                 type: string
  *                 example: "08123456789"
- *               role:
- *                 type: string
- *                 enum: [user, admin]
- *                 example: user
  *               email:
  *                 type: string
  *                 format: email
@@ -238,7 +234,7 @@ router.get('/investor/:id', getOne);
 
 /**
  * @swagger
- * /userl:
+ * /investorl:
  *   post:
  *     summary: User login
  *     description: Authenticates a user with email and password, returning a JWT token upon success.
@@ -321,7 +317,7 @@ router.post('/investorl', logininvestor);
 
 /**
  * @swagger
- * /verify:
+ * /verifyInvestor:
  *   post:
  *     summary: Verify user email using OTP
  *     description: Verifies a user's email address by validating the OTP sent to their email. If valid, the user's account is marked as verified.

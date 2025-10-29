@@ -40,25 +40,16 @@ User.init(
         type: DataTypes.BOOLEAN,
         defaultValue:false
       },
-      role: {
-        type: DataTypes.ENUM('businessOwner','investor'),
-        allowNull: false,
-        defaultValue:'businessOwner'
-      },
       subscribed:{
         type: DataTypes.BOOLEAN,
         allowNull:false,
         defaultValue:false
       },
-      viewAllocation:{
-        type: DataTypes.INTEGER,
-        defaultValue:0
-      },
       otp:{
         type: DataTypes.STRING
       },
       otpExpiredAt:{
-        type: DataTypes.BIGINT
+        type: DataTypes.INTEGER
       }
   },
   {

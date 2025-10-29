@@ -74,38 +74,6 @@ const router = express.Router()
  *                 busy:
  *                   type: array
  *                   description: Existing businesses associated with the user
- *       400:
- *         description: Bad request (missing or invalid input)
- *       401:
- *         description: Unauthorized (missing or invalid token)
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Please login again to continue
- *       404:
- *         description: User not found or authentication failed
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Authentication Failed: User not found
- *       500:
- *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: internal server error
  */
 router.post('/pitch', checkLogin, createBusiness);
 

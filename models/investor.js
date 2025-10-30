@@ -41,6 +41,10 @@ investor.init(
         allowNull:false,
         defaultValue:false
       },
+      role:{
+        type: DataTypes.STRING,
+        defaultValue: "Investor"
+      },
       viewAllocation:{
         type: DataTypes.INTEGER,
         defaultValue:0

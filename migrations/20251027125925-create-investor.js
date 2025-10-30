@@ -30,6 +30,10 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         allowNull:false,
       },
+      role:{
+        type: Sequelize.STRING,
+        allowNull:false
+      },
       viewAllocation:{
         type: Sequelize.INTEGER,
       },

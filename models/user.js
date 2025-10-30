@@ -36,6 +36,10 @@ User.init(
         type: DataTypes.BOOLEAN,
         defaultValue:false
       },
+      role:{
+        type: DataTypes.STRING,
+        defaultValue:"BusinessOwner"
+      },
       subscribed:{
         type: DataTypes.BOOLEAN,
         allowNull:false,

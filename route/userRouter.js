@@ -26,6 +26,79 @@ const router = express.Router()
  *             required:
  *               - fullName
  *               - phoneNumber
+ *               - email
+ *               - password
+ *               - confirmPassword
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *                 example: Daniel Saul
+ *               phoneNumber:
+ *                 type: string
+ *                 example: "+2348091234567"
+ *               email:
+ *                 type: string
+ *                 example: danielsaul@email.com
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: mySecurePassword123
+ *               confirmPassword:
+ *                 type: string
+ *                 format: password
+ *                 example: mySecurePassword123
+ *     responses:
+ *       201:
+ *         description: User created successfully and verification email sent
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User created successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 1
+ *                     fullName:
+ *                       type: string
+ *                       example: Daniel Saul
+ *                     email:
+ *                       type: string
+ *                       example: danielsaul@email.com
+ *                     otp:
+ *                       type: string
+ *                       example: "123456"
+ *                     otpExpiredAt:
+ *                       type: integer
+ *                       example: 1723567890123
+ *       403:
+ *         description: Validation error (email already exists or passwords don't match)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Passwords dont match
+ *       500:
+ *         description: Internal server error during signup
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
+ */
+router.post('/user', signUp)
+
 
 
 /**

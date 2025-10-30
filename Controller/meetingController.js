@@ -2,6 +2,7 @@ require('dotenv').config()
 const meetingModel = require('../models/meeting')
 const userModel = require('../models/user')
 const investorModel = require('../models/investor')
+const LINK = process.env.meetingLink
 
 
 
@@ -39,14 +40,15 @@ exports.createMeetingInvestor = async (req, res) => {
     //   guest = `${UserI.firstName} ${UserI.lastName}`
     // }
 
-    hostName = `${UserI.firstName} ${UserI.lastName}`
-    guestName = `${UserB.firstName} ${UserB.lastName}`
+    // hostName = `${UserI.firstName} ${UserI.lastName}`
+    // guestName = `${UserB.firstName} ${UserB.lastName}`
 
 
     const meeting = await meetingModel.create({
       host:id,
       guest,
       meetingTitle,
+      meetingLink:LINK,
       date,
       time,
       meetingType,
@@ -57,8 +59,8 @@ exports.createMeetingInvestor = async (req, res) => {
     res.status(201).json({
       message: 'Meeting created successfully',
       data: meeting,
-      hostName,
-      guestName
+      // hostName,
+      // guestName
     });
   } catch (error) {
     res.status(500).json({ 
@@ -72,6 +74,39 @@ exports.approveMeeting = async (req,res)=>{
   try {
     const {id} = req.user
     const {meetingId}  = req.body
+    const targetH = await meetingModel.findOne({where:{host:id,meetingId}})
+    const targetG = await meetingModel.findOne({where:{guest:id,meetingId}})
+    console.log(targetG);
+    console.log(targetH)
+    
+
+    if(!targetH && !targetG){
+      return res.status(404).json({
+        message:"Oops it seems like the meeting does not exist "
+      })
+    }else if(!targetG){
+      targetH.meetingStatus = "Approved and Upcoming"
+      await targetH.save()
+    }else if(!targetH){
+      targetG.meetingStatus = "Approved and Upcoming"
+      await targetG.save()
+    }
+    res.status(200).json({
+      message:"Approved meeting",
+      data:targetH??targetG
+    })
+  } catch (error) {
+    res.status(500).json({ 
+      message: 'Error approving meeting', 
+      error: error.message 
+    });
+  }
+}
+
+exports.rescheduleMeeting = async(req,res)=>{
+  try {
+    const {id} = req.user
+    const {meetingId, date, time}  = req.body
     const target = await meetingModel.findOne({where:{guest:id}})
 
     if(!target){
@@ -79,10 +114,12 @@ exports.approveMeeting = async (req,res)=>{
         message:"Oops it seems like the meeting does not exist "
       })
     }
-    target.meetingStatus = "Approved and Upcoming"
-    await target.save()
+    await target.update({date,time,meetingStatus:"Reschedule Requested"})
+
+
+    
     res.status(200).json({
-      message:"Approved meeting",
+      message:"changes made awaiting approval",
       data:target
     })
   } catch (error) {

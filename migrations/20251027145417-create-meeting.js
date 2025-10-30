@@ -13,6 +13,9 @@ module.exports = {
       },
       guest:{
         type: Sequelize.UUID
+      },
+      meetingLink:{
+        type: Sequelize.STRING
       }, 
       meetingTitle: {
         type: Sequelize.STRING,
@@ -34,7 +37,7 @@ module.exports = {
         type: Sequelize.STRING,
       },
       meetingStatus:{
-        type: Sequelize.ENUM('Awaiting Approval','Approved and Upcoming','Concluded')
+        type: Sequelize.ENUM('Awaiting Approval','Approved','Pending','Reschedule Requested','Concluded')
       },
       createdAt: {
         allowNull: false,

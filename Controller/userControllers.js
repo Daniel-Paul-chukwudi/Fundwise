@@ -13,16 +13,16 @@ const { where } = require('sequelize')
 
 exports.signUp = async (req, res, next) => {
   try {
-    const { firstName, lastName, phoneNumber, email, password,confirmPassword } = req.body
+    const { fullName, phoneNumber, email, password,confirmPassword } = req.body
     const user = await userModel.findOne({where:{ email: email.toLowerCase() }})
     // console.log(user);
     
-    // if (user !== null) {
-    //   return res.status(403).json({
-    //     message: 'User already exists, Log in to your account',
-    //   })
-      // return next(createError(404, "User not found"));
-    //}
+    if (user !== null) {
+      return res.status(403).json({
+        message: 'User already exists, Log in to your account',
+      })
+      return next(createError(404, "User not found"));
+    }
     if(password !== confirmPassword){   
       return res.status(403).json({
         message:"Passwords dont match"
@@ -37,13 +37,12 @@ exports.signUp = async (req, res, next) => {
       .padStart(6, '0')
 
     const newUser = new userModel({
-      firstName,
-      lastName,
+      fullName,
       phoneNumber,
       password: hashedPassword,
       email:email.toLowerCase(),
       otp: otp,
-      otpExpiredAt:Date.now() + (1000 * 120)
+      otpExpiredAt:(Date.now() + 1000 * 300)
     })
     console.log(newUser);
     
@@ -54,8 +53,8 @@ exports.signUp = async (req, res, next) => {
 
     const verifyMail = {
       email:newUser.email,
-      subject:`Please verify your email ${newUser.firstName}`,
-      html:verify(newUser.firstName,newUser.otp)//email template 
+      subject:`Please verify your email ${newUser.fullName}`,
+      html:verify(newUser.fullName,newUser.otp)//email template 
     }
     sendEmail(verifyMail)
 
@@ -79,21 +78,11 @@ exports.verifyOtp = async (req, res, next) => {
     
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
-    }
-    // console.log("current",new Date(Date.now() + 1000 * 60 * 2));
-    console.log("user current",user.otpExpiredAt);
-    console.log("new date",(Date.now() + (1000 * 120)));
-    // console.log(Date.now());
-    // console.log(Date.now()+1000*120);
-    // console.log(Date.now()+(1000*120));
-
-    
-    
-    
+    }    
     //  Check OTP
-    // if ((Date.now() + (1000 * 120)) > user.otpExpiredAt) {
-    //   return res.status(400).json({ message: 'OTP Expired' });
-    // }
+    if (Date.now() > user.otpExpiredAt) {
+      return res.status(400).json({ message: 'OTP Expired' });
+    }
     
     
     if (user.otp !== otp) {
@@ -103,7 +92,7 @@ exports.verifyOtp = async (req, res, next) => {
     //  Update verification
     Object.assign(user, {
       otp: null,
-      otpExpiredAt: null,
+      otpExpiredAt: 0,
       isVerified: true
     });
 
@@ -330,6 +319,8 @@ exports.getOne = async(req,res)=>{
   try {
         const id  = req.params.id
         const user = await userModel.findByPk(id)
+        console.log(user);
+        
         // const savedBusinesses = await saveModel.findAll({where:{userId:id}})
         // console.log(savedBusinesses);
         

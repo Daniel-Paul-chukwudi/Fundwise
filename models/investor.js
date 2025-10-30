@@ -11,11 +11,7 @@ investor.init(
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4
       },
-      firstName: {
-        type: DataTypes.STRING,
-        allowNull:false
-      },
-      lastName: {
+      fullName: {
         type: DataTypes.STRING,
         allowNull:false
       },
@@ -53,7 +49,7 @@ investor.init(
         type: DataTypes.STRING
       },
       otpExpiredAt:{
-        type: DataTypes.INTEGER
+        type: DataTypes.BIGINT
       }
   },
   {

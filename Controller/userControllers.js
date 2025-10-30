@@ -103,7 +103,7 @@ exports.verifyOtp = async (req, res, next) => {
     //  Update verification
     Object.assign(user, {
       otp: null,
-      otpExpiredAt: null,
+      otpExpiredAt: 0,
       isVerified: true
     });
 

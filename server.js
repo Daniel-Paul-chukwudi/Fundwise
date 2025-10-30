@@ -9,6 +9,7 @@ const businessRouter = require('./route/businessRouter')
 const paymentRouter = require('./route/paymentRouter')
 const investorRouter = require ('./route/investorRouter')
 const meetingRouter = require("./route/meetingRouter")
+const kycRouter = require('./route/kycRoute')
 const swaggerJSDoc = require('swagger-jsdoc')
 const swaggerUi  = require('swagger-ui-express')
 
@@ -80,6 +81,7 @@ app.use(businessRouter);
 app.use(investorRouter);
 app.use(paymentRouter);
 app.use(meetingRouter)
+app.use(kycRouter)
 app.use((error, req, res, next)=>{
   if (error) {
     res.send(error.message)

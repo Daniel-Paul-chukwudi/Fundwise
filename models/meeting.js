@@ -17,6 +17,9 @@ meeting.init(
       guest:{
         type: DataTypes.UUID
       },
+      meetingLink:{
+        type: DataTypes.STRING
+      },
       meetingTitle: {
         type: DataTypes.STRING,
         allowNull:false,
@@ -37,7 +40,7 @@ meeting.init(
         type: DataTypes.STRING,
       },
       meetingStatus:{
-        type: DataTypes.ENUM('Awaiting Approval','Approved and Upcoming','Concluded')
+        type: DataTypes.ENUM('Awaiting Approval','Approved','Pending','Reschedule Requested','Concluded')
       }
       
       

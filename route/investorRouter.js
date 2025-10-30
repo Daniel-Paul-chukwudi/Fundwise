@@ -11,9 +11,8 @@ const router = express.Router()
  *   post:
  *     summary: Register a new investor
  *     description: >
- *       Creates a new investor account.  
- *       Validates that the email does not already exist, hashes the password, generates a 6-digit OTP,  
- *       and sends a verification email for account activation.
+ *       Creates a new investor account, hashes the password, generates a 6-digit OTP for email verification,  
+ *       and sends a verification email. The investor must verify their email before logging in.
  *     tags:
  *       - Investors
  *     requestBody:
@@ -24,40 +23,32 @@ const router = express.Router()
  *           schema:
  *             type: object
  *             required:
- *               - firstName
- *               - lastName
+ *               - fullName
  *               - phoneNumber
  *               - email
  *               - password
  *               - confirmPassword
  *             properties:
- *               firstName:
+ *               fullName:
  *                 type: string
- *                 example: Daniel
- *                 description: Investor's first name
- *               lastName:
- *                 type: string
- *                 example: Saul
- *                 description: Investor's last name
+ *                 example: "Jane Doe"
  *               phoneNumber:
  *                 type: string
  *                 example: "+2348123456789"
- *                 description: Investor's phone number
  *               email:
  *                 type: string
- *                 example: danielsaul@email.com
- *                 description: Investor's email address (must be unique)
+ *                 example: "janedoe@email.com"
  *               password:
  *                 type: string
- *                 example: StrongPass@123
- *                 description: Investor's password (will be hashed before saving)
+ *                 format: password
+ *                 example: "strongPassword123"
  *               confirmPassword:
  *                 type: string
- *                 example: StrongPass@123
- *                 description: Must match the password field
+ *                 format: password
+ *                 example: "strongPassword123"
  *     responses:
  *       201:
- *         description: Investor registered successfully
+ *         description: Investor account created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -65,33 +56,27 @@ const router = express.Router()
  *               properties:
  *                 message:
  *                   type: string
- *                   example: investor created successfully
+ *                   example: "investor created successfully"
  *                 data:
  *                   type: object
  *                   properties:
  *                     id:
+ *                       type: integer
+ *                       example: 1
+ *                     fullName:
  *                       type: string
- *                       example: 3c9d1b1e-1234-4a67-a8a7-16e12c4b7a9d
- *                     firstName:
- *                       type: string
- *                       example: Daniel
- *                     lastName:
- *                       type: string
- *                       example: Saul
+ *                       example: "Jane Doe"
  *                     email:
  *                       type: string
- *                       example: danielsaul@email.com
- *                     phoneNumber:
- *                       type: string
- *                       example: "+2348123456789"
+ *                       example: "janedoe@email.com"
  *                     otp:
  *                       type: string
- *                       example: "584210"
+ *                       example: "123456"
  *                     otpExpiredAt:
- *                       type: string
- *                       example: "2025-10-07T10:15:00Z"
+ *                       type: integer
+ *                       example: 1723467890123
  *       403:
- *         description: Email already exists or password mismatch
+ *         description: Investor already exists or password mismatch
  *         content:
  *           application/json:
  *             schema:
@@ -99,9 +84,9 @@ const router = express.Router()
  *               properties:
  *                 message:
  *                   type: string
- *                   example: investor already exists, Log in to your account
+ *                   example: "Passwords dont match"
  *       500:
- *         description: Internal server error during registration
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -109,7 +94,7 @@ const router = express.Router()
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Internal server error
+ *                   example: "Internal server error"
  */
 router.post('/investor', signUp);
 

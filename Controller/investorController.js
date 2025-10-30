@@ -38,7 +38,7 @@ exports.makeDeal = async (req,res)=>{
 
 exports.signUp = async (req, res, next) => {
   try {
-    const { firstName, lastName, phoneNumber,email, password,confirmPassword } = req.body
+    const { fullName, phoneNumber,email, password,confirmPassword } = req.body
     const user = await investorModel.findOne({where:{ email: email.toLowerCase() }})
     // console.log(user);
     
@@ -62,21 +62,20 @@ exports.signUp = async (req, res, next) => {
       .padStart(6, '0')
 
     const newUser = new investorModel({
-      firstName,
-      lastName,
+      fullName,
       phoneNumber,
       password: hashedPassword,
       email:email.toLowerCase(),
       otp: otp,
-      otpExpiredAt:new Date(Date.now() + 1000 * 60 * 2).getSeconds()
+      otpExpiredAt:(Date.now() + 1000 * 300)
     })
     // console.log(newUser);
     await newUser.save()
     // console.log(newUser.dataValues);
     const verifyMail = {
       email:newUser.email,
-      subject:`Please verify your email ${newUser.firstName}`,
-      html:verify(newUser.firstName,newUser.otp)//email template 
+      subject:`Please verify your email ${newUser.fullName}`,
+      html:verify(newUser.fullName,newUser.otp)//email template 
     }
     sendEmail(verifyMail)
 
@@ -103,9 +102,9 @@ exports.verifyOtp = async (req, res, next) => {
     }
 
     //  Check OTP
-    // if (new Date(Date.now() + 1000 * 60 * 2).getSeconds() > user.otpExpiredAt) {
-    //   return res.status(400).json({ message: 'OTP Expired' });
-    // }
+    if (Date.now() > user.otpExpiredAt) {
+      return res.status(400).json({ message: 'OTP Expired' });
+    }
     
     
     if (user.otp !== otp) {

@@ -10,101 +10,23 @@ const router = express.Router()
  * /user:
  *   post:
  *     summary: Register a new user
- *     description: Creates a new user account, hashes the password, generates an OTP for email verification, and sends a verification email.
+ *     description: >
+ *       Creates a new user account, hashes the password, generates a 6-digit OTP for verification,  
+ *       and sends an email with a verification link or code.  
+ *       The user must verify their email before logging in.
  *     tags:
  *       - Users
  *     requestBody:
  *       required: true
+ *       description: New user registration details
  *       content:
  *         application/json:
  *           schema:
  *             type: object
  *             required:
- *               - firstName
- *               - lastName
+ *               - fullName
  *               - phoneNumber
- *               - email
- *               - password
- *               - confirmPassword
- *             properties:
- *               firstName:
- *                 type: string
- *                 example: Daniel
- *               lastName:
- *                 type: string
- *                 example: Saul
- *               phoneNumber:
- *                 type: string
- *                 example: "08123456789"
- *               email:
- *                 type: string
- *                 format: email
- *                 example: danielsaul@example.com
- *               password:
- *                 type: string
- *                 format: password
- *                 example: myStrongPassword123
- *               confirmPassword:
- *                 type: string
- *                 format: password
- *                 example: myStrongPassword123
- *     responses:
- *       201:
- *         description: User successfully registered and verification email sent.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: User created successfully
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       example: 6710b7e3b61a2f15b6ac0219
- *                     firstName:
- *                       type: string
- *                       example: Daniel
- *                     lastName:
- *                       type: string
- *                       example: Saul
- *                     email:
- *                       type: string
- *                       example: danielsaul@example.com
- *                     role:
- *                       type: string
- *                       example: user
- *       403:
- *         description: Validation error or duplicate user.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   examples:
- *                     userExists:
- *                       summary: Duplicate email
- *                       value: User already exists, Log in to your account
- *                     passwordMismatch:
- *                       summary: Password mismatch
- *                       value: Passwords dont match
- *       500:
- *         description: Internal server error while creating user.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Error creating user
- */
-router.post('/user', signUp);
+
 
 /**
  * @swagger

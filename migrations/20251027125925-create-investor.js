@@ -8,10 +8,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.UUID
       },
-      firstName: {
-        type: Sequelize.STRING
-      },
-      lastName: {
+      fullName: {
         type: Sequelize.STRING
       },
       email: {
@@ -41,7 +38,7 @@ module.exports = {
       },
       otpExpiredAt:{
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.BIGINT
       },
       createdAt: {
         allowNull: false,

@@ -1,7 +1,8 @@
 const express = require('express')
 // const {register,getAll,login,changeRole,forgotPassword,resetPassword} = require("../Controller/userController")
 const {checkLogin,checkAdmin} = require('../Middleware/authentication')
-const { signUp, loginUser,forgotPassword,changePassword,resetPassword,getAll,deleteUser,getOne,verifyOtp, subscriptionBypass} = require('../Controller/userControllers')
+const {registerValidator, loginValidator, verifyValidator,changePasswordValidator,forgotPasswordValidator, resendValidator, resetPasswordValidator,deleteUserValidator} = require('../Middleware/validator')
+const { signUp, loginUser,forgotPassword,changePassword,resetPassword,getAll,deleteUser,getOne,verifyOtp, subscriptionBypass, userResendOtp} = require('../Controller/userControllers')
 
 const router = express.Router()
 
@@ -104,7 +105,7 @@ const router = express.Router()
  *                   type: string
  *                   example: Error creating user
  */
-router.post('/user', signUp);
+router.post('/user',registerValidator, signUp);
 
 /**
  * @swagger
@@ -232,6 +233,8 @@ router.get('/users', getAll);
  */
 router.get('/user/:id', getOne);
 
+router.post('/resend', resendValidator, userResendOtp)
+
 /**
  * @swagger
  * /userl:
@@ -313,7 +316,7 @@ router.get('/user/:id', getOne);
  *                   type: string
  *                   example: Internal server error
  */
-router.post('/userl', loginUser);
+router.post('/userl',loginValidator, loginUser);
 
 /**
  * @swagger
@@ -401,7 +404,7 @@ router.post('/userl', loginUser);
  *                   type: string
  *                   example: Internal server error during OTP verification
  */
-router.post('/verify', verifyOtp);
+router.post('/verify',verifyValidator, verifyOtp);
 
 /**
  * @swagger
@@ -488,7 +491,7 @@ router.post('/verify', verifyOtp);
  *                   type: string
  *                   example: Internal server error
  */
-router.patch('/change', checkLogin, changePassword);
+router.patch('/change', checkLogin,changePasswordValidator, changePassword);
 
 /**
  * @swagger
@@ -549,7 +552,7 @@ router.patch('/change', checkLogin, changePassword);
  *                   type: string
  *                   example: Email sending failed due to invalid credentials
  */
-router.post('/forgot', forgotPassword);
+router.post('/forgot', forgotPasswordValidator, forgotPassword);
 
 /**
  * @swagger
@@ -647,7 +650,7 @@ router.post('/forgot', forgotPassword);
  *                   type: string
  *                   example: jwt malformed
  */
-router.patch('/reset-password/:token', resetPassword);
+router.patch('/reset-password/:token',resetPasswordValidator, resetPassword);
 
 /**
  * @swagger
@@ -704,7 +707,7 @@ router.patch('/reset-password/:token', resetPassword);
  *                   type: string
  *                   example: SequelizeDatabaseError
  */
-router.delete('/kill', deleteUser); 
+router.delete('/kill',deleteUserValidator, deleteUser); 
 
 // router.post('/user',register)
 // router.get('/user',checkLogin,checkAdmin,getAll)

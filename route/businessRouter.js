@@ -1,5 +1,7 @@
 const {createBusiness,getBusiness,getByCategory,updateB,getOneById, deleteB,likeBusiness,viewBusiness,saveBusiness} = require('../Controller/businessController')
 const {checkLogin,checkSubscription,checkAdmin} = require('../Middleware/authentication')
+const {createBusinessValidator} = require('../Middleware/validator')
+
 const express = require('express')
 const router = express.Router()
 
@@ -75,7 +77,7 @@ const router = express.Router()
  *                   type: array
  *                   description: Existing businesses associated with the user
  */
-router.post('/pitch', checkLogin, createBusiness);
+router.post('/pitch',createBusinessValidator, checkLogin, createBusiness);
 
 
 // router.post('/like',checkLogin,likeBusiness)
@@ -92,8 +94,8 @@ router.get('/business',getByCategory)
 
 router.get('/Abusiness/:id',getOneById)
 
-router.patch("/business/:id",updateB)//admin only
+router.patch("/business/:id",checkAdmin, updateB)//admin only
 
-router.delete("/business/:id",deleteB)//admin only
+router.delete("/business/:id",checkAdmin,deleteB)//admin only
 
 module.exports = router

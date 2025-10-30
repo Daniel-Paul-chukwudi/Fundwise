@@ -157,7 +157,7 @@ exports.loginUser = async (req, res, next) => {
   }
 };
 
-exports.resendOtp = async (req, res, next) => {
+exports.userResendOtp = async (req, res, next) => {
   const { email } = req.body
 
   try {

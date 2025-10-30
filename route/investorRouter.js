@@ -1,6 +1,7 @@
 const express = require('express')
 // const {register,getAll,login,changeRole,forgotPassword,resetPassword} = require("../Controller/userController")
-const {checkInvestorLogin,checkAdmin} = require('../Middleware/authentication')
+const {checkInvestorLogin,checkAdmin, checkLogin} = require('../Middleware/authentication')
+const {checkInvestorValidation, investorValidator} = require('../Middleware/validator');
 const { signUp, logininvestor,forgotPassword,changePassword,resetPassword,getAll,deleteUser,getOne,verifyOtp, subscriptionBypass} = require('../Controller/investorController')
 
 const router = express.Router()
@@ -111,7 +112,7 @@ const router = express.Router()
  *                   type: string
  *                   example: Internal server error
  */
-router.post('/investor', signUp);
+router.post('/investor',investorValidator, checkLogin, signUp);
 
 
 /**
@@ -721,7 +722,7 @@ router.patch('/reset-passwordi/:token', resetPassword);
  *                   type: string
  *                   example: SequelizeDatabaseError
  */
-router.delete('/killi', deleteUser); 
+router.delete('/killi', checkAdmin, deleteUser); 
 
 // router.post('/user',register)
 // router.get('/user',checkLogin,checkAdmin,getAll)

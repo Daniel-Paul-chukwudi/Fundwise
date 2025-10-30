@@ -22,27 +22,6 @@ exports.createMeetingInvestor = async (req, res) => {
     const UserB = await userModel.findByPk(guest)
     const UserI = await investorModel.findByPk(id)
 
-    // if(!UserB && !UserI){
-    //   return res.status(404).json({
-    //     message:"user not found"
-    //   })
-    // }
-    // let hostType = ''
-    // let hostName = ''
-    // let guest = ''
-    // if(!UserB){
-    //   hostType = 'Investor'
-    //   hostName = `${UserI.firstName} ${UserI.lastName}`
-    //   guest = `${UserB.firstName} ${UserB.lastName}`
-    // }else{
-    //   hostType = 'businessOwner'
-    //   hostName = `${UserB.firstName} ${UserB.lastName}`
-    //   guest = `${UserI.firstName} ${UserI.lastName}`
-    // }
-
-    // hostName = `${UserI.firstName} ${UserI.lastName}`
-    // guestName = `${UserB.firstName} ${UserB.lastName}`
-
 
     const meeting = await meetingModel.create({
       host:id,
@@ -58,9 +37,7 @@ exports.createMeetingInvestor = async (req, res) => {
 
     res.status(201).json({
       message: 'Meeting created successfully',
-      data: meeting,
-      // hostName,
-      // guestName
+      data: meeting
     });
   } catch (error) {
     res.status(500).json({ 
@@ -74,8 +51,8 @@ exports.approveMeeting = async (req,res)=>{
   try {
     const {id} = req.user
     const {meetingId}  = req.body
-    const targetH = await meetingModel.findOne({where:{host:id,meetingId}})
-    const targetG = await meetingModel.findOne({where:{guest:id,meetingId}})
+    const targetH = await meetingModel.findOne({where:{host:id,id:meetingId}})
+    // const targetG = await meetingModel.findOne({where:{guest:id,id:meetingId}})
     console.log(targetG);
     console.log(targetH)
     

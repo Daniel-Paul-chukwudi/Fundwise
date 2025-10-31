@@ -3,11 +3,12 @@ const userModel = require('../models/user')
 const businessModel = require('../models/business')
 const saveModel = require('../models/save')
 const meetingModel = require('../models/meeting')
+const investorModel = require('../models/investor')
 const jwt = require('jsonwebtoken')
 const {verify,forgotPassword}= require('../Middleware/emailTemplates')
 const sendEmail = require('../Middleware/Bmail')
 const bcrypt = require('bcrypt')
-const { where } = require('sequelize')
+
 
 
 
@@ -159,7 +160,7 @@ exports.resendOtp = async (req, res, next) => {
 
     const newOtp = Math.floor(1000 + Math.random() * 9000).toString()
     user.otp = newOtp
-    otpExpiredAt: new Date(Date.now() + 1000 * 60 * 2) // 2 minutes later
+    user.otpExpiredAt = new Date(Date.now() + 1000 * 60 * 2) // 2 minutes later
 
 
     await user.save()

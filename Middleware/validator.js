@@ -14,7 +14,7 @@ function validate(schema, req, res, next) {
 exports.registerValidator = (req, res, next) => {
   const schema = Joi.object({
     fullName: Joi.string().min(2).trim().required(),
-    phoneNumber: Joi.string().pattern(/^[0-9]{11}$/).required()
+    phoneNumber: Joi.string().required()
       .messages({ "string.pattern.base": "Phone number must be 11 digits" }),
     email: Joi.string().email().trim().required(),
     password: Joi.string()

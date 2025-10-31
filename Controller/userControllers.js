@@ -13,7 +13,7 @@ const { where } = require('sequelize')
 
 exports.signUp = async (req, res, next) => {
   try {
-    const { firstName, lastName, phoneNumber, email, password,confirmPassword } = req.body
+    const { fullName, phoneNumber, email, password,confirmPassword } = req.body
     const user = await userModel.findOne({where:{ email: email.toLowerCase() }})
     // console.log(user);
     
@@ -37,8 +37,7 @@ exports.signUp = async (req, res, next) => {
       .padStart(6, '0')
 
     const newUser = new userModel({
-      firstName,
-      lastName,
+      fullName,
       phoneNumber,
       password: hashedPassword,
       email:email.toLowerCase(),
@@ -81,8 +80,8 @@ exports.verifyOtp = async (req, res, next) => {
       return res.status(404).json({ message: 'User not found' });
     }
     // console.log("current",new Date(Date.now() + 1000 * 60 * 2));
-    console.log("user current",user.otpExpiredAt);
-    console.log("new date",(Date.now() + (1000 * 120)));
+    // console.log("user current",user.otpExpiredAt);
+    // console.log("new date",(Date.now() + (1000 * 120)));
     // console.log(Date.now());
     // console.log(Date.now()+1000*120);
     // console.log(Date.now()+(1000*120));

@@ -110,7 +110,7 @@ exports.loginUser = async (req, res, next) => {
       
       try {
         const { email, password } = req.body;
-    // Find user in SQL database
+  
     const user = await userModel.findOne({ where: { email: email.toLowerCase() } });
     if (user === null) {
       return res.status(404).json({ 
@@ -331,9 +331,8 @@ exports.getOne = async(req,res)=>{
           totalLikes += x.likeCount
           totalViews += x.viewCount
         })
-        const meetings = []
-        meetings.push(await meetingModel.findAll({where:{host:id}}))
-        meetings.push(await meetingModel.findAll({where:{guest:id}}))
+    
+        const meetings = await meetingModel.findAll({where:{guest:id}})
         const response = {
           user,
           businesscount:businesses.length,

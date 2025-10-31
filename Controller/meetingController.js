@@ -12,16 +12,31 @@ exports.createMeetingInvestor = async (req, res) => {
     const {id} = req.user
     const { meetingTitle, date, time, meetingType, note , guest } = req.body;
 
+    if(!meetingTitle || !date || !time || !meetingType || !note || !guest){
+      return res.status(403).json({ 
+        message: 'Please make sure all fields are filled' 
+      });
+    }
+
     // Check if the title already exists
     const existingMeeting = await meetingModel.findOne({ where: { meetingTitle } });
     if (existingMeeting) {
-      return res.status(400).json({ 
+      return res.status(403).json({ 
         message: 'Meeting title already exists' 
       });
     }
     const UserB = await userModel.findByPk(guest)
+    if (!UserB) {
+      return res.status(404).json({ 
+        message: 'BusinessOwner not found' 
+      });
+    }
     const UserI = await investorModel.findByPk(id)
-
+    if (!UserI) {
+      return res.status(404).json({ 
+        message: 'Investor not found' 
+      });
+    }
 
     const meeting = await meetingModel.create({
       host:id,
@@ -51,26 +66,19 @@ exports.approveMeeting = async (req,res)=>{
   try {
     const {id} = req.user
     const {meetingId}  = req.body
-    const targetH = await meetingModel.findOne({where:{host:id,id:meetingId}})
-    // const targetG = await meetingModel.findOne({where:{guest:id,id:meetingId}})
-    console.log(targetG);
-    console.log(targetH)
-    
+    const target = await meetingModel.findOne({where:{id:meetingId}})
 
-    if(!targetH && !targetG){
+    if(!target){
       return res.status(404).json({
         message:"Oops it seems like the meeting does not exist "
       })
-    }else if(!targetG){
-      targetH.meetingStatus = "Approved and Upcoming"
-      await targetH.save()
-    }else if(!targetH){
-      targetG.meetingStatus = "Approved and Upcoming"
-      await targetG.save()
     }
+    target.meetingStatus = "Approved and Upcoming"
+    await target.save()
+
     res.status(200).json({
       message:"Approved meeting",
-      data:targetH??targetG
+      data:target
     })
   } catch (error) {
     res.status(500).json({ 

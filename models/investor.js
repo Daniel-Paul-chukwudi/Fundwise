@@ -49,6 +49,10 @@ investor.init(
         type: DataTypes.INTEGER,
         defaultValue:0
       },
+      totalInvestment:{
+        type: DataTypes.BIGINT,
+        defaultValue:0
+      },
       otp:{
         type: DataTypes.STRING
       },

@@ -46,7 +46,7 @@ exports.signUp = async (req, res, next) => {
       otp: otp,
       otpExpiredAt:(Date.now() + 1000 * 300)
     })
-    console.log(newUser);
+    // console.log(newUser);
     
     //Date.now() + 1000 * 120
     await newUser.save()
@@ -97,11 +97,14 @@ exports.verifyOtp = async (req, res, next) => {
       otpExpiredAt: 0,
       isVerified: true
     });
-
     await user.save();
+
+    const token = await jwt.sign({id:user.id},process.env.JWT_SECRET,{expiresIn:"1h"})
     return res.status(200).json({ 
       message: 'Email verified successfully',
-      data:user 
+      data:user ,
+      token,
+      role:user.role
     });
   } catch (error) {
     next(error);

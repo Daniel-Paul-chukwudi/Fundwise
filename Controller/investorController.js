@@ -117,12 +117,14 @@ exports.verifyOtp = async (req, res, next) => {
       otpExpiredAt: 0,
       isVerified: true
     });
-
     await user.save();
-    return res.status(200).json({ 
-      message: 'Email verified successfully',
-      data:user 
-    });
+     const token = await jwt.sign({id:user.id},process.env.JWT_SECRET,{expiresIn:"1h"})
+        return res.status(200).json({ 
+          message: 'Email verified successfully',
+          data:user ,
+          token,
+          role:user.role
+        });
   } catch (error) {
     next(error);
   }

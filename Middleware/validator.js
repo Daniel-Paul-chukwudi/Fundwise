@@ -13,13 +13,12 @@ function validate(schema, req, res, next) {
 // Register Validator
 exports.registerValidator = (req, res, next) => {
   const schema = Joi.object({
-    firstName: Joi.string().min(2).trim().required(),
-    lastName: Joi.string().min(2).trim().required(),
+    fullName: Joi.string().min(2).trim().required(),
     phoneNumber: Joi.string().pattern(/^[0-9]{11}$/).required()
       .messages({ "string.pattern.base": "Phone number must be 11 digits" }),
     email: Joi.string().email().trim().required(),
     password: Joi.string()
-      .pattern(/^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[@$!%*#?&-])[A-Za-z\d@$!%*#?&-]{8,}$/)
+      // .pattern(/^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[@$!%*#?&-])[A-Za-z\d@$!%*#?&-]{8,}$/)
       .required()
       .messages({
         "string.pattern.base": "Password must be at least 8 chars long with upper, lower, number & special character"
@@ -103,7 +102,7 @@ exports.createBusinessValidator = (req, res, next) => {
     businessName: Joi.string().min(3).required(),
     fundGoal: Joi.number().required(),
     category: Joi.string().required(),
-    description: Joi.string().optional()
+    description: Joi.string().required().optional()
   });
   validate(schema, req, res, next);
 };
@@ -119,6 +118,9 @@ exports.meetingValidator = (req, res, next) => {
     }),
     time: Joi.string().required().messages({
       "string.empty": "Meeting time is required"
+    }),
+    guest: Joi.string().required().messages({
+      "string.empty": "guestId is required"
     }),
     meetingType: Joi.string().optional(),
     note: Joi.string().optional()

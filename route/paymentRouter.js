@@ -1,5 +1,6 @@
 const {initializeInvestementPaymentInvestor,webHook,verifyPayment, getAll, initializeSubscriptionPaymentInvestor} = require('../Controller/paymentController')
-const {checkLogin, checkInvestorLogin} = require('../Middleware/authentication')
+const {checkInvestorLogin} = require('../Middleware/authentication')
+const {paymentValidator} = require('../Middleware/validator')
 
 const router = require('express').Router()
 

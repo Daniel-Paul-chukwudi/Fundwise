@@ -37,6 +37,9 @@ module.exports = {
       viewAllocation:{
         type: Sequelize.INTEGER,
       },
+      totalInvestment:{
+        type: Sequelize.BIGINT
+      },
       otp:{
         type: Sequelize.STRING
       },

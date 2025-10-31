@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const {meetingValidator} = require('../Middleware/validator');
 const {getAllMeetings,getMeetingById,updateMeeting,deleteMeeting, createMeetingInvestor,approveMeeting} = require('../Controller/meetingController');
-const {checkInvestorLogin, checkLogin} = require('../Middleware/authentication')
+const {checkInvestorLogin, checkLogin, checkAdmin} = require('../Middleware/authentication')
 
 
 /**
@@ -90,7 +91,7 @@ const {checkInvestorLogin, checkLogin} = require('../Middleware/authentication')
  *                   type: string
  *                   example: Sarah Daniels
  */
-router.post('/meeting', checkInvestorLogin, createMeetingInvestor);
+router.post('/meeting',meetingValidator, checkInvestorLogin, createMeetingInvestor);
 
 
 router.post('/approve-meeting',checkLogin,approveMeeting)
@@ -99,8 +100,8 @@ router.get('/meetings', getAllMeetings);
 
 router.get('/meeting/:id', getMeetingById);
 
-router.patch('/meeting/:id', updateMeeting);
+router.patch('/meeting/:id',checkAdmin, updateMeeting);
 
-router.delete('/meeting/:id', deleteMeeting);
+router.delete('/meeting/:id', checkAdmin, deleteMeeting);
 
 module.exports = router;

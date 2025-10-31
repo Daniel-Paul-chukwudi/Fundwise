@@ -1,6 +1,7 @@
 const express = require('express')
 // const {register,getAll,login,changeRole,forgotPassword,resetPassword} = require("../Controller/userController")
-const {checkInvestorLogin,checkAdmin} = require('../Middleware/authentication')
+const {checkInvestorLogin,checkAdmin, checkLogin} = require('../Middleware/authentication')
+const {registerValidator, loginValidator, verifyValidator,changePasswordValidator,forgotPasswordValidator, resendValidator, resetPasswordValidator,deleteUserValidator} = require('../Middleware/validator')
 const { signUp, logininvestor,forgotPassword,changePassword,resetPassword,getAll,deleteUser,getOne,verifyOtp, subscriptionBypass} = require('../Controller/investorController')
 
 const router = express.Router()
@@ -96,7 +97,7 @@ const router = express.Router()
  *                   type: string
  *                   example: "Internal server error"
  */
-router.post('/investor', signUp);
+router.post('/investor',registerValidator, signUp);
 
 
 /**
@@ -309,7 +310,7 @@ router.get('/investor/:id', getOne);
  *                   type: string
  *                   example: Internal server error
  */
-router.post('/investorl', logininvestor);
+router.post('/investorl',loginValidator, logininvestor);
 
 
 /**
@@ -401,8 +402,7 @@ router.post('/investorl', logininvestor);
  *                   type: string
  *                   example: Internal server error
  */
-router.post('/verifyInvestor', verifyOtp);
-
+router.post('/verifyInvestor',verifyValidator, verifyOtp);
 
 
 /**
@@ -551,7 +551,7 @@ router.patch('/changeIvestor', checkInvestorLogin, changePassword);
  *                   type: string
  *                   example: Email sending failed due to invalid credentials
  */
-router.post('/forgoti', forgotPassword);
+router.post('/forgoti',forgotPasswordValidator, forgotPassword);
 
 /**
  * @swagger

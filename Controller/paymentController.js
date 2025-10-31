@@ -13,6 +13,7 @@ exports.initializeSubscriptionPaymentInvestor = async (req, res) => {
       const code = await otpGen.generate(12, { upperCaseAlphabets: false, lowerCaseAlphabets: true, digits: true, specialChars: false })
       const ref = `TF-${code}-INS`
       const {price} = req.body
+
       
 
     if (user === null) {
@@ -30,6 +31,8 @@ exports.initializeSubscriptionPaymentInvestor = async (req, res) => {
         name: `${user.firstName} ${user.lastName}`
       }
     }
+    console.log(paymentData);
+    
 
     const { data } = await axios.post('https://api.korapay.com/merchant/api/v1/charges/initialize', paymentData, {
       headers: {
@@ -43,6 +46,69 @@ exports.initializeSubscriptionPaymentInvestor = async (req, res) => {
       reference: ref,
       price,
       userType:"Investor"
+    });
+
+    if (data?.status === true) {
+      await payment.save();
+    }
+
+    res.status(200).json({
+      message: 'Payment Initialized successfuly',
+      data: {
+        reference: data?.data?.reference,
+        url: data?.data?.checkout_url
+      },
+      payment,
+      paymentData
+    })
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error initializing payment: ' + error.message,
+      error: error.response?.data
+    })
+  }
+};
+
+exports.initializeSubscriptionPaymentBusinessOwner = async (req, res) => {
+  try {
+      const { id } = req.user;
+      const user = await investorModel.findByPk(id);
+      const code = await otpGen.generate(12, { upperCaseAlphabets: false, lowerCaseAlphabets: true, digits: true, specialChars: false })
+      const ref = `TF-${code}-BOS`
+      const {price} = req.body
+
+      
+
+    if (user === null) {
+      return res.status(404).json({
+        message: 'user not found'
+      })
+    }
+
+    const paymentData = {
+      amount: price,
+      currency: 'NGN',
+      reference: ref,
+      customer: {
+        email: user.email,
+        name: `${user.firstName} ${user.lastName}`
+      }
+    }
+    console.log(paymentData);
+    
+
+    const { data } = await axios.post('https://api.korapay.com/merchant/api/v1/charges/initialize', paymentData, {
+      headers: {
+        Authorization: `Bearer ${process.env.KORA_SECRET_KEY}`
+      }
+    });
+
+    const payment = new paymentModel({
+      userId: id,
+      paymentType:'subscription',
+      reference: ref,
+      price,
+      userType:"BusinessOwner"
     });
 
     if (data?.status === true) {
@@ -213,6 +279,21 @@ exports.webHook = async (req, res) => {
     if ( event === "charge.success") {
       payment.status = 'Successful'
       await payment.save();
+      if(payment.paymentType === 'subscription'){
+        if(payment.userType === 'Investor'){
+          const targetI = await investorModel.findByPk(payment.userId)
+          targetI.subscribed = true
+          targetI.viewAllocation = 5
+          await targetI.save()
+        }else if(payment.userType === 'BusinessOwner'){
+          const targetB = await userModel.findByPk(payment.userId)
+          targetB.subscribed = true
+          await targetB.save()
+        }
+      }else if(payment.paymentType === 'investment'){
+        const targetI = await investorModel.findByPk(payment.userId)
+        targetI.totalInvestment
+      }
 
       const user = await investorModel.findByPk(payment.userId)
       user.subscribed = true

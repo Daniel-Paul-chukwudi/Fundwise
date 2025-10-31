@@ -3,11 +3,12 @@ const userModel = require('../models/user')
 const businessModel = require('../models/business')
 const saveModel = require('../models/save')
 const meetingModel = require('../models/meeting')
+const investorModel = require('../models/investor')
 const jwt = require('jsonwebtoken')
 const {verify,forgotPassword}= require('../Middleware/emailTemplates')
 const sendEmail = require('../Middleware/Bmail')
 const bcrypt = require('bcrypt')
-const { where } = require('sequelize')
+
 
 
 
@@ -38,13 +39,14 @@ exports.signUp = async (req, res, next) => {
 
     const newUser = new userModel({
       fullName,
+      fullName,
       phoneNumber,
       password: hashedPassword,
       email:email.toLowerCase(),
       otp: otp,
       otpExpiredAt:(Date.now() + 1000 * 300)
     })
-    console.log(newUser);
+    // console.log(newUser);
     
     //Date.now() + 1000 * 120
     await newUser.save()
@@ -95,11 +97,14 @@ exports.verifyOtp = async (req, res, next) => {
       otpExpiredAt: 0,
       isVerified: true
     });
-
     await user.save();
+
+    const token = await jwt.sign({id:user.id},process.env.JWT_SECRET,{expiresIn:"1h"})
     return res.status(200).json({ 
       message: 'Email verified successfully',
-      data:user 
+      data:user ,
+      token,
+      role:user.role
     });
   } catch (error) {
     next(error);
@@ -110,7 +115,7 @@ exports.loginUser = async (req, res, next) => {
       
       try {
         const { email, password } = req.body;
-    // Find user in SQL database
+  
     const user = await userModel.findOne({ where: { email: email.toLowerCase() } });
     if (user === null) {
       return res.status(404).json({ 
@@ -146,7 +151,7 @@ exports.loginUser = async (req, res, next) => {
   }
 };
 
-exports.resendOtp = async (req, res, next) => {
+exports.userResendOtp = async (req, res, next) => {
   const { email } = req.body
 
   try {
@@ -159,7 +164,7 @@ exports.resendOtp = async (req, res, next) => {
 
     const newOtp = Math.floor(1000 + Math.random() * 9000).toString()
     user.otp = newOtp
-    otpExpiredAt: new Date(Date.now() + 1000 * 60 * 2) // 2 minutes later
+    user.otpExpiredAt = new Date(Date.now() + 1000 * 60 * 2) // 2 minutes later
 
 
     await user.save()
@@ -331,9 +336,8 @@ exports.getOne = async(req,res)=>{
           totalLikes += x.likeCount
           totalViews += x.viewCount
         })
-        const meetings = []
-        meetings.push(await meetingModel.findAll({where:{host:id}}))
-        meetings.push(await meetingModel.findAll({where:{guest:id}}))
+    
+        const meetings = await meetingModel.findAll({where:{guest:id}})
         const response = {
           user,
           businesscount:businesses.length,

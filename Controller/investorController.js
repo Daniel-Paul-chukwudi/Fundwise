@@ -34,7 +34,36 @@ exports.makeDeal = async (req,res)=>{
     }
 }
 
+exports.investorResendOtp = async (req,res)=>{
+  try {
+    const { email } = req.body
+    const user = await investorModel.findOne({where:{ email: email.toLowerCase() }})
+    if (!user) {
+      return res.status(404).json({
+        message: 'Investor not found',
+      })
+    }
 
+    const newOtp = Math.floor(1000 + Math.random() * 900000).toString()
+    user.otp = newOtp
+    user.otpExpiredAt = Date.now() + 1000 * 60 * 5 // 2 minutes later
+    await user.save()
+
+    const emailOptions = {
+      email: user.email,
+      subject: 'OTP Resent',
+      html: verify(newOtp, user.fullName),
+    }
+
+    await sendEmail(emailOptions)
+
+    res.status(200).json({
+      message: 'OTP resent successfully',
+    })
+  } catch (error) {
+    next(error)
+  }
+}
 
 exports.signUp = async (req, res, next) => {
   try {
@@ -209,7 +238,7 @@ exports.changePassword = async (req, res, next) => {
     const user = await investorModel.findByPk(id);
     if (!user) {
       return res.status(404).json({
-        message: "User not found",
+        message: "Investor not found",
       });
     }
 
@@ -338,7 +367,7 @@ exports.getAll = async (req,res)=>{
 exports.getOne = async(req,res)=>{
   try {
         const id  = req.params.id
-        const user = await userModel.findByPk(id)
+        const user = await investorModel.findByPk(id)
         const savedBusinesses = await saveModel.findAll({where:{userId:id}})
         // console.log(savedBusinesses);
         
@@ -386,7 +415,7 @@ exports.deleteUser = async (req,res)=>{
 exports.subscriptionBypass = async (req,res)=>{
   try {
     const {id} = req.body
-    const user = await userModel.findByPk(id)
+    const user = await investorModel.findByPk(id)
 
     user.subscribed = true 
     user.viewAllocation = 1

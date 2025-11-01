@@ -17,12 +17,12 @@ exports.signUp = async (req, res, next) => {
     const user = await userModel.findOne({where:{ email: email.toLowerCase() }})
     // console.log(user);
     
-    // if (user !== null) {
-    //   return res.status(403).json({
-    //     message: 'User already exists, Log in to your account',
-    //   })
-      // return next(createError(404, "User not found"));
-    //}
+    if (user !== null) {
+      return res.status(403).json({
+        message: 'User already exists, Log in to your account',
+      })
+      return next(createError(404, "User not found"));
+    }
     if(password !== confirmPassword){   
       return res.status(403).json({
         message:"Passwords dont match"

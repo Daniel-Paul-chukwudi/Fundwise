@@ -6,9 +6,7 @@ const router = require('express').Router()
 
 router.post('/subscribeInvestor', checkInvestorLogin, initializeSubscriptionPaymentInvestor);
 
-
 router.post('/makeInvestment', checkInvestorLogin, initializeInvestementPaymentInvestor);
-
 
 router.get('/verify-payment', verifyPayment);
 

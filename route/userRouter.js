@@ -226,7 +226,73 @@ router.get('/users', getAll);
  */
 router.get('/user/:id', getOne);
 
-router.post('/resend', resendValidator, userResendOtp)
+/**
+ * @swagger
+ * /resend:
+ *   post:
+ *     summary: Resend user OTP
+ *     description: >
+ *       Resends a new One-Time Password (OTP) to the user's registered email address for verification.  
+ *       The OTP expires 5 minutes after being generated.
+ *     tags:
+ *       - Users
+ *     requestBody:
+ *       required: true
+ *       description: Email of the user requesting a new OTP
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "johndoe@email.com"
+ *     responses:
+ *       200:
+ *         description: OTP resent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "OTP resent successfully"
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User not found"
+ *       400:
+ *         description: Invalid request (e.g., invalid email format)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid email format"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+router.post('/resend', resendValidator, userResendOtp);
 
 /**
  * @swagger

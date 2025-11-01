@@ -152,9 +152,9 @@ exports.loginUser = async (req, res, next) => {
 };
 
 exports.userResendOtp = async (req, res, next) => {
-  const { email } = req.body
-
+  
   try {
+    const { email } = req.body
     const user = await userModel.findOne({where:{ email: email.toLowerCase() }})
     if (!user) {
       return res.status(404).json({
@@ -162,23 +162,22 @@ exports.userResendOtp = async (req, res, next) => {
       })
     }
 
-    const newOtp = Math.floor(1000 + Math.random() * 9000).toString()
+    const newOtp = Math.floor(1000 + Math.random() * 900000).toString()
     user.otp = newOtp
-    user.otpExpiredAt = new Date(Date.now() + 1000 * 60 * 2) // 2 minutes later
-
-
+    user.otpExpiredAt = Date.now() + 1000 * 60 * 5 // 2 minutes later
     await user.save()
 
     const emailOptions = {
       email: user.email,
       subject: 'OTP Resent',
-      html: verify(newOtp, user.firstName),
+      html: verify(newOtp, user.fullName),
     }
 
     await sendEmail(emailOptions)
 
     res.status(200).json({
       message: 'OTP resent successfully',
+      otp:newOtp
     })
   } catch (error) {
     next(error)

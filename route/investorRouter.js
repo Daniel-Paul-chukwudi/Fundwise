@@ -2,7 +2,7 @@ const express = require('express')
 // const {register,getAll,login,changeRole,forgotPassword,resetPassword} = require("../Controller/userController")
 const {checkInvestorLogin,checkAdmin, checkLogin} = require('../Middleware/authentication')
 const {registerValidator, loginValidator, verifyValidator,changePasswordValidator,forgotPasswordValidator, resendValidator, resetPasswordValidator,deleteUserValidator} = require('../Middleware/validator')
-const { signUp, logininvestor,forgotPassword,changePassword,resetPassword,getAll,deleteUser,getOne,verifyOtp, subscriptionBypass} = require('../Controller/investorController')
+const { signUp, logininvestor,forgotPassword,changePassword,resetPassword,getAll,deleteUser,getOne,verifyOtp, subscriptionBypass,investorResendOtp} = require('../Controller/investorController')
 
 const router = express.Router()
 
@@ -99,18 +99,17 @@ const router = express.Router()
  */
 router.post('/investor',registerValidator, signUp);
 
-
 /**
  * @swagger
- * /users:
+ * /investor:
  *   get:
- *     summary: Retrieve all users
- *     description: Fetches all registered users from the database.
+ *     summary: Get all investors
+ *     description: Retrieves a list of all investors stored in the database.
  *     tags:
- *       - Users
+ *       - Investors
  *     responses:
  *       200:
- *         description: Successfully retrieved all users.
+ *         description: Successfully retrieved all investors
  *         content:
  *           application/json:
  *             schema:
@@ -118,7 +117,10 @@ router.post('/investor',registerValidator, signUp);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: All users in the database
+ *                   example: "All investor in the database"
+ *                 count:
+ *                   type: integer
+ *                   example: 3
  *                 data:
  *                   type: array
  *                   items:
@@ -126,21 +128,29 @@ router.post('/investor',registerValidator, signUp);
  *                     properties:
  *                       id:
  *                         type: string
- *                         example: 6710b7e3b61a2f15b6ac0219
- *                       firstName:
+ *                         example: "123e4567-e89b-12d3-a456-426614174000"
+ *                       fullName:
  *                         type: string
- *                         example: Daniel
- *                       lastName:
- *                         type: string
- *                         example: Saul
+ *                         example: "Jane Doe"
  *                       email:
  *                         type: string
- *                         example: danielsaul@example.com
- *                       role:
+ *                         example: "janedoe@example.com"
+ *                       phoneNumber:
  *                         type: string
- *                         example: user
+ *                         example: "+2348012345678"
+ *                       isVerified:
+ *                         type: boolean
+ *                         example: true
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2025-10-07T12:34:56.000Z"
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2025-10-07T13:00:00.000Z"
  *       500:
- *         description: Internal server error while retrieving users.
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -148,32 +158,32 @@ router.post('/investor',registerValidator, signUp);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Internal server error
+ *                   example: "Internal server error"
  *                 error:
  *                   type: string
- *                   example: Database connection failed
+ *                   example: "Database connection failed"
  */
 router.get('/investor', getAll);
 
 /**
  * @swagger
- * /user/{id}:
+ * /investor/{id}:
  *   get:
- *     summary: Get a user by ID
- *     description: Retrieves a single user from the database by their unique ID.
+ *     summary: Get a single investor by ID
+ *     description: Retrieves details of an investor and their saved businesses based on the provided ID.
  *     tags:
- *       - Users
+ *       - Investors
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
+ *         description: The unique ID of the investor
  *         schema:
  *           type: string
- *         description: The ID of the user to retrieve.
- *         example: 6710b7e3b61a2f15b6ac0219
+ *           example: "c7b1a7b9-0e8f-4a4f-bb57-df6c5a55cfa7"
  *     responses:
  *       200:
- *         description: User successfully retrieved.
+ *         description: Successfully retrieved investor details
  *         content:
  *           application/json:
  *             schema:
@@ -181,37 +191,56 @@ router.get('/investor', getAll);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: The user in the database
+ *                   example: "The investor in the database"
  *                 data:
  *                   type: object
  *                   properties:
- *                     id:
- *                       type: string
- *                       example: 6710b7e3b61a2f15b6ac0219
- *                     firstName:
- *                       type: string
- *                       example: Daniel
- *                     lastName:
- *                       type: string
- *                       example: Saul
- *                     email:
- *                       type: string
- *                       example: danielsaul@example.com
- *                     role:
- *                       type: string
- *                       example: user
- *       404:
- *         description: User not found.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: User not found
+ *                     user:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                           example: "c7b1a7b9-0e8f-4a4f-bb57-df6c5a55cfa7"
+ *                         fullName:
+ *                           type: string
+ *                           example: "Jane Doe"
+ *                         email:
+ *                           type: string
+ *                           example: "janedoe@example.com"
+ *                         phoneNumber:
+ *                           type: string
+ *                           example: "+2348012345678"
+ *                         isVerified:
+ *                           type: boolean
+ *                           example: true
+ *                         createdAt:
+ *                           type: string
+ *                           format: date-time
+ *                           example: "2025-10-07T12:34:56.000Z"
+ *                         updatedAt:
+ *                           type: string
+ *                           format: date-time
+ *                           example: "2025-10-07T13:00:00.000Z"
+ *                     savedBusinesses:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "bf7821a1-ec87-4cf1-9e1a-14d45350a3c1"
+ *                           businessName:
+ *                             type: string
+ *                             example: "TechNova"
+ *                           description:
+ *                             type: string
+ *                             example: "A platform connecting startups to investors."
+ *                           createdAt:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2025-10-05T14:30:00.000Z"
  *       500:
- *         description: Internal server error while retrieving user.
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -219,10 +248,10 @@ router.get('/investor', getAll);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Internal server error
+ *                   example: "Internal server error"
  *                 error:
  *                   type: string
- *                   example: Database connection failed
+ *                   example: "Database connection failed"
  */
 router.get('/investor/:id', getOne);
 
@@ -311,7 +340,6 @@ router.get('/investor/:id', getOne);
  *                   example: Internal server error
  */
 router.post('/investorl',loginValidator, logininvestor);
-
 
 /**
  * @swagger
@@ -404,17 +432,84 @@ router.post('/investorl',loginValidator, logininvestor);
  */
 router.post('/verifyInvestor',verifyValidator, verifyOtp);
 
+/**
+ * @swagger
+ * /resendi:
+ *   post:
+ *     summary: Resend OTP for investor account
+ *     description: >
+ *       Sends a new One-Time Password (OTP) to the investor’s registered email address for account verification.  
+ *       The OTP expires 5 minutes after being generated.
+ *     tags:
+ *       - Investors
+ *     requestBody:
+ *       required: true
+ *       description: Email of the investor requesting a new OTP
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "investor@example.com"
+ *     responses:
+ *       200:
+ *         description: OTP resent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "OTP resent successfully"
+ *       404:
+ *         description: Investor not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Investor not found"
+ *       400:
+ *         description: Invalid request (e.g., malformed email)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid email format"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+router.post('/resendi', resendValidator, investorResendOtp);
 
 /**
  * @swagger
- * /change:
+ * /changeInvestor:
  *   patch:
- *     summary: Change user password
- *     description: Allows an authenticated user to change their password by providing the old password, a new password, and a confirmation.
+ *     summary: Change investor password
+ *     description: Allows a logged-in investor to change their password after verifying the old one.
  *     tags:
- *       - Authentication
+ *       - Investors
  *     security:
- *       - bearerAuth: []   # JWT authentication required
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -428,16 +523,16 @@ router.post('/verifyInvestor',verifyValidator, verifyOtp);
  *             properties:
  *               oldPassword:
  *                 type: string
- *                 example: oldPassword123
+ *                 example: "OldPass123!"
  *               newPassword:
  *                 type: string
- *                 example: newStrongPassword456
+ *                 example: "NewPass456!"
  *               confirmPassword:
  *                 type: string
- *                 example: newStrongPassword456
+ *                 example: "NewPass456!"
  *     responses:
  *       200:
- *         description: Password changed successfully.
+ *         description: Password changed successfully
  *         content:
  *           application/json:
  *             schema:
@@ -445,12 +540,25 @@ router.post('/verifyInvestor',verifyValidator, verifyOtp);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Password changed successfully
+ *                   example: "Password changed successfully"
  *                 data:
  *                   type: object
- *                   description: The updated user record.
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "a8f1b5b9-2e3d-4f21-8c1d-3b5a934ddf4c"
+ *                     fullName:
+ *                       type: string
+ *                       example: "John Doe"
+ *                     email:
+ *                       type: string
+ *                       example: "johndoe@example.com"
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-10-07T14:22:15.000Z"
  *       400:
- *         description: Invalid request, such as incorrect old password or mismatched new passwords.
+ *         description: Invalid password input or mismatch
  *         content:
  *           application/json:
  *             schema:
@@ -458,9 +566,9 @@ router.post('/verifyInvestor',verifyValidator, verifyOtp);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Old password incorrect
+ *                   example: "New password mismatch"
  *       401:
- *         description: Missing or invalid authentication token.
+ *         description: Unauthorized or expired session
  *         content:
  *           application/json:
  *             schema:
@@ -468,9 +576,9 @@ router.post('/verifyInvestor',verifyValidator, verifyOtp);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Please login again to continue
+ *                   example: "Session expired, Please login again to continue"
  *       404:
- *         description: User not found.
+ *         description: Investor not found
  *         content:
  *           application/json:
  *             schema:
@@ -478,9 +586,9 @@ router.post('/verifyInvestor',verifyValidator, verifyOtp);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: User not found
+ *                   example: "Investor not found"
  *       500:
- *         description: Internal server error.
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -488,18 +596,21 @@ router.post('/verifyInvestor',verifyValidator, verifyOtp);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Internal server error
+ *                   example: "internal server error"
+ *                 error:
+ *                   type: string
+ *                   example: "Database connection failed"
  */
-router.patch('/changeIvestor', checkInvestorLogin, changePassword);
+router.patch('/changeInvestor', checkInvestorLogin, changePassword);
 
 /**
  * @swagger
- * /forgot:
+ * /forgoti:
  *   post:
- *     summary: Request password reset
- *     description: Sends a password reset email containing a secure token link that expires in 10 minutes.
+ *     summary: Send investor password reset link
+ *     description: Sends a password reset link to the investor's registered email. The link expires in 10 minutes.
  *     tags:
- *       - Authentication
+ *       - Investors
  *     requestBody:
  *       required: true
  *       content:
@@ -512,10 +623,10 @@ router.patch('/changeIvestor', checkInvestorLogin, changePassword);
  *               email:
  *                 type: string
  *                 format: email
- *                 example: johndoe@example.com
+ *                 example: "investor@example.com"
  *     responses:
  *       200:
- *         description: Password reset email sent successfully.
+ *         description: Password reset email sent successfully
  *         content:
  *           application/json:
  *             schema:
@@ -523,12 +634,12 @@ router.patch('/changeIvestor', checkInvestorLogin, changePassword);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: password reset email sent successfully
+ *                   example: "Password reset email sent successfully"
  *                 link:
  *                   type: string
- *                   example: http://localhost:3000/reset-password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *                   example: "https://yourapi.com/reset-password/eyJhbGciOiJIUzI1NiIsInR5..."
  *       404:
- *         description: User not found for the provided email.
+ *         description: Investor not found
  *         content:
  *           application/json:
  *             schema:
@@ -536,9 +647,9 @@ router.patch('/changeIvestor', checkInvestorLogin, changePassword);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: user not found
+ *                   example: "Investor not found"
  *       500:
- *         description: Internal server error while sending the reset email.
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -546,26 +657,26 @@ router.patch('/changeIvestor', checkInvestorLogin, changePassword);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: internal server error
+ *                   example: "internal server error"
  *                 error:
  *                   type: string
- *                   example: Email sending failed due to invalid credentials
+ *                   example: "Database connection failed"
  */
-router.post('/forgoti',forgotPasswordValidator, forgotPassword);
+router.post('/forgoti', forgotPasswordValidator, forgotPassword);
 
 /**
  * @swagger
- * /reset-password/{token}:
+ * /reset-passwordi/{token}:
  *   patch:
- *     summary: Reset user password
- *     description: Resets the user's password using the token sent via email. The token expires in 10 minutes.
+ *     summary: Reset investor password
+ *     description: Allows an investor to reset their password using a valid token from the password reset email.
  *     tags:
- *       - Authentication
+ *       - Investors
  *     parameters:
  *       - in: path
  *         name: token
  *         required: true
- *         description: JWT token sent to the user's email for password reset.
+ *         description: JWT token sent via password reset email
  *         schema:
  *           type: string
  *           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
@@ -581,13 +692,13 @@ router.post('/forgoti',forgotPasswordValidator, forgotPassword);
  *             properties:
  *               newPassword:
  *                 type: string
- *                 example: MyNewStrongPassword123
+ *                 example: "NewSecurePassword123!"
  *               confirmPassword:
  *                 type: string
- *                 example: MyNewStrongPassword123
+ *                 example: "NewSecurePassword123!"
  *     responses:
  *       200:
- *         description: Password reset successful. The user can now log in with the new password.
+ *         description: Password reset successful
  *         content:
  *           application/json:
  *             schema:
@@ -595,18 +706,18 @@ router.post('/forgoti',forgotPasswordValidator, forgotPassword);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: password reset successful, try and login again
+ *                   example: "Password reset successful, try and login again"
  *                 data:
  *                   type: object
  *                   properties:
  *                     id:
- *                       type: string
- *                       example: 9e5fadc4-0c29-4b7d-8a3d-f2e6db3c50b5
+ *                       type: integer
+ *                       example: 1
  *                     email:
  *                       type: string
- *                       example: johndoe@example.com
+ *                       example: "investor@example.com"
  *       400:
- *         description: New password mismatch.
+ *         description: Passwords do not match
  *         content:
  *           application/json:
  *             schema:
@@ -614,9 +725,9 @@ router.post('/forgoti',forgotPasswordValidator, forgotPassword);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: passwords do not match
+ *                   example: "passwords do not match"
  *       403:
- *         description: Invalid or expired token.
+ *         description: Invalid or expired token
  *         content:
  *           application/json:
  *             schema:
@@ -624,9 +735,9 @@ router.post('/forgoti',forgotPasswordValidator, forgotPassword);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: invalid token or token expired
+ *                   example: "invalid token or token expired"
  *       404:
- *         description: User not found for the provided token.
+ *         description: Investor not found
  *         content:
  *           application/json:
  *             schema:
@@ -634,9 +745,9 @@ router.post('/forgoti',forgotPasswordValidator, forgotPassword);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: user not found
+ *                   example: "investor not found"
  *       500:
- *         description: Internal server error during password reset.
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -644,21 +755,21 @@ router.post('/forgoti',forgotPasswordValidator, forgotPassword);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: internal server error
+ *                   example: "internal server error"
  *                 error:
  *                   type: string
- *                   example: jwt malformed
+ *                   example: "jwt malformed"
  */
 router.patch('/reset-passwordi/:token', resetPassword);
 
 /**
  * @swagger
- * /kill:
+ * /killi:
  *   delete:
- *     summary: Delete a user by email
- *     description: Permanently removes a user from the database using their email address.
+ *     summary: Delete an investor account
+ *     description: Permanently removes an investor from the database using their email address.
  *     tags:
- *       - Users
+ *       - Investors
  *     requestBody:
  *       required: true
  *       content:
@@ -670,10 +781,10 @@ router.patch('/reset-passwordi/:token', resetPassword);
  *             properties:
  *               email:
  *                 type: string
- *                 example: johndoe@example.com
+ *                 example: "investor@example.com"
  *     responses:
  *       200:
- *         description: User deleted successfully.
+ *         description: Investor deleted successfully
  *         content:
  *           application/json:
  *             schema:
@@ -681,9 +792,9 @@ router.patch('/reset-passwordi/:token', resetPassword);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: i don commot am
+ *                   example: "i don commot am"
  *       404:
- *         description: User not found in the database.
+ *         description: Investor not found in the database
  *         content:
  *           application/json:
  *             schema:
@@ -691,9 +802,9 @@ router.patch('/reset-passwordi/:token', resetPassword);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: the guy no dey DB
+ *                   example: "the guy no dey DB"
  *       500:
- *         description: Internal server error while deleting the user.
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -701,17 +812,12 @@ router.patch('/reset-passwordi/:token', resetPassword);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Internal server error
+ *                   example: "Internal server error"
  *                 error:
  *                   type: string
- *                   example: SequelizeDatabaseError
+ *                   example: "SequelizeConnectionError: ..."
  */
-router.delete('/killi', deleteUser); 
-
-// router.post('/user',register)
-// router.get('/user',checkLogin,checkAdmin,getAll)
-// router.post('/userl',login)
-// router.patch('/makeAdmin',checkLogin,checkAdmin,changeRole)
+router.delete('/killi', deleteUser);
 
 router.post('/admin',subscriptionBypass)
 

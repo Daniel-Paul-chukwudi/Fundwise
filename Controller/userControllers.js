@@ -46,9 +46,9 @@ exports.signUp = async (req, res, next) => {
     })
     console.log(newUser);
     
-    //Date.now() + 1000 * 120
+    
     await newUser.save()
-    // console.log(newUser.dataValues);
+    
     
 
     const verifyMail = {
@@ -72,9 +72,9 @@ exports.signUp = async (req, res, next) => {
 exports.verifyOtp = async (req, res, next) => {
   try {
     const { email, otp } = req.body;
-    // Find user by email
+    
     const user = await userModel.findOne({ where: { email: email.toLowerCase() } });
-    // console.log("user:", user);
+    
     
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -99,7 +99,7 @@ exports.verifyOtp = async (req, res, next) => {
       return res.status(400).json({ message: 'Invalid OTP' });
     }
 
-    //  Update verification
+    
     Object.assign(user, {
       otp: null,
       otpExpiredAt: null,
@@ -120,7 +120,7 @@ exports.loginUser = async (req, res, next) => {
       
       try {
         const { email, password } = req.body;
-    // Find user in SQL database
+    
     const user = await userModel.findOne({ where: { email: email.toLowerCase() } });
     if (user === null) {
       return res.status(404).json({ 
@@ -132,20 +132,20 @@ exports.loginUser = async (req, res, next) => {
       })
     }
     
-    //  Compare password
+    
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: 'Incorrect password' });
     }
     
-    // Generate JWT
+    
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
     
-    // Return response
+    
     return res.status(200).json({
       message: 'Login successful',
       token,
@@ -191,11 +191,11 @@ exports.userResendOtp = async (req, res, next) => {
 }
 
 exports.changePassword = async (req, res, next) => {
-  const { id } = req.user; // comes from the JWT middleware
+  const { id } = req.user; 
   const { oldPassword, newPassword, confirmPassword } = req.body;
   
   try {
-    //Find user in SQL database
+    
     const user = await userModel.findByPk(id);
     if (!user) {
       return res.status(404).json({
@@ -203,7 +203,7 @@ exports.changePassword = async (req, res, next) => {
       });
     }
 
-    //Check if old password matches
+    
     const checkOldPassword = await bcrypt.compare(oldPassword, user.password);
     if (!checkOldPassword) {
       return res.status(400).json({
@@ -211,22 +211,19 @@ exports.changePassword = async (req, res, next) => {
       });
     }
 
-    //Ensure new password matches confirmation
+    
     if (newPassword !== confirmPassword) {
       return res.status(400).json({
         message: "New password mismatch",
       });
     }
-
-    //Hash and save the new password
+    
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
     
     user.password = hashedPassword;
     await user.save();
-    
-    // v21
-    // Return success message
+        
     return res.status(200).json({
       message: "Password changed successfully",
       data:user
@@ -329,9 +326,7 @@ exports.getOne = async(req,res)=>{
   try {
         const id  = req.params.id
         const user = await userModel.findByPk(id)
-        // const savedBusinesses = await saveModel.findAll({where:{userId:id}})
-        // console.log(savedBusinesses);
-        
+                
         const businesses = await businessModel.findAll({where:{businessOwner:id}})
         let totalLikes = 0
         let totalViews = 0

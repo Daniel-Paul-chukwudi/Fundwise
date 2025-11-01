@@ -8,31 +8,60 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.UUID
       },
-       businessName: {
+      businessName: {
         type: Sequelize.STRING,
-        allowNull:false
+        allowNull: false
       },
       fundGoal: {
         type: Sequelize.INTEGER,
-        allowNull:false
+        allowNull: false
       },
-      description:{
+      description: {
         type: Sequelize.STRING,
-        allowNull:false
+        allowNull: false
       },
-      category:{
+      category: {
         type: Sequelize.STRING,
-        allowNull:false
+        allowNull: false
       },
-      likeCount:{
+      industry: {
+        type: Sequelize.STRING
+      },
+      yearFounded: {
+        type: Sequelize.INTEGER
+      },
+      businessModel: {
+        type: Sequelize.STRING
+      },
+      revenueModel: {
+        type: Sequelize.STRING
+      },
+      targetMarket: {
+        type: Sequelize.STRING
+      },
+      fundingStage: {
+        type: Sequelize.STRING
+      },
+      fundingSought: {
+        type: Sequelize.INTEGER
+      },
+      currentRevenue: {
+        type: Sequelize.INTEGER
+      },
+      pitchDeckUrl: {
+        type: Sequelize.STRING
+      },
+      likeCount: {
         type: Sequelize.INTEGER,
+        defaultValue: 0
       },
-      viewCount:{
+      viewCount: {
         type: Sequelize.INTEGER,
+        defaultValue: 0
       },
-      businessOwner:{
+      businessOwner: {
         type: Sequelize.UUID,
-        allowNull:false,
+        allowNull: false
       },
       createdAt: {
         allowNull: false,
@@ -44,6 +73,7 @@ module.exports = {
       }
     });
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('businesses');
   }

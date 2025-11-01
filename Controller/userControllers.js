@@ -382,24 +382,5 @@ exports.deleteUser = async (req,res)=>{
   }
 }
 
-exports.subscriptionBypass = async (req,res)=>{
-  try {
-    const {id} = req.body
-    const user = await userModel.findByPk(id)
 
-    user.subscribed = true 
-    user.viewAllocation = 1
-    await user.save()
-    res.status(200).json({
-      message:"stuff",
-      data:user
-    })
-
-  } catch (error) {
-    res.status(500).json({
-      message: "Internal server error",
-      error: error.message
-    })
-  }
-}
 

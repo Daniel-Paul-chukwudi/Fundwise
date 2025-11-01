@@ -1,31 +1,6 @@
-// const express = require('express');
-// const router = express.Router();
-
-// const {
-//   createKyc,
-//   getAllKycs,
-//   getKycById,
-//   updateKyc,
-//   deleteKyc
-// } = require('../controllers/kycController');
-
-// const { checkLogin } = require('../Middleware/authentication');
-
-// router.post('/', checkLogin, createKyc);
-
-// router.get('/', checkLogin, getAllKycs);
-
-// router.get('/:id', checkLogin, getKycById);
-
-// router.put('/:id', checkLogin, updateKyc);
-
-// router.delete('/:id', checkLogin, deleteKyc);
-
-// module.exports = router;
-
 const express = require('express');
 const router = express.Router();
-
+const multer = require('multer');
 const {
   createKyc,
   getAllKycs,
@@ -36,14 +11,38 @@ const {
 
 const { checkLogin } = require('../Middleware/authentication');
 
-router.post('/kyc', checkLogin, createKyc);
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
-router.get('/kycs',checkLogin, getAllKycs);
+// Create new KYC with file uploads
+router.post(
+  '/kyc',
+  checkLogin,
+  upload.fields([
+    { name: 'governmentId', maxCount: 1 },
+    { name: 'proofOfAddress', maxCount: 1 }
+  ]),
+  createKyc
+);
 
-router.get('/:id',checkLogin, getKycById);
+// Get all KYCs
+router.get('/kycs', checkLogin, getAllKycs);
 
-router.put('/:id',  updateKyc);
+// Get one KYC 
+router.get('/:id', checkLogin, getKycById);
 
-router.delete('/:id', deleteKyc);
+// Update KYC 
+router.put(
+  '/:id',
+  checkLogin,
+  upload.fields([
+    { name: 'governmentId', maxCount: 1 },
+    { name: 'proofOfAddress', maxCount: 1 }
+  ]),
+  updateKyc
+);
+
+// Delete a KYC
+router.delete('/:id', checkLogin, deleteKyc);
 
 module.exports = router;

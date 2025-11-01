@@ -11,8 +11,8 @@ Kyc.init(
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4
     },
-    userId:{
-        type: DataTypes.UUID
+    userId: {
+      type: DataTypes.UUID
     },
     firstName: {
       type: DataTypes.STRING,
@@ -64,19 +64,13 @@ Kyc.init(
       allowNull: false
     },
 
-    // 🆕 Document fields (only these two)
-    governmentIdUrl: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      comment: 'URL of uploaded government-issued ID document'
+    governmentIdFile: {
+      type: DataTypes.BLOB('long')
     },
-    proofOfAddressUrl: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      comment: 'URL of uploaded proof of address document'
+    proofOfAddressFile: {
+      type: DataTypes.BLOB('long')
     },
 
-    // Optional verification fields
     verificationStatus: {
       type: DataTypes.ENUM('pending', 'approved', 'rejected'),
       defaultValue: 'pending'
@@ -88,7 +82,7 @@ Kyc.init(
   },
   {
     sequelize,
-    modelName: 'Kyc',
+    modelName: 'kyc_verifications',
     timestamps: true
   }
 );

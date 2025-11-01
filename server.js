@@ -1,104 +1,93 @@
-require('dotenv').config()
-const express = require('express')
-const PORT = process.env.PORT || 1234
-const cors = require('cors')
-const axios = require('axios')
-const sequelize = require('./Database/database')
-const userRouter = require('./route/userRouter')
-const businessRouter = require('./route/businessRouter')
-const paymentRouter = require('./route/paymentRouter')
-const investorRouter = require ('./route/investorRouter')
-const meetingRouter = require("./route/meetingRouter")
-const kycRouter = require('./route/kycRoute')
-const swaggerJSDoc = require('swagger-jsdoc')
-const swaggerUi  = require('swagger-ui-express')
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const sequelize = require('./Database/database');
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+
+const userRouter = require('./route/userRouter');
+const businessRouter = require('./route/businessRouter');
+const paymentRouter = require('./route/paymentRouter');
+const investorRouter = require('./route/investorRouter');
+const meetingRouter = require('./route/meetingRouter');
+const kycRouter = require('./route/kycRoute');
+
+const app = express();
+const PORT = process.env.PORT || 1234;
+
+app.use(cors());
+app.use(express.json());
 
 
-const app = express()
-app.use(express.json())
-app.use(cors())
-
-
-// app.use('/', (req, res) => {
-//   res.send('Connected to Backend Server')
+// app.get('/', (req, res) => {
+//   res.send('✅ TrustForge backend connected successfully');
 // });
 
 const swaggerDefinition = {
   openapi: '3.0.0',
   info: {
-    title: 'Api documentation for mini project',
+    title: 'API Documentation for TrustForge',
     version: '4.1.9',
-    description:
-    'first swagger documentation class',
-    // license: {
-      //   name: 'Licensed Under MIT',
-      //   url: 'https://spdx.org/licenses/MIT.html',//whatever
-    // },
+    description: 'Swagger documentation for the TrustForge backend',
     contact: {
-      name: 'JSONPlaceholder',
-      url: 'https://google.com',//frontend link
+      name: 'TrustForge Support',
+      url: 'https://google.com',
     },
   },
   servers: [
     {
       url: 'https://trustforge.onrender.com',
-      description: 'production server',
+      description: 'Production server',
     },
     {
       url: 'http://localhost:4309',
       description: 'Development server',
-    }
+    },
   ],
-  components:{
-    securitySchemes:{
-      bearerAuth:{
-        type:"http",
-        scheme:"bearer",
-        bearerFormat:"JWT",// optional but recomended
-        description:"Enter your jwt token in the format **Bearer &lt;token&gt;**",
-      }
-    }
+  components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'Enter your JWT token as **Bearer <token>**',
+      },
+    },
   },
-  security:[
-    {
-      bearerAuth:[],
-    }
-  ]
+  security: [{ bearerAuth: [] }],
 };
 
-const options = {
+const swaggerOptions = {
   swaggerDefinition,
-  // Paths to files containing OpenAPI definitions
   apis: ['./route/*.js'],
 };
 
-const swaggerSpec = swaggerJSDoc(options);
+const swaggerSpec = swaggerJSDoc(swaggerOptions);
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
 
 app.use(userRouter);
 app.use(businessRouter);
 app.use(investorRouter);
 app.use(paymentRouter);
-app.use(meetingRouter)
-app.use(kycRouter)
-app.use((error, req, res, next)=>{
-  if (error) {
-    res.send(error.message)
-  }
-  next()
-})
-const Startserver = async ()=>{ 
+app.use(meetingRouter);
+app.use(kycRouter);
+
+app.use((error, req, res, next) => {
+  console.error('Error:', error.message);
+  res.status(500).json({ message: 'Internal Server Error', error: error.message });
+});
+
+const startServer = async () => {
   try {
     await sequelize.authenticate();
-    console.log('Connection has been established successfully.');
-    app.listen(PORT,()=>{
-        console.log(`Server is running on PORT: ${PORT}`);
-        
-    })
-    } catch (error) {
-    console.error('Unable to connect to the database:', error.message);
-    }
-}
+    console.log('Database connection established successfully');
 
-Startserver();
+    app.listen(PORT, () => {
+      console.log(` Server running on PORT: ${PORT}`);
+    });
+  } catch (error) {
+    console.error('Unable to connect to the database:', error.message);
+  }
+};
+
+startServer();

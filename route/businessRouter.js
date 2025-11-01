@@ -5,20 +5,18 @@ const {createBusinessValidator} = require('../Middleware/validator')
 const express = require('express')
 const router = express.Router()
 
-
 /**
  * @swagger
  * /pitch:
  *   post:
  *     summary: Create a new business pitch
- *     description: Allows an authenticated user to create a new business pitch by submitting the business details. A valid JWT token is required in the Authorization header.
+ *     description: Allows a logged-in user to create a new business pitch with full business details.
  *     tags:
  *       - Businesses
  *     security:
  *       - bearerAuth: []
  *     requestBody:
  *       required: true
- *       description: Business details to be created
  *       content:
  *         application/json:
  *           schema:
@@ -27,23 +25,54 @@ const router = express.Router()
  *               - businessName
  *               - fundGoal
  *               - description
- *               - category
+ *               - industry
+ *               - yearFounded
+ *               - businessModel
+ *               - revenueModel
+ *               - targetMarket
+ *               - fundingStage
+ *               - fundingSought
+ *               - currentRevenue
  *             properties:
  *               businessName:
  *                 type: string
- *                 example: TrustForge Limited
+ *                 example: "Tech Innovations Ltd"
  *               fundGoal:
  *                 type: number
  *                 example: 50000
  *               description:
  *                 type: string
- *                 example: A fintech platform helping users save and invest effortlessly.
- *               category:
+ *                 example: "A startup developing AI-driven financial tools for SMEs."
+ *               industry:
  *                 type: string
- *                 example: Fintech
+ *                 example: "FinTech"
+ *               yearFounded:
+ *                 type: integer
+ *                 example: 2023
+ *               businessModel:
+ *                 type: string
+ *                 example: "Subscription-based"
+ *               revenueModel:
+ *                 type: string
+ *                 example: "Monthly recurring revenue"
+ *               targetMarket:
+ *                 type: string
+ *                 example: "Small and medium-sized enterprises"
+ *               fundingStage:
+ *                 type: string
+ *                 example: "Seed"
+ *               fundingSought:
+ *                 type: number
+ *                 example: 100000
+ *               currentRevenue:
+ *                 type: number
+ *                 example: 15000
+ *               pitchDeck:
+ *                 type: string
+ *                 example: "https://example.com/pitchdeck.pdf"
  *     responses:
  *       201:
- *         description: Business pitch created successfully
+ *         description: Business created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -51,33 +80,45 @@ const router = express.Router()
  *               properties:
  *                 message:
  *                   type: string
- *                   example: created successfully
+ *                   example: "Business created successfully"
  *                 data:
  *                   type: object
  *                   properties:
  *                     id:
  *                       type: string
- *                       example: 2b5fa7f1-7a6d-4f32-b73f-1de27b49d55f
+ *                       example: "b1d2e3f4-5678-9876-5432-10a11b12c13d"
  *                     businessName:
  *                       type: string
- *                       example: TrustForge Limited
+ *                       example: "Tech Innovations Ltd"
  *                     fundGoal:
  *                       type: number
  *                       example: 50000
- *                     description:
- *                       type: string
- *                       example: A fintech platform helping users save and invest effortlessly.
- *                     category:
- *                       type: string
- *                       example: Fintech
- *                 user:
- *                   type: object
- *                   description: The user who created the business pitch
- *                 busy:
- *                   type: array
- *                   description: Existing businesses associated with the user
+ *       401:
+ *         description: Unauthorized — token missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Please login again to continue"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ *                 error:
+ *                   type: string
+ *                   example: "SequelizeValidationError: Missing required field"
  */
-router.post('/pitch',createBusinessValidator, checkLogin, createBusiness);
+router.post('/pitch', checkLogin, createBusiness);
+// router.post('/pitch',createBusinessValidator, checkLogin, createBusiness);
 
 /**
  * @swagger
@@ -530,6 +571,81 @@ router.get('/business',getByCategory)
  */
 router.get('/Abusiness/:id',getOneById)
 
+/**
+ * @swagger
+ * /request:
+ *   delete:
+ *     summary: Request deletion of a business
+ *     description: Allows a logged-in user to submit a support ticket requesting that a specific business be deleted.
+ *     tags:
+ *       - Support Tickets
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - businessId
+ *             properties:
+ *               businessId:
+ *                 type: string
+ *                 example: "b7d8e9f0-1234-5678-90ab-cdef12345678"
+ *     responses:
+ *       201:
+ *         description: Support ticket created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Your support Ticket has been created, you should receive a response soon"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "t1a2b3c4-d5e6-7890-f1g2-h3i4j5k6l7m8"
+ *                     userId:
+ *                       type: string
+ *                       example: "u9n8m7l6-k5j4-h3g2-f1e0-d9c8b7a6"
+ *                     businessId:
+ *                       type: string
+ *                       example: "b7d8e9f0-1234-5678-90ab-cdef12345678"
+ *                     title:
+ *                       type: string
+ *                       example: "Request to delete business"
+ *                     ticketStatus:
+ *                       type: string
+ *                       example: "open"
+ *       401:
+ *         description: Unauthorized — token missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Please login again to continue"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "internal server error"
+ *                 error:
+ *                   type: string
+ *                   example: "SequelizeDatabaseError: column not found"
+ */
 router.delete('/request',checkLogin,requestDelete)
 
 /**

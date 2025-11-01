@@ -16,7 +16,6 @@ exports.createBusiness = async (req, res) => {
       businessName,
       fundGoal,
       description,
-      category,
       industry,
       yearFounded,
       businessModel,
@@ -28,11 +27,10 @@ exports.createBusiness = async (req, res) => {
       pitchDeck
     } = req.body;
 
-    const newBusiness = await businessModel.create({
+    const newBusiness = await business.create({
       businessName,
       fundGoal,
       description,
-      category,
       industry,
       yearFounded,
       businessModel,
@@ -249,6 +247,11 @@ exports.deleteB = async(req,res)=>{
     try {
         const id = req.params.id
         const target = await businessModel.findByPk(id)
+        if(!target){
+          return res.status(404).json({
+            message:"business not found"
+          })
+        }
         await target.destroy()
         res.status(200).json({
             message:"Business data deleted successfully",

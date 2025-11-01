@@ -8,31 +8,65 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.UUID
       },
-       businessName: {
+      businessName: {
         type: Sequelize.STRING,
-        allowNull:false
+        
+      },
+      industry: {
+        type: Sequelize.STRING,
+
+      },
+      description: {
+        type: Sequelize.STRING,
+
+      },
+      yearFounded: {
+        type: Sequelize.INTEGER,
+
+      },
+      businessModel: {
+        type: Sequelize.STRING,
+
+      },
+      revenueModel: {
+        type: Sequelize.STRING,
+
+      },
+      targetMarket: {
+        type: Sequelize.STRING,
+
+      },
+      fundingStage: {
+        type: Sequelize.STRING,
+
+      },
+      fundingSought: {
+        type: Sequelize.INTEGER,
+
+      },
+      currentRevenue: {
+        type: Sequelize.INTEGER,
+
+      },
+      pitchDeck: {
+        type: Sequelize.STRING, 
+
       },
       fundGoal: {
         type: Sequelize.INTEGER,
-        allowNull:false
+
       },
-      description:{
-        type: Sequelize.STRING,
-        allowNull:false
-      },
-      category:{
-        type: Sequelize.STRING,
-        allowNull:false
-      },
-      likeCount:{
+      likeCount: {
         type: Sequelize.INTEGER,
+        defaultValue: 0
       },
-      viewCount:{
+      viewCount: {
         type: Sequelize.INTEGER,
+        defaultValue: 0
       },
-      businessOwner:{
+      businessOwner: {
         type: Sequelize.UUID,
-        allowNull:false,
+
       },
       createdAt: {
         allowNull: false,

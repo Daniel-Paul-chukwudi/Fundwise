@@ -288,8 +288,9 @@ exports.forgotPassword = async (req,res) => {
       const token = jwt.sign({id:user.id}, process.env.JWT_SECRET,{
         expiresIn:'10m',
       });
-      const link = `${req.protocol}://${req.get('host')}/reset-password/${token}`;
-   
+      const link =`http://localhost:5173/reset-password/${token}`;
+      // `http://localhost:5173/reset-password/${token}`
+      // `${req.protocol}://${req.get('host')}/reset-password/${token}`
        await sendEmail({email,
         subject:'Password reset link',
         html:forgotPassword(link,user.fullName)});

@@ -1,49 +1,83 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
 const sequelize = require('../Database/database');
 
-class business extends Model {}
+class Business extends Model {}
 
-business.init(
+Business.init(
   {
     id: {
-        allowNull: false,
-        primaryKey: true,
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4
-      },
-      businessName: {
-        type: DataTypes.STRING,
-        allowNull:false
-      },
-      fundGoal: {
-        type: DataTypes.INTEGER,
-        allowNull:false
-      },
-      description:{
-        type: DataTypes.STRING,
-        allowNull:false
-      },
-      category:{
-        type: DataTypes.STRING,
-        allowNull:false
-      },
-      likeCount:{
-        type: DataTypes.INTEGER,
-      },
-      viewCount:{
-        type: DataTypes.INTEGER
-      },
-      businessOwner:{
-        type: DataTypes.UUID,
-        allowNull:false,
-      }
-
+      allowNull:false,
+      primaryKey: true,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4
+    },
+    businessName: {
+      type: DataTypes.STRING,
+      
+    },
+    industry: {
+      type: DataTypes.STRING,
+      
+    },
+    description: {
+      type: DataTypes.STRING,
+      
+    },
+    yearFounded: {
+      type: DataTypes.INTEGER,
+      
+    },
+    businessModel: {
+      type: DataTypes.STRING,
+      
+    },
+    revenueModel: {
+      type: DataTypes.STRING,
+      
+    },
+    targetMarket: {
+      type: DataTypes.STRING,
+      
+    },
+    fundingStage: {
+      type: DataTypes.STRING,
+      
+    },
+    fundingSought: {
+      type: DataTypes.INTEGER,
+      
+    },
+    currentRevenue: {
+      type: DataTypes.INTEGER,
+      
+    },
+    pitchDeck: {
+      type: DataTypes.STRING, 
+      
+    },
+    fundGoal: {
+      type: DataTypes.INTEGER,
+      
+    },
+    likeCount: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
+    viewCount: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
+    businessOwner: {
+      type: DataTypes.UUID,
+      
+    }
   },
   {
-    sequelize, 
-    modelName: 'businesses', 
-    timestamps:true,
+    sequelize,
+    modelName: 'Business',
+    tableName: 'businesses',
+    timestamps: true
   }
 );
 
-module.exports = business 
+module.exports = Business;

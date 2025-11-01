@@ -66,7 +66,6 @@ module.exports = {
       },
       businessOwner: {
         type: Sequelize.UUID,
-
       },
       createdAt: {
         allowNull: false,
@@ -78,6 +77,7 @@ module.exports = {
       }
     });
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('businesses');
   }

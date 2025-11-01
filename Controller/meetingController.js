@@ -130,7 +130,6 @@ exports.getAllMeetings = async (req, res) => {
   }
 };
 
-// Get a single meeting by ID
 exports.getMeetingById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -153,7 +152,6 @@ exports.getMeetingById = async (req, res) => {
   }
 };
 
-// Update a meeting
 exports.updateMeeting = async (req, res) => {
   try {
     const { id } = req.params;
@@ -180,7 +178,7 @@ exports.updateMeeting = async (req, res) => {
   }
 };
 
-// Delete a meeting
+
 exports.deleteMeeting = async (req, res) => {
   try {
     const { id } = req.params;

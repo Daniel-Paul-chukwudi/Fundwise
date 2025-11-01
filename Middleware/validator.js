@@ -142,7 +142,7 @@ exports.paymentValidator = (req, res, next) => {
   validate(schema, req, res, next);
 };
 
-//INVESTOR VALIDATOR=
+//INVESTOR VALIDATOR =======================
 exports.investorValidator = (req, res, next) => {
   const schema = Joi.object({
     investorName: Joi.string().min(3).required(),

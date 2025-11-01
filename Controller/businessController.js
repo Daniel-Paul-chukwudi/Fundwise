@@ -7,6 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET
 const likeModel = require('../models/like')
 const viewModel = require('../models/view')
 const saveModel = require('../models/save')
+const ticketModel = require('../models/supportticket')
 
 exports.createBusiness= async(req,res)=>{
     try {
@@ -251,6 +252,29 @@ exports.deleteB = async(req,res)=>{
         await target.destroy()
         res.status(200).json({
             message:"Business data deleted successfully",
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            message:"internal server error",
+            error:error.message
+        })
+    }
+}
+
+exports.requestDelete = async(req,res)=>{
+    try {
+        const {id} = req.user
+        const {businessId} = req.body
+        const newTicket  = await ticketModel.create({
+            userId:id,
+            title:"Request to delete business",
+            businessId,
+            ticketStatus:"open"
+        })
+        res.status(201).json({
+            message:"Your support Ticket has been created, you should recieve a response soon",
+            data:newTicket
         })
 
     } catch (error) {

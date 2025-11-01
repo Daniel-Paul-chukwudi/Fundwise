@@ -2,18 +2,26 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('admins', {
+    await queryInterface.createTable('supporttickets', {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.UUID
       },
-      fullName: {
+      userId:{
+        type: Sequelize.UUID
+      },
+      businessId:{
+        type: Sequelize.UUID
+      },
+      title:{
         type: Sequelize.STRING
       },
-      role:{
-        type: Sequelize.STRING,
-        allowNull:false
+      description:{
+        type: Sequelize.STRING
+      },
+      ticketStatus:{
+        type: Sequelize.ENUM('open','under review','closed')
       },
       createdAt: {
         allowNull: false,
@@ -26,6 +34,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('admins');
+    await queryInterface.dropTable('supporttickets');
   }
 };

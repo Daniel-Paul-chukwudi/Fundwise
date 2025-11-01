@@ -1,4 +1,4 @@
-const {createBusiness,getBusiness,getByCategory,updateB,getOneById, deleteB,likeBusiness,viewBusiness,saveBusiness} = require('../Controller/businessController')
+const {createBusiness,getBusiness,getByCategory,updateB,getOneById, deleteB,likeBusiness,viewBusiness,saveBusiness, requestDelete} = require('../Controller/businessController')
 const {checkLogin,checkSubscription,checkAdmin, checkInvestorLogin} = require('../Middleware/authentication')
 const {createBusinessValidator} = require('../Middleware/validator')
 
@@ -529,6 +529,8 @@ router.get('/business',getByCategory)
  *                   example: "SequelizeDatabaseError: Unknown column 'id'"
  */
 router.get('/Abusiness/:id',getOneById)
+
+router.delete('/request',checkLogin,requestDelete)
 
 /**
  * @swagger

@@ -2,7 +2,7 @@ const express = require('express')
 // const {register,getAll,login,changeRole,forgotPassword,resetPassword} = require("../Controller/userController")
 const {checkLogin,checkAdmin} = require('../Middleware/authentication')
 const {registerValidator, loginValidator, verifyValidator,changePasswordValidator,forgotPasswordValidator, resendValidator, resetPasswordValidator,deleteUserValidator} = require('../Middleware/validator')
-const { signUp, loginUser,forgotPassword,changePassword,resetPassword,getAll,deleteUser,getOne,verifyOtp, subscriptionBypass, userResendOtp} = require('../Controller/userControllers')
+const { signUp, loginUser,forgotPassword,changePassword,resetPassword,getAll,deleteUser,getOne,verifyOtp, userResendOtp} = require('../Controller/userControllers')
 
 const router = express.Router()
 
@@ -767,13 +767,6 @@ router.patch('/reset-password/:token',resetPasswordValidator, resetPassword);
  *                   example: SequelizeDatabaseError
  */
 router.delete('/kill',deleteUserValidator, deleteUser); 
-
-// router.post('/user',register)
-// router.get('/user',checkLogin,checkAdmin,getAll)
-// router.post('/userl',login)
-// router.patch('/makeAdmin',checkLogin,checkAdmin,changeRole)
-
-router.post('/admin',subscriptionBypass)
 
 module.exports = router
 

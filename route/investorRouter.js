@@ -819,7 +819,6 @@ router.patch('/reset-passwordi/:token', resetPassword);
  */
 router.delete('/killi', deleteUser);
 
-router.post('/admin',subscriptionBypass)
 
 module.exports = router
 

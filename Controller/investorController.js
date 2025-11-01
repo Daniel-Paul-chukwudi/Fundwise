@@ -40,13 +40,13 @@ exports.signUp = async (req, res, next) => {
   try {
     const { firstName, lastName, phoneNumber,email, password,confirmPassword } = req.body
     const user = await investorModel.findOne({where:{ email: email.toLowerCase() }})
-    // console.log(user);
+    
     
     if (user !== null) {
       return res.status(403).json({
         message: 'investor already exists, Log in to your account',
       })
-      // return next(createError(404, "User not found"));
+      
     }
     if(password !== confirmPassword){   
       return res.status(403).json({
@@ -70,9 +70,9 @@ exports.signUp = async (req, res, next) => {
       otp: otp,
       otpExpiredAt:new Date(Date.now() + 1000 * 60 * 2).getSeconds()
     })
-    // console.log(newUser);
+    
     await newUser.save()
-    // console.log(newUser.dataValues);
+    
     const verifyMail = {
       email:newUser.email,
       subject:`Please verify your email ${newUser.firstName}`,
@@ -96,7 +96,7 @@ exports.verifyOtp = async (req, res, next) => {
     const { email, otp } = req.body;
     // Find user by email
     const user = await investorModel.findOne({ where: { email: email.toLowerCase() } });
-    // console.log("user:", user);
+    
     
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -132,7 +132,7 @@ exports.verifyOtp = async (req, res, next) => {
 exports.logininvestor = async (req, res, next) => {
     try {
         const { email, password } = req.body;
-    // Find user in SQL database
+    
     const user = await investorModel.findOne({ where: { email: email.toLowerCase() } });
     if (user === null) {
       return res.status(404).json({ 
@@ -144,7 +144,7 @@ exports.logininvestor = async (req, res, next) => {
       })
     }
     
-    //  Compare password
+    
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: 'Incorrect password' });
@@ -157,7 +157,7 @@ exports.logininvestor = async (req, res, next) => {
       { expiresIn: '1h' }
     );
     
-    // Return response
+   
     return res.status(200).json({
       message: 'Login successful',
       token,
@@ -202,9 +202,9 @@ exports.resendOtp = async (req, res, next) => {
 
 exports.changePassword = async (req, res, next) => {
   try {
-    const { id } = req.user; // comes from the JWT middleware
+    const { id } = req.user; 
     const { oldPassword, newPassword, confirmPassword } = req.body;
-    //Find user in SQL database
+    
     const user = await investorModel.findByPk(id);
     if (!user) {
       return res.status(404).json({
@@ -212,30 +212,29 @@ exports.changePassword = async (req, res, next) => {
       });
     }
 
-    //Check if old password matches
-    const checkOldPassword = await bcrypt.compare(oldPassword, user.password);
+        const checkOldPassword = await bcrypt.compare(oldPassword, user.password);
     if (!checkOldPassword) {
       return res.status(400).json({
         message: "Old password incorrect",
       });
     }
 
-    //Ensure new password matches confirmation
+    
     if (newPassword !== confirmPassword) {
       return res.status(400).json({
         message: "New password mismatch",
       });
     }
 
-    //Hash and save the new password
+    
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
     
     user.password = hashedPassword;
     await user.save();
     
-    // v21
-    // Return success message
+   
+   
     return res.status(200).json({
       message: "Password changed successfully",
       data:user

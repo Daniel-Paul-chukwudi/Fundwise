@@ -292,10 +292,11 @@ exports.forgotPassword = async (req,res) => {
    
        await sendEmail({email,
         subject:'Password reset link',
-        html:forgotPassword(link,user.firstName)});
+        html:forgotPassword(link,user.fullName)});
       
         res.status(200).json({
-        message:'password reset email sent successfully',link
+        message:'password reset email sent successfully',
+        link
         })
 
     } catch (error) {

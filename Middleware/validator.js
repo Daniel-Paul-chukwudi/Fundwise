@@ -60,7 +60,7 @@ exports.changePasswordValidator = (req, res, next) => {
   const schema = Joi.object({
     oldPassword: Joi.string().required(),
     newPassword: Joi.string()
-      .pattern(/^(?=.[A-Z])(?=.[a-z])(?=.*\d).{8,}$/)
+      // .pattern(/^(?=.[A-Z])(?=.[a-z])(?=.*\d).{8,}$/)
       .required(),
     confirmPassword: Joi.string().valid(Joi.ref("newPassword")).required()
       .messages({ "any.only": "Passwords do not match" })
@@ -80,7 +80,7 @@ exports.forgotPasswordValidator = (req, res, next) => {
 exports.resetPasswordValidator = (req, res, next) => {
   const schema = Joi.object({
     newPassword: Joi.string()
-      .pattern(/^(?=.[A-Z])(?=.[a-z])(?=.*\d).{8,}$/)
+      // .pattern(/^(?=.[A-Z])(?=.[a-z])(?=.*\d).{8,}$/)
       .required(),
     confirmPassword: Joi.string().valid(Joi.ref("newPassword")).required()
       .messages({ "any.only": "Passwords do not match" })
@@ -147,7 +147,7 @@ exports.investorValidator = (req, res, next) => {
   const schema = Joi.object({
     investorName: Joi.string().min(3).required(),
     email: Joi.string().email().required(),
-    phoneNumber: Joi.string().pattern(/^[0-9]{11}$/).required(),
+    phoneNumber: Joi.string().required(),
     amount: Joi.number().positive().required(),
     businessId: Joi.string().required()
   });

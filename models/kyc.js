@@ -64,11 +64,13 @@ Kyc.init(
       allowNull: false
     },
 
-    governmentIdFile: {
-      type: DataTypes.BLOB('long')
+    governmentIdUrl: {
+      type: DataTypes.STRING,
+      allowNull: false
     },
-    proofOfAddressFile: {
-      type: DataTypes.BLOB('long')
+    proofOfAddressUrl: {
+      type: DataTypes.STRING,
+      allowNull: false
     },
 
     verificationStatus: {

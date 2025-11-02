@@ -1,3 +1,5 @@
+const fs = require('fs');
+const cloudinary = require('../utils/cloudinary');
 const KycModel = require('../models/kyc');
 const UserModel = require('../models/user');
 
@@ -9,9 +11,6 @@ exports.createKyc = async (req, res) => {
     if (existingKyc) {
       return res.status(400).json({ message: 'KYC already exists for this user' });
     }
-
-    const governmentIdFile = req.files?.governmentId?.[0]?.buffer || null;
-    const proofOfAddressFile = req.files?.proofOfAddress?.[0]?.buffer || null;
 
     const {
       firstName,
@@ -28,6 +27,27 @@ exports.createKyc = async (req, res) => {
       preferredSelectors
     } = req.body;
 
+    let governmentIdUrl = null;
+    let proofOfAddressUrl = null;
+
+    if (req.files?.governmentId?.[0]) {
+      const govFile = req.files.governmentId[0];
+      const result = await cloudinary.uploader.upload(govFile.path, {
+        folder: 'kyc_documents'
+      });
+      governmentIdUrl = result.secure_url;
+      fs.unlinkSync(govFile.path);
+    }
+
+    if (req.files?.proofOfAddress?.[0]) {
+      const proofFile = req.files.proofOfAddress[0];
+      const result = await cloudinary.uploader.upload(proofFile.path, {
+        folder: 'kyc_documents'
+      });
+      proofOfAddressUrl = result.secure_url;
+      fs.unlinkSync(proofFile.path);
+    }
+
     const newKyc = await KycModel.create({
       userId,
       firstName,
@@ -42,8 +62,8 @@ exports.createKyc = async (req, res) => {
       investmentType,
       investmentRange,
       preferredSelectors,
-      governmentIdFile,
-      proofOfAddressFile
+      governmentIdUrl,
+      proofOfAddressUrl
     });
 
     res.status(201).json({
@@ -51,16 +71,17 @@ exports.createKyc = async (req, res) => {
       data: newKyc
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       message: 'Internal server error',
       error: error.message
     });
   }
 };
-
 exports.getAllKycs = async (req, res) => {
   try {
-    const kycs = await KycModel.findAll({include: { model: UserModel, as: 'user' },
+    const kycs = await KycModel.findAll({
+      include: { model: UserModel, as: 'user' },
       attributes: { exclude: ['governmentIdFile', 'proofOfAddressFile'] }
     });
 
@@ -84,7 +105,9 @@ exports.getKycById = async (req, res) => {
       include: { model: UserModel, as: 'user' }
     });
 
-    if (!kyc) return res.status(404).json({ message: 'KYC not found' });
+    if (!kyc) {
+      return res.status(404).json({ message: 'KYC not found' });
+    }
 
     res.status(200).json({
       message: 'KYC found',
@@ -105,11 +128,22 @@ exports.updateKyc = async (req, res) => {
     if (!kyc) return res.status(404).json({ message: 'KYC not found' });
 
     const updateData = { ...req.body };
-
-    if (req.files?.governmentId)
-      updateData.governmentIdFile = req.files.governmentId[0].buffer;
-    if (req.files?.proofOfAddress)
-      updateData.proofOfAddressFile = req.files.proofOfAddress[0].buffer;
+    if (req.files?.governmentId?.[0]) {
+      const govFile = req.files.governmentId[0];
+      const result = await cloudinary.uploader.upload(govFile.path, {
+        folder: 'kyc_documents'
+      });
+      updateData.governmentIdUrl = result.secure_url;
+      fs.unlinkSync(govFile.path);
+    }
+    if (req.files?.proofOfAddress?.[0]) {
+      const proofFile = req.files.proofOfAddress[0];
+      const result = await cloudinary.uploader.upload(proofFile.path, {
+        folder: 'kyc_documents'
+      });
+      updateData.proofOfAddressUrl = result.secure_url;
+      fs.unlinkSync(proofFile.path);
+    }
 
     const updated = await kyc.update(updateData);
 
@@ -118,6 +152,7 @@ exports.updateKyc = async (req, res) => {
       data: updated
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       message: 'Internal server error',
       error: error.message
@@ -132,23 +167,12 @@ exports.deleteKyc = async (req, res) => {
     if (!kyc) return res.status(404).json({ message: 'KYC not found' });
 
     await kyc.destroy();
+
     res.status(200).json({ message: 'KYC deleted successfully' });
   } catch (error) {
     res.status(500).json({
       message: 'Internal server error',
       error: error.message
     });
-  }
-};
-
-exports.getGovernmentIdFile = async (req, res) => {
-  try {
-    const kyc = await KycModel.findByPk(req.params.id);
-    if (!kyc || !kyc.governmentIdFile) return res.status(404).send('File not found');
-
-    res.set('Content-Type', 'image/jpeg');
-    res.send(kyc.governmentIdFile);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
   }
 };

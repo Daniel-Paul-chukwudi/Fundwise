@@ -62,13 +62,13 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      governmentIdFile: {
-        type: Sequelize.BLOB('long'),
-        allowNull: true
+      governmentIdUrl: {
+        type: Sequelize.STRING,
+        allowNull: false
       },
-      proofOfAddressFile: {
-        type: Sequelize.BLOB('long'),
-        allowNull: true
+      proofOfAddressUrl: {
+        type: Sequelize.STRING,
+        allowNull: false
       },
 
       verificationStatus: {

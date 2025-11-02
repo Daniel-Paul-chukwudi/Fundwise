@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {meetingValidator} = require('../Middleware/validator');
-const {getAllMeetings,getMeetingById,updateMeeting,deleteMeeting, createMeetingInvestor,approveMeeting} = require('../Controller/meetingController');
+const {getAllMeetings,getMeetingById,updateMeeting,deleteMeeting, createMeetingInvestor,approveMeeting,requestReschedule,respondReschedule} = require('../Controller/meetingController');
 const {checkInvestorLogin, checkLogin, checkAdmin} = require('../Middleware/authentication')
 
 
@@ -103,5 +103,9 @@ router.get('/meeting/:id', getMeetingById);
 router.patch('/meeting/:id',checkAdmin, updateMeeting);
 
 router.delete('/meeting/:id', checkAdmin, deleteMeeting);
+
+router.post('/meeting/request-reschedule', checkLogin,requestReschedule) //business owner
+
+router.post('/meeting/respond-reschedule', checkInvestorLogin, respondReschedule) //investor respond owner
 
 module.exports = router;

@@ -40,7 +40,8 @@ meeting.init(
         type: DataTypes.STRING,
       },
       meetingStatus:{
-        type: DataTypes.ENUM('Awaiting Approval','Approved','Pending','Reschedule Requested','Concluded')
+        type: DataTypes.ENUM('Awaiting Approval','Approved and Upcoming','Reschedule Requested','Declined','Concluded'),
+        defaultValue: 'Awaiting Approval'
       }
       
       

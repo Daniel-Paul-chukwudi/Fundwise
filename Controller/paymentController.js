@@ -257,6 +257,7 @@ exports.webHook = async (req, res) => {
         message: 'Payment not found'
       })
     }
+
     // const { data } = await axios.get(`https://api.korapay.com/merchant/api/v1/charges/${reference}`, {
     //   headers: {
     //     Authorization: `Bearer ${process.env.KORAPAY_SECRET_KEY}`
@@ -273,19 +274,26 @@ exports.webHook = async (req, res) => {
     // status: 'success'
     // }
 
-    // console.log(data)
+    console.log(data)
+    console.log(payment);
+    
     if ( event === "charge.success") {
       payment.status = 'Successful'
       await payment.save();
       if(payment.paymentType === 'subscription'){
         if(payment.userType === 'Investor'){
           const targetI = await investorModel.findByPk(payment.userId)
+          console.log('investor',targetI);
+          
           targetI.subscribed = true
           targetI.viewAllocation = 5
           await targetI.save()
         }else if(payment.userType === 'BusinessOwner'){
           const targetB = await userModel.findByPk(payment.userId)
+          console.log('business',targetB);
+          
           targetB.subscribed = true
+          console.log('business',targetB);
           await targetB.save()
         }
       }else if(payment.paymentType === 'investment'){

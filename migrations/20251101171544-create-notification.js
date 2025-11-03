@@ -20,8 +20,8 @@ module.exports = {
       description:{
         type: Sequelize.STRING
       },
-      ticketStatus:{
-        type: Sequelize.ENUM('Unread','Read')
+      status:{
+        type: Sequelize.ENUM('unread','read')
       },
       createdAt: {
         allowNull: false,

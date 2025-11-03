@@ -24,7 +24,8 @@ supportticket.init(
         type: DataTypes.STRING
       },
       ticketStatus:{
-        type: DataTypes.ENUM('open','under review','closed')
+        type: DataTypes.ENUM('open','under review','closed'),
+        defaultValue:'open'
       }
       
       

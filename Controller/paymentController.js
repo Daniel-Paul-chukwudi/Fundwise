@@ -72,7 +72,7 @@ exports.initializeSubscriptionPaymentInvestor = async (req, res) => {
 exports.initializeSubscriptionPaymentBusinessOwner = async (req, res) => {
   try {
       const { id } = req.user;
-      const user = await investorModel.findByPk(id);
+      const user = await userModel.findByPk(id);
       const code = await otpGen.generate(12, { upperCaseAlphabets: false, lowerCaseAlphabets: true, digits: true, specialChars: false })
       const ref = `TF-${code}-BOS`
       const {price} = req.body
@@ -91,7 +91,7 @@ exports.initializeSubscriptionPaymentBusinessOwner = async (req, res) => {
       reference: ref,
       customer: {
         email: user.email,
-        name: `${user.firstName} ${user.lastName}`
+        name: `${user.fullName}`
       }
     }
     console.log(paymentData);
@@ -193,8 +193,6 @@ exports.initializeInvestementPaymentInvestor = async (req, res) => {
   }
 };
 
-
-
 exports.verifyPayment = async (req, res) => {
   try {
     const { reference } = req.query;
@@ -292,13 +290,16 @@ exports.webHook = async (req, res) => {
         }
       }else if(payment.paymentType === 'investment'){
         const targetI = await investorModel.findByPk(payment.userId)
-        targetI.totalInvestment
+        targetI.totalInvestment += payment.price
       }
 
-      const user = await investorModel.findByPk(payment.userId)
-      user.subscribed = true
-    //   user.viewAllocation = 10
-        user.save()
+    //   const user = await investorModel.findByPk(payment.userId)
+    //   user.subscribed = true
+    // //   user.viewAllocation = 10
+    //     user.save()
+    console.log("event",event);
+    console.log("data",data);
+    
 
 
       res.status(200).json({

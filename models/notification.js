@@ -24,7 +24,8 @@ notification.init(
         type: DataTypes.STRING
       },
       status:{
-        type: DataTypes.ENUM('unread','read')
+        type: DataTypes.ENUM('unread','read'),
+        defaultValue:'unread'
       } 
   },
   {

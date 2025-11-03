@@ -108,7 +108,7 @@ exports.initializeSubscriptionPaymentBusinessOwner = async (req, res) => {
       paymentType:'subscription',
       reference: ref,
       price,
-      userType:"BusinessOwner"
+      userType:"businessOwner"
     });
 
     if (data?.status === true) {
@@ -280,7 +280,7 @@ exports.webHook = async (req, res) => {
     if ( event === "charge.success") {
       payment.status = 'Successful'
       await payment.save();
-      if(payment.paymentType === 'subscription'){
+      if (payment.paymentType === 'subscription'){
         if(payment.userType === 'Investor'){
           const targetI = await investorModel.findByPk(payment.userId)
           console.log('investor',targetI);
@@ -288,7 +288,7 @@ exports.webHook = async (req, res) => {
           targetI.subscribed = true
           targetI.viewAllocation = 5
           await targetI.save()
-        }else if(payment.userType === 'BusinessOwner'){
+        }else if(payment.userType === 'businessOwner'){
           const targetB = await userModel.findByPk(payment.userId)
           console.log('business',targetB);
           

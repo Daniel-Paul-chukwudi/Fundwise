@@ -67,6 +67,9 @@ module.exports = {
       businessOwner: {
         type: Sequelize.UUID,
       },
+      businessStatus:{
+        type: Sequelize.ENUM('live','under Review','verified')
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

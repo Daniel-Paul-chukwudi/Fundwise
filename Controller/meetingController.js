@@ -5,8 +5,6 @@ const investorModel = require('../models/investor')
 const LINK = process.env.meetingLink
 
 
-
-// Create a new meeting
 exports.createMeetingInvestor = async (req, res) => {
   try {
     const {id} = req.user
@@ -92,7 +90,7 @@ exports.rescheduleMeeting = async(req,res)=>{
   try {
     const {id} = req.user
     const {meetingId, date, time}  = req.body
-    const target = await meetingModel.findOne({where:{guest:id}})
+    const target = await meetingModel.findOne({where:{id:meetingId}})
 
     if(!target){
       return res.status(404).json({
@@ -100,9 +98,6 @@ exports.rescheduleMeeting = async(req,res)=>{
       })
     }
     await target.update({date,time,meetingStatus:"Reschedule Requested"})
-
-
-    
     res.status(200).json({
       message:"changes made awaiting approval",
       data:target
@@ -115,7 +110,32 @@ exports.rescheduleMeeting = async(req,res)=>{
   }
 }
 
-// Get all meetings
+exports.declineMeeting = async(req,res)=>{
+  try {
+    const {id} = req.user
+    const {meetingId}  = req.body
+    const target = await meetingModel.findOne({where:{id:meetingId}})
+
+    if(!target){
+      return res.status(404).json({
+        message:"Oops it seems like the meeting does not exist "
+      })
+    }
+    target.meetingStatus = "Declined"
+    await target.save()
+
+    res.status(200).json({
+      message:"Declined meeting",
+      data:target
+    })
+  } catch (error) {
+    res.status(500).json({ 
+      message: 'Error declining meeting', 
+      error: error.message 
+    });
+  }
+}
+
 exports.getAllMeetings = async (req, res) => {
   try {
     const meetings = await meetingModel.findAll();
@@ -178,7 +198,6 @@ exports.updateMeeting = async (req, res) => {
   }
 };
 
-
 exports.deleteMeeting = async (req, res) => {
   try {
     const { id } = req.params;
@@ -203,78 +222,77 @@ exports.deleteMeeting = async (req, res) => {
   }
 };
 
-// Business Owner requests to reschedule a meeting
-exports.requestReschedule = async (req, res) => {
-  try {
-    const { id } = req.user;  
-    const { meetingId, date, time } = req.body; 
+// exports.requestReschedule = async (req, res) => {
+//   try {
+//     const { id } = req.user;  
+//     const { meetingId, date, time } = req.body; 
     
-    const meeting = await meetingModel.findOne({ where: { id: meetingId, guest: id } });
+//     const meeting = await meetingModel.findOne({ where: { id: meetingId, guest: id } });
 
-    if (!meeting) {
-      return res.status(404).json({
-        message: "Meeting not found or you're not allowed to reschedule this meeting"
-      });
-    }
-
-
-    meeting.date = date;
-    meeting.time = time;
-    meeting.meetingStatus = "Reschedule Requested";
-    await meeting.save();
-
-    res.status(200).json({
-      message: "Reschedule request sent successfully. Waiting for investor's response.",
-      data: meeting
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Error requesting reschedule",
-      error: error.message
-    });
-  }
-};
+//     if (!meeting) {
+//       return res.status(404).json({
+//         message: "Meeting not found or you're not allowed to reschedule this meeting"
+//       });
+//     }
 
 
-// Investor responds to reschedule request
-exports.respondReschedule = async (req, res) => {
-  try {
-    const { id } = req.user; // this is the investor's ID
-    const { meetingId, action, date, time } = req.body; 
-    // action = "accept" | "decline" | "reschedule"
+//     meeting.date = date;
+//     meeting.time = time;
+//     meeting.meetingStatus = "Reschedule Requested";
+//     await meeting.save();
 
-    const meeting = await meetingModel.findOne({ where: { id: meetingId, host: id } });
+//     res.status(200).json({
+//       message: "Reschedule request sent successfully. Waiting for investor's response.",
+//       data: meeting
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       message: "Error requesting reschedule",
+//       error: error.message
+//     });
+//   }
+// };
 
-    if (!meeting) {
-      return res.status(404).json({ 
-        message: "Meeting not found or you're not the host of this meeting" 
-      });
-    }
+
+
+// exports.respondReschedule = async (req, res) => {
+//   try {
+//     const { id } = req.user; 
+//     const { meetingId, action, date, time } = req.body; 
+//     // action = "accept" | "decline" | "reschedule"
+
+//     const meeting = await meetingModel.findOne({ where: { id: meetingId, host: id } });
+
+//     if (!meeting) {
+//       return res.status(404).json({ 
+//         message: "Meeting not found or you're not the host of this meeting" 
+//       });
+//     }
 
     
-    if (action === "accept") {
-      meeting.meetingStatus = "Approved and Upcoming";
-    } else if (action === "decline") {
-      meeting.meetingStatus = "Declined";
-    } else if (action === "reschedule") {
-      meeting.date = date;
-      meeting.time = time;
-      meeting.meetingStatus = "Reschedule Requested";
-    } else {
-      return res.status(400).json({ message: "Invalid action type. Must be accept, decline, or reschedule." });
-    }
+//     if (action === "accept") {
+//       meeting.meetingStatus = "Approved and Upcoming";
+//     } else if (action === "decline") {
+//       meeting.meetingStatus = "Declined";
+//     } else if (action === "reschedule") {
+//       meeting.date = date;
+//       meeting.time = time;
+//       meeting.meetingStatus = "Reschedule Requested";
+//     } else {
+//       return res.status(400).json({ message: "Invalid action type. Must be accept, decline, or reschedule." });
+//     }
 
-    await meeting.save();
+//     await meeting.save();
 
-    res.status(200).json({
-      message:`Meeting ${action}ed successfully.`,
-      data: meeting
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Error responding to reschedule request",
-      error: error.message
-    });
-  }
-};
+//     res.status(200).json({
+//       message:`Meeting ${action}ed successfully.`,
+//       data: meeting
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       message: "Error responding to reschedule request",
+//       error: error.message
+//     });
+//   }
+// };
 

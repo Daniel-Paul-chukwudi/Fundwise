@@ -1,5 +1,6 @@
 require('dotenv').config()
 const userModel = require('../models/user')
+const adminModel = require('../models/admin')
 const jwt = require('jsonwebtoken')
 const investorModel = require("../models/investor")
 const meetingModel = require("../models/meeting")
@@ -73,12 +74,18 @@ exports.checkInvestorLogin  = async (req,res,next)=>{
 
 exports.checkAdmin = async (req,res,next)=>{
     try {
-        const data = req.user
-        const user = await userModel.findByPk(data.id)
+        const token = req.headers.authorization?.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({
+                message: 'Please login again to continue'
+            })
+        }
+        const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+        const user = await adminModel.findByPk(decoded.id)
 
         if(user === null){
             return res.status(404).json({
-                message:"user not found"
+                message:"admin not found"
             })
         }else{
             if(user.role !== 'admin' ){

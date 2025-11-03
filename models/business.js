@@ -70,6 +70,10 @@ Business.init(
     businessOwner: {
       type: DataTypes.UUID,
       
+    },
+    businessStatus:{
+      type: DataTypes.ENUM('live','under Review','verified'),
+      defaultValue:'live'
     }
   },
   {

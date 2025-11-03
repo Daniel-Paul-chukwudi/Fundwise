@@ -5,7 +5,7 @@ const supportTicketModel = require('../models/supportticket');
 
 exports.createTicket = async (req, res) => {
   try {
-    const { id } = req.user; // from login token
+    const { id } = req.user
     const { businessId, title, description } = req.body;
 
    

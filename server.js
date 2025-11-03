@@ -10,6 +10,7 @@ const paymentRouter = require('./route/paymentRouter')
 const investorRouter = require ('./route/investorRouter')
 const adminRouter = require ('./route/adminRouter')
 const meetingRouter = require("./route/meetingRouter")
+const notificationRouter = require("./route/notificationRouter")
 const swaggerJSDoc = require('swagger-jsdoc')
 const swaggerUi  = require('swagger-ui-express')
 
@@ -17,6 +18,7 @@ const swaggerUi  = require('swagger-ui-express')
 const app = express()
 app.use(express.json())
 app.use(cors())
+
 
 
 // app.use('/', (req, res) => {
@@ -82,6 +84,7 @@ app.use(investorRouter);
 app.use(adminRouter);
 app.use(paymentRouter);
 app.use(meetingRouter)
+app.use(notificationRouter)
 app.use((error, req, res, next)=>{
   if (error) {
     res.send(error.message)

@@ -1,7 +1,6 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
 const sequelize = require('../Database/database');
 
-
 class admin extends Model {}
 
 admin.init(
@@ -18,7 +17,8 @@ admin.init(
       },
       role: {
         type: DataTypes.STRING,
-        allowNull:false
+        allowNull:false,
+        defaultValue:'admin'
       },
   },
   {

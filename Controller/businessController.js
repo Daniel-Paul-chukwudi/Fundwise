@@ -30,7 +30,9 @@ exports.createBusiness = async (req, res) => {
     const newBusiness = await business.create({
       businessName,
       fundGoal,
-      description,
+      description:{
+        
+      },
       industry,
       yearFounded,
       businessModel,

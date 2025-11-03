@@ -25,7 +25,9 @@ exports.createNofification = async (req,res)=>{
 
 exports.markAllRead = async (req,res)=>{
     try {
-        const {id} =req.user
+        const {id} = req.user
+        console.log(id);
+        
         await notificationModel.update({status:'read'},{where:{userId:id}})
         res.status(200).json({
             message:"all notifications marked as read"
@@ -56,10 +58,12 @@ exports.allNotifications = async (req,res)=>{
 exports.allNotificationsById = async (req,res)=>{
     try {
         const {id} = req.user
-        const notifications = await notificationModel.findAll({where:{userId:id}})
+        const notificationsUnread = await notificationModel.findAll({where:{userId:id,status:'unread'}})
+        const notificationsRead = await notificationModel.findAll({where:{userId:id,status:'read'}})
         res.status(200).json({
             message:`all the notifications in the db for this user`,
-            notifications
+            read:notificationsRead,
+            unread:notificationsUnread
         })
     } catch (error) {
         res.status(500).json({ 

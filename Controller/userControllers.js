@@ -139,10 +139,14 @@ exports.loginUser = async (req, res, next) => {
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
-    
+    const response = {
+      id:user.id,
+      role:user.role
+    }
     
     return res.status(200).json({
       message: 'Login successful',
+      data:response,
       token,
       
     });

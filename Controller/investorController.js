@@ -8,6 +8,7 @@ const sendEmail = require('../Middleware/Bmail')
 const investorModel = require('../models/investor')
 const agreementModel = require('../models/agreement')
 const saveModel = require("../models/save")
+const businessModel = require('../models/business')
 
 
 exports.makeDeal = async (req,res)=>{
@@ -15,8 +16,16 @@ exports.makeDeal = async (req,res)=>{
         const investorId = req.user.id
         const businessId = req.params.id
 
+        const business = await businessModel.findOne({where:{id:businessId}})
+        if(!business){
+          return res.status(404).json({
+            message:"business not found"
+          })
+        }
+
         const deal = await agreementModel.create({
             investorId,
+            businessOwner:business.businessOwner,
             businessId,
             agreementStatus:"meetup"
         })

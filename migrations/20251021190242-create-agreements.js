@@ -12,6 +12,9 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull:false
       },
+      businessOwner:{
+        type: Sequelize.UUID
+      },
       businessId: {
         type: Sequelize.UUID,
         allowNull:false

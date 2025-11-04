@@ -2,9 +2,69 @@ const express = require('express')
 // const {register,getAll,login,changeRole,forgotPassword,resetPassword} = require("../Controller/userController")
 const {checkInvestorLogin,checkAdmin, checkLogin} = require('../Middleware/authentication')
 const {registerValidator, loginValidator, verifyValidator,changePasswordValidator,forgotPasswordValidator, resendValidator, resetPasswordValidator,deleteUserValidator} = require('../Middleware/validator')
-const { signUp, logininvestor,forgotPassword,changePassword,resetPassword,getAll,deleteUser,getOne,verifyOtp, subscriptionBypass,investorResendOtp} = require('../Controller/investorController')
+const { signUp, logininvestor,forgotPassword,changePassword,resetPassword,getAll,deleteUser,getOne,verifyOtp, subscriptionBypass,investorResendOtp,makeDeal} = require('../Controller/investorController')
 
 const router = express.Router()
+
+/**
+ * @swagger
+ * /makeDeal/{id}:
+ *   post:
+ *     summary: Create a new deal between an investor and a business
+ *     description: Allows an authenticated investor to initiate a deal with a specific business, creating an agreement with status "meetup".
+ *     tags:
+ *       - Deals
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the business the investor wants to make a deal with.
+ *         schema:
+ *           type: integer
+ *           example: 5
+ *     responses:
+ *       201:
+ *         description: Deal created successfully between the investor and the business
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Meeting between 2 and 5 created
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 12
+ *                     investorId:
+ *                       type: integer
+ *                       example: 2
+ *                     businessOwner:
+ *                       type: integer
+ *                       example: 4
+ *                     businessId:
+ *                       type: integer
+ *                       example: 5
+ *                     agreementStatus:
+ *                       type: string
+ *                       example: meetup
+ *       404:
+ *         description: Business not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Business not found
+ */
+router.post('/makeDeal/:id',checkInvestorLogin, makeDeal) 
 
 /**
  * @swagger

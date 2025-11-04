@@ -8,6 +8,8 @@ const likeModel = require('../models/like')
 const viewModel = require('../models/view')
 const saveModel = require('../models/save')
 const ticketModel = require('../models/supportticket')
+const  cloudinary  = require('../config/cloudinary')
+const fs = require('fs')
 
 exports.createBusiness = async (req, res) => {
   try {
@@ -26,6 +28,28 @@ exports.createBusiness = async (req, res) => {
       currentRevenue,
       pitchDeck
     } = req.body;
+
+
+    const files = req.files
+        let response
+        let list = []
+        let babyList = {}
+
+        if(files && files.length > 0){
+            for (const file of files ) {
+                // console.log("the files",file);
+                
+                response = await cloudinary.uploader.upload(file.path)
+                babyList = {
+                    publicId: response.public_id,
+                    imageUrl: response.secure_url
+                }
+                list.push(babyList)
+                // console.log(list);
+                
+                fs.unlinkSync(file.path)
+            }
+        }
 
     const newBusiness = await business.create({
       businessName,

@@ -4,6 +4,10 @@ const {createBusinessValidator} = require('../Middleware/validator')
 
 const express = require('express')
 const router = express.Router()
+const uploads = require('../Middleware/multer')
+
+// router.post('/products',uploads.array('productImages',5),products)
+
 
 /**
  * @swagger

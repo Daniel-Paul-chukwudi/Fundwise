@@ -2,9 +2,9 @@ const { Sequelize, DataTypes, Model } = require('sequelize');
 const sequelize = require('../Database/database');
 
 
-class agrement extends Model {}
+class agreement extends Model {}
 
-agrement.init(
+agreement.init(
   {
     id: {
         allowNull: false,
@@ -15,6 +15,9 @@ agrement.init(
       investorId: {
         type: DataTypes.UUID,
         allowNull:false
+      },
+      businessOwner:{
+        type:DataTypes.UUID
       },
       businessId: {
         type: DataTypes.UUID,
@@ -29,9 +32,9 @@ agrement.init(
   },
   {
     sequelize, 
-    modelName: 'agrements', 
+    modelName: 'agreements', 
     timestamps:true,
   }
 );
 
-module.exports = agrement 
+module.exports = agreement 

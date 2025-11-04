@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken')
 const {verify,forgotPassword}= require('../Middleware/emailTemplates')
 const sendEmail = require('../Middleware/Bmail')
 const bcrypt = require('bcrypt')
+const agreementModel = require('../models/agreement')
 
 
 
@@ -340,13 +341,15 @@ exports.getOne = async(req,res)=>{
         })
     
         const meetings = await meetingModel.findAll({where:{guest:id}})
+        const agreements = await agreementModel.findAll({where:{businessOwner:id}})
         const response = {
           user,
           businesscount:businesses.length,
           totalLikes,
           totalViews,
           businesses,
-          meetings
+          meetings,
+          investorInterests:agreements.length
         }
 
 

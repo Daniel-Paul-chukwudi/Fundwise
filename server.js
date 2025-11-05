@@ -21,62 +21,51 @@ app.use(cors())
 
 
 
-// app.use('/', (req, res) => {
-//   res.send('Connected to Backend Server')
+// app.get('/', (req, res) => {
+//   res.send('✅ TrustForge backend connected successfully');
 // });
 
 const swaggerDefinition = {
   openapi: '3.0.0',
   info: {
-    title: 'Api documentation for mini project',
+    title: 'API Documentation for TrustForge',
     version: '4.1.9',
-    description:
-    'first swagger documentation class',
-    // license: {
-      //   name: 'Licensed Under MIT',
-      //   url: 'https://spdx.org/licenses/MIT.html',//whatever
-    // },
+    description: 'Swagger documentation for the TrustForge backend',
     contact: {
-      name: 'JSONPlaceholder',
-      url: 'https://google.com',//frontend link
+      name: 'TrustForge Support',
+      url: 'https://google.com',
     },
   },
   servers: [
     {
       url: 'https://trustforge.onrender.com',
-      description: 'production server',
+      description: 'Production server',
     },
     {
       url: 'http://localhost:4309',
       description: 'Development server',
-    }
+    },
   ],
-  components:{
-    securitySchemes:{
-      bearerAuth:{
-        type:"http",
-        scheme:"bearer",
-        bearerFormat:"JWT",// optional but recomended
-        description:"Enter your jwt token in the format **Bearer &lt;token&gt;**",
-      }
-    }
+  components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'Enter your JWT token as **Bearer <token>**',
+      },
+    },
   },
-  security:[
-    {
-      bearerAuth:[],
-    }
-  ]
+  security: [{ bearerAuth: [] }],
 };
 
-const options = {
+const swaggerOptions = {
   swaggerDefinition,
-  // Paths to files containing OpenAPI definitions
   apis: ['./route/*.js'],
 };
 
-const swaggerSpec = swaggerJSDoc(options);
+const swaggerSpec = swaggerJSDoc(swaggerOptions);
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
 
 app.use(userRouter);
 app.use(businessRouter);
@@ -94,14 +83,14 @@ app.use((error, req, res, next)=>{
 const Startserver = async ()=>{ 
   try {
     await sequelize.authenticate();
-    console.log('Connection has been established successfully.');
-    app.listen(PORT,()=>{
-        console.log(`Server is running on PORT: ${PORT}`);
-        
-    })
-    } catch (error) {
-    console.error('Unable to connect to the database:', error.message);
-    }
-}
+    console.log('Database connection established successfully');
 
-Startserver();
+    app.listen(PORT, () => {
+      console.log(` Server running on PORT: ${PORT}`);
+    });
+  } catch (error) {
+    console.error('Unable to connect to the database:', error.message);
+  }
+};
+
+startServer();

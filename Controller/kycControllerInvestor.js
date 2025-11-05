@@ -1,5 +1,5 @@
 const fs = require('fs');
-const cloudinary = require('../utils/cloudinary');
+const cloudinary = require('../config/cloudinary');
 const KycModel = require('../models/kyc-investor');
 const UserModel = require('../models/user');
 

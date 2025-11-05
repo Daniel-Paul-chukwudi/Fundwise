@@ -11,6 +11,9 @@ Kyc.init(
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4
     },
+    profilePic:{
+      type: DataTypes.STRING
+    },
     userId: {
       type: DataTypes.UUID
     },
@@ -63,7 +66,6 @@ Kyc.init(
       type: DataTypes.STRING,
       allowNull: false
     },
-
     governmentIdUrl: {
       type: DataTypes.STRING,
       allowNull: false
@@ -72,7 +74,6 @@ Kyc.init(
       type: DataTypes.STRING,
       allowNull: false
     },
-
     verificationStatus: {
       type: DataTypes.ENUM('pending', 'approved', 'rejected'),
       defaultValue: 'pending'

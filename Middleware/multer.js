@@ -2,7 +2,7 @@ const multer = require('multer')
 
 const storage = multer.diskStorage({
     destination:(req,file,cb)=>{
-        cb(null,'./businessDocuments')
+        cb(null,'./images')
     },
     filename:(req,file,cb)=>{
         console.log(file);
@@ -12,22 +12,31 @@ const storage = multer.diskStorage({
         cb(null, `IMG_${uniqueSuffix}.${ext}`)
     }
 })
+
 const fileFilter = (req,file,cb)=>{
-    if (file.mimetype.startsWith('image/')){
-        cb(null,true)
+    const allowedMimes = [
+      'application/pdf',
+    ];
+    if (allowedMimes.includes(file.mimetype) || file.mimetype.startsWith('image/')){ 
+        cb(null, true);
     }else {
-        cb(new Error('invalid file format: image only'))
+        cb(new Error('Invalid file type. Only Image and PDF allowed.'));
     }
 }
 const limits = {
     fileSize:1024*1024*10
-
 }
 
-const uploads = multer({
+exports.uploads = multer({
     storage,
     fileFilter,
     limits
 })
 
-module.exports = uploads
+// exports.uploadDoc = multer({
+//     storage2,
+//     fileFilter:fileFilter2,
+//     limits
+// })
+
+// module.exports = uploads,uploadDoc

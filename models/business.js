@@ -55,6 +55,15 @@ Business.init(
       type: DataTypes.STRING, 
       
     },
+    businessRegisterationCertificate:{
+      type: DataTypes.STRING
+    },
+    pitchDeckPublicId:{
+      type: DataTypes.STRING
+    },
+    businessRegisterationCertificatePublicId:{
+      type: DataTypes.STRING
+    },
     fundGoal: {
       type: DataTypes.INTEGER,
       

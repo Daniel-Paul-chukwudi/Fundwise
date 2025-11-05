@@ -50,7 +50,15 @@ module.exports = {
       },
       pitchDeck: {
         type: Sequelize.STRING, 
-
+      },
+      businessRegisterationCertificate:{
+        type: Sequelize.STRING
+      },
+      pitchDeckPublicId:{
+        type: Sequelize.STRING
+      },
+      businessRegisterationCertificatePublicId:{
+        type: Sequelize.STRING
       },
       fundGoal: {
         type: Sequelize.INTEGER,

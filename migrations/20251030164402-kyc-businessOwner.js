@@ -50,16 +50,20 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      investmentType: {
-        type: Sequelize.STRING,
+      accountName: {
+        type: DataTypes.STRING,
         allowNull: false
       },
-      investmentRange: {
-        type: Sequelize.STRING,
+      accountNumber: {
+        type: DataTypes.STRING,
         allowNull: false
       },
-      preferredSelectors: {
-        type: Sequelize.STRING,
+      accountType: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      bankName: {
+        type: DataTypes.STRING,
         allowNull: false
       },
       governmentIdUrl: {
@@ -70,24 +74,19 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-
       verificationStatus: {
         type: Sequelize.ENUM('pending', 'approved', 'rejected'),
         defaultValue: 'pending'
       },
-      remarks: {
-        type: Sequelize.STRING,
-        allowNull: true
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.fn('NOW')
+        
       },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.fn('NOW')
+        
       }
     });
   },

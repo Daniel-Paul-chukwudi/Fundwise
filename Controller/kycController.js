@@ -1,6 +1,6 @@
 const fs = require('fs');
 const cloudinary = require('../utils/cloudinary');
-const KycModel = require('../models/kyc');
+const KycModel = require('../models/kyc-investor');
 const UserModel = require('../models/user');
 
 exports.createKyc = async (req, res) => {

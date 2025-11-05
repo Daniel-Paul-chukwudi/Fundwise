@@ -13,8 +13,7 @@ Kyc.init(
     },
     profilePic:{
       type: DataTypes.STRING
-    },
-    userId: {
+    }, userId: {
       type: DataTypes.UUID
     },
     firstName: {
@@ -54,15 +53,19 @@ Kyc.init(
       type: DataTypes.STRING,
       allowNull: false
     },
-    investmentType: {
+    accountName: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    investmentRange: {
+    accountNumber: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    preferredSelectors: {
+    accountType: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    bankName: {
       type: DataTypes.STRING,
       allowNull: false
     },
@@ -77,10 +80,6 @@ Kyc.init(
     verificationStatus: {
       type: DataTypes.ENUM('pending', 'approved', 'rejected'),
       defaultValue: 'pending'
-    },
-    remarks: {
-      type: DataTypes.STRING,
-      allowNull: true
     }
   },
   {

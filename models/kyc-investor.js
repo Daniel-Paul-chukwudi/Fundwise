@@ -13,7 +13,8 @@ Kyc.init(
     },
     profilePic:{
       type: DataTypes.STRING
-    }, userId: {
+    },
+    userId: {
       type: DataTypes.UUID
     },
     firstName: {
@@ -62,6 +63,14 @@ Kyc.init(
       allowNull: false
     },
     proofOfAddressUrl: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    governmentIdPublicId: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    proofOfAddressPublicId: {
       type: DataTypes.STRING,
       allowNull: false
     },

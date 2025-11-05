@@ -28,7 +28,7 @@ exports.initializeSubscriptionPaymentInvestor = async (req, res) => {
       reference: ref,
       customer: {
         email: user.email,
-        name: `${user.firstName} ${user.lastName}`
+        name: `${user.fullName}`
       }
     }
     console.log(paymentData);
@@ -153,7 +153,7 @@ exports.initializeInvestementPaymentInvestor = async (req, res) => {
       reference: ref,
       customer: {
         email: user.email,
-        name: `${user.firstName} ${user.lastName}`
+        name: `${user.fullName}`
       }
     }
 

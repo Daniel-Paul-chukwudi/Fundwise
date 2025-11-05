@@ -4,11 +4,14 @@ const {createBusinessValidator} = require('../Middleware/validator')
 
 const express = require('express')
 const router = express.Router()
-const uploads = require('../Middleware/multer')
-
-// router.post('/products',uploads.array('productImages',5),products)
+const {uploads,uploadDoc} = require('../Middleware/multer')
 
 
+
+router.post('/pitch',uploads.fields([
+    { name: 'pitchDeck', maxCount: 1 },
+    { name: 'businessRegistrationCertificate', maxCount: 1 },
+  ]), checkLogin, createBusiness);
 /**
  * @swagger
  * /pitch:
@@ -121,8 +124,7 @@ const uploads = require('../Middleware/multer')
  *                   type: string
  *                   example: "SequelizeValidationError: Missing required field"
  */
-router.post('/pitch', checkLogin, createBusiness);
-// router.post('/pitch',createBusinessValidator, checkLogin, createBusiness);
+// router.post('/pitch', checkLogin, createBusiness);
 
 /**
  * @swagger

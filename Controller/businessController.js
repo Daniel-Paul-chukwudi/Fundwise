@@ -1,4 +1,6 @@
 require('dotenv').config()
+const  cloudinary  = require('../config/cloudinary')
+const fs = require('fs')
 const business = require('../models/business')
 const businessModel = require('../models/business')
 const userModel = require('../models/user')
@@ -8,52 +10,12 @@ const likeModel = require('../models/like')
 const viewModel = require('../models/view')
 const saveModel = require('../models/save')
 const ticketModel = require('../models/supportticket')
-const  cloudinary  = require('../config/cloudinary')
-const fs = require('fs')
 
 exports.createBusiness = async (req, res) => {
   try {
     const userId = req.user.id;
     const {
       businessName,
-      fundGoal,
-      description,
-      industry,
-      yearFounded,
-      businessModel,
-      revenueModel,
-      targetMarket,
-      fundingStage,
-      fundingSought,
-      currentRevenue,
-      pitchDeck
-    } = req.body;
-
-
-    const files = req.files
-        let response
-        let list = []
-        let babyList = {}
-
-        if(files && files.length > 0){
-            for (const file of files ) {
-                // console.log("the files",file);
-                
-                response = await cloudinary.uploader.upload(file.path)
-                babyList = {
-                    publicId: response.public_id,
-                    imageUrl: response.secure_url
-                }
-                list.push(babyList)
-                // console.log(list);
-                
-                fs.unlinkSync(file.path)
-            }
-        }
-
-    const newBusiness = await business.create({
-      businessName,
-      fundGoal,
       description,
       industry,
       yearFounded,
@@ -64,13 +26,53 @@ exports.createBusiness = async (req, res) => {
       fundingSought,
       currentRevenue,
       pitchDeck,
+      businessRegistrationCertificate
+      
+    } = req.body;
+    const Bcheck = await business.findOne({where:{businessName:businessName}})
+    if(Bcheck){
+      return res.status(403).json({
+        message:"A business with this name already exists"
+      })
+    }
+    let file
+    let pitchD = req.files.pitchDeck 
+    file = pitchD[0]
+    console.log(file.path);
+    
+    const responseP = await cloudinary.uploader.upload(file.path, {resource_type: "auto"})
+    fs.unlinkSync(file.path)
+
+    const businessReg = req.files.businessRegistrationCertificate
+    file = businessReg[0]
+    const responseB = await cloudinary.uploader.upload(file.path, {resource_type: "auto"})
+    fs.unlinkSync(file.path)
+    
+
+    const newBusiness = new business({
+      businessName,
+      description,
+      industry,
+      yearFounded,
+      businessModel,
+      revenueModel,
+      targetMarket,
+      fundingStage,
+      fundingSought,
+      currentRevenue,
+      pitchDeck:responseP.secure_url,
+      businessRegisterationCertificate:responseB.secure_url,
+      pitchDeckPublicId:responseP.public_id,
+      businessRegisterationCertificatePublicId:responseB.public_id,
       businessOwner: userId
     });
+    await newBusiness.save()
 
     res.status(201).json({
       message: "Business created successfully",
       data: newBusiness
     });
+
   } catch (error) {
     res.status(500).json({
       message: "Internal server error",
@@ -115,7 +117,6 @@ exports.likeBusiness = async (req, res) => {
     });
   }
 };
-
 
 exports.viewBusiness = async (req, res) => {
   try {

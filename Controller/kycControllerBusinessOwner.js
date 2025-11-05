@@ -7,12 +7,13 @@ exports.createKyc = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const existingKyc = await KycModel.findOne({ where: { userId } });
+    const existingKyc = await KycModel.findOne({ where: { userId:userId } });
     if (existingKyc) {
       return res.status(400).json({ message: 'KYC already exists for this user' });
     }
 
     const {
+      profilePic,
       firstName,
       lastName,
       dateOfBirth,
@@ -22,33 +23,23 @@ exports.createKyc = async (req, res) => {
       residentialAddress,
       city,
       state,
-      investmentType,
-      investmentRange,
-      preferredSelectors
+      investmentType
     } = req.body;
-
-    let governmentIdUrl = null;
-    let proofOfAddressUrl = null;
-
-    if (req.files?.governmentId?.[0]) {
+    
+    let file
       const govFile = req.files.governmentId[0];
-      const result = await cloudinary.uploader.upload(govFile.path, {
-        folder: 'kyc_documents'
-      });
-      governmentIdUrl = result.secure_url;
+      file = govFile
+      const resultG = await cloudinary.uploader.upload(file.path, {resource_type: "auto"});
       fs.unlinkSync(govFile.path);
-    }
-
-    if (req.files?.proofOfAddress?.[0]) {
+    
       const proofFile = req.files.proofOfAddress[0];
-      const result = await cloudinary.uploader.upload(proofFile.path, {
-        folder: 'kyc_documents'
-      });
-      proofOfAddressUrl = result.secure_url;
+      file = proofFile
+      const resultP = await cloudinary.uploader.upload(file.path, {resource_type: "auto"});
       fs.unlinkSync(proofFile.path);
-    }
+    
 
     const newKyc = await KycModel.create({
+      profilePic,
       userId,
       firstName,
       lastName,
@@ -60,10 +51,10 @@ exports.createKyc = async (req, res) => {
       city,
       state,
       investmentType,
-      investmentRange,
-      preferredSelectors,
-      governmentIdUrl,
-      proofOfAddressUrl
+      governmentIdUrl: resultG.secure_url,
+      proofOfAddressUrl: resultP.secure_url,
+      governmentIdPublicId:resultG.public_id,
+      proofOfAddressPublicId:resultP.public_id
     });
 
     res.status(201).json({
@@ -80,10 +71,7 @@ exports.createKyc = async (req, res) => {
 };
 exports.getAllKycs = async (req, res) => {
   try {
-    const kycs = await KycModel.findAll({
-      include: { model: UserModel, as: 'user' },
-      attributes: { exclude: ['governmentIdFile', 'proofOfAddressFile'] }
-    });
+    const kycs = await KycModel.findAll();
 
     res.status(200).json({
       message: 'All KYCs fetched successfully',

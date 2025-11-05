@@ -7,7 +7,109 @@ const router = express.Router()
 const {uploads,uploadDoc} = require('../Middleware/multer')
 
 
-
+/**
+ * @swagger
+ * /pitch:
+ *   post:
+ *     summary: Submit a business pitch
+ *     description: Allows an authenticated user to create a business profile with a pitch deck and business registration certificate uploaded to Cloudinary.
+ *     tags:
+ *       - Business
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - businessName
+ *               - description
+ *               - industry
+ *               - pitchDeck
+ *               - businessRegistrationCertificate
+ *             properties:
+ *               businessName:
+ *                 type: string
+ *                 example: "TechNova Ltd"
+ *               description:
+ *                 type: string
+ *                 example: "A startup focused on AI-driven solutions for small businesses."
+ *               industry:
+ *                 type: string
+ *                 example: "Technology"
+ *               yearFounded:
+ *                 type: string
+ *                 example: "2021"
+ *               businessModel:
+ *                 type: string
+ *                 example: "Subscription-based SaaS"
+ *               revenueModel:
+ *                 type: string
+ *                 example: "Monthly recurring revenue"
+ *               targetMarket:
+ *                 type: string
+ *                 example: "Small and medium-sized enterprises"
+ *               fundingStage:
+ *                 type: string
+ *                 example: "Seed"
+ *               fundingSought:
+ *                 type: string
+ *                 example: "50000"
+ *               currentRevenue:
+ *                 type: string
+ *                 example: "10000"
+ *               pitchDeck:
+ *                 type: string
+ *                 format: binary
+ *                 description: Upload the pitch deck (PDF, PPT, etc.)
+ *               businessRegistrationCertificate:
+ *                 type: string
+ *                 format: binary
+ *                 description: Upload the business registration certificate (PDF, image, etc.)
+ *     responses:
+ *       201:
+ *         description: Business created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Business created successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 5
+ *                     businessName:
+ *                       type: string
+ *                       example: TechNova Ltd
+ *                     industry:
+ *                       type: string
+ *                       example: Technology
+ *                     pitchDeck:
+ *                       type: string
+ *                       example: https://res.cloudinary.com/demo/pitchdeck.pdf
+ *                     businessRegistrationCertificate:
+ *                       type: string
+ *                       example: https://res.cloudinary.com/demo/certificate.pdf
+ *       403:
+ *         description: Business name already exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: A business with this name already exists
+ *       500:
+ *         description: Internal server error
+ */
 router.post('/pitch',uploads.fields([
     { name: 'pitchDeck', maxCount: 1 },
     { name: 'businessRegistrationCertificate', maxCount: 1 },

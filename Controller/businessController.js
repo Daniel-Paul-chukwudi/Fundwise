@@ -38,15 +38,15 @@ exports.createBusiness = async (req, res) => {
     let file
     let pitchD = req.files.pitchDeck 
     file = pitchD[0]
-    console.log(file.path);
-    
     const responseP = await cloudinary.uploader.upload(file.path, {resource_type: "auto"})
     fs.unlinkSync(file.path)
+    // console.log("first",file.path);
 
     const businessReg = req.files.businessRegistrationCertificate
     file = businessReg[0]
     const responseB = await cloudinary.uploader.upload(file.path, {resource_type: "auto"})
     fs.unlinkSync(file.path)
+    // console.log("second", file.path)
     
 
     const newBusiness = new business({

@@ -38,6 +38,8 @@ exports.createBusiness = async (req, res) => {
     let file
     let pitchD = req.files.pitchDeck 
     file = pitchD[0]
+    console.log(file.path);
+    
     const responseP = await cloudinary.uploader.upload(file.path, {resource_type: "auto"})
     fs.unlinkSync(file.path)
 

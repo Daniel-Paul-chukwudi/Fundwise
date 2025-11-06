@@ -1,4 +1,4 @@
-const {createBusiness,getBusiness,getByCategory,updateB,getOneById, deleteB,likeBusiness,viewBusiness,saveBusiness, requestDelete} = require('../Controller/businessController')
+const {createBusiness,getBusiness,getByIndustry,updateB,getOneById, deleteB,likeBusiness,viewBusiness,saveBusiness, requestDelete} = require('../Controller/businessController')
 const {checkLogin,checkSubscription,checkAdmin, checkInvestorLogin} = require('../Middleware/authentication')
 const {createBusinessValidator} = require('../Middleware/validator')
 
@@ -520,21 +520,21 @@ router.get('/businesses',getBusiness)
  * @swagger
  * /business:
  *   get:
- *     summary: Get businesses by category
- *     description: Retrieve all businesses that belong to a specific category.
+ *     summary: Get businesses by industry
+ *     description: Retrieve all businesses that belong to a specific industry.
  *     tags:
- *       - Businesses
+ *       - Business
  *     parameters:
  *       - in: query
- *         name: category
+ *         name: industry
  *         required: true
  *         schema:
  *           type: string
- *         description: The category of businesses to filter by.
- *         example: "Technology"
+ *         description: The industry to filter businesses by
+ *         example: Technology
  *     responses:
  *       200:
- *         description: Successfully retrieved businesses for the given category
+ *         description: Successfully retrieved businesses by industry
  *         content:
  *           application/json:
  *             schema:
@@ -542,37 +542,26 @@ router.get('/businesses',getBusiness)
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "businesses in the Technology category"
+ *                   example: Businesses in the Technology industry
  *                 data:
  *                   type: array
  *                   items:
  *                     type: object
  *                     properties:
  *                       id:
+ *                         type: integer
+ *                         example: 1
+ *                       businessName:
  *                         type: string
- *                         example: "e41b3f88-2cde-4e33-b12e-28f98b8b391b"
- *                       name:
+ *                         example: TechNova Ltd
+ *                       industry:
  *                         type: string
- *                         example: "TechNova Ltd"
+ *                         example: Technology
  *                       description:
  *                         type: string
- *                         example: "A startup building AI-powered logistics tools."
- *                       category:
- *                         type: string
- *                         example: "Technology"
- *                       viewCount:
- *                         type: integer
- *                         example: 120
- *                       createdAt:
- *                         type: string
- *                         format: date-time
- *                         example: "2025-10-07T10:45:32.000Z"
- *                       updatedAt:
- *                         type: string
- *                         format: date-time
- *                         example: "2025-10-07T10:45:32.000Z"
+ *                         example: A startup focused on AI-driven solutions for small businesses.
  *       400:
- *         description: Missing category query parameter
+ *         description: Missing required query parameter
  *         content:
  *           application/json:
  *             schema:
@@ -580,22 +569,21 @@ router.get('/businesses',getBusiness)
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "Category is required"
+ *                   example: Please provide an industry to filter by
+ *       404:
+ *         description: No businesses found in the specified industry
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No businesses found in the Technology industry
  *       500:
  *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "internal server error"
- *                 error:
- *                   type: string
- *                   example: "SequelizeDatabaseError: Unknown column 'category'"
  */
-router.get('/business',getByCategory)
+router.get('/business',getByIndustry)
 
 /**
  * @swagger

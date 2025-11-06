@@ -77,17 +77,25 @@ exports.checkKyc = async (req,res,next)=>{
         const investor = await investorModel.findByPk(userId)
         const user = await userModel.findByPk(userId)
         if(!user && investor){
-            if(investor.kycStatus !== 'verified'){
+            if(investor.kycStatus === 'not provided'){
                 return res.status(200).json({
                 message:"Please submit your KYC for verification"
+                })
+            }else if (investor.kycStatus === 'under review'){
+                return res.status(200).json({
+                message:"your kyc is under review wait for it to be verified"
                 })
             }else{
                 next()
             }
         }else if(!investor && user){
-            if(user.kycStatus !== 'verified'){
+            if(user.kycStatus === 'not provided'){
                 return res.status(200).json({
                 message:"Please submit your KYC for verification"
+                })
+            }else if (user.kycStatus === 'under review'){
+                return res.status(200).json({
+                message:"your kyc is under review wait for it to be verified"
                 })
             }else{
                 next()

@@ -5,11 +5,14 @@ const UserModel = require('../models/user');
 
 exports.createKyc = async (req, res) => {
   try {
+    
     const userId = req.user.id;
-    const govFile = req.files.governmentId[0];
-    const proofFile = req.files.proofOfAddress[0];
-    const proPic = req.files.profilePic[0];
     const existingKyc = await KycModel.findOne({ where: { userId:userId } });
+    
+    const govFile = req.files?.governmentId?.[0]
+    const proofFile = req.files?.proofOfAddress?.[0]
+    const proPic = req.files?.profilePic?.[0];
+
     if (existingKyc) {
       fs.unlinkSync(govFile.path);
       fs.unlinkSync(proofFile.path);
@@ -35,17 +38,17 @@ exports.createKyc = async (req, res) => {
     } = req.body;
     
     let file
-      file = govFile
-      const resultG = await cloudinary.uploader.upload(file.path, {resource_type: "auto"});
-      fs.unlinkSync(govFile.path);
+    file = govFile
+    const resultG = await cloudinary.uploader.upload(file.path, {resource_type: "auto"});
+    fs.unlinkSync(govFile.path);
     
-      file = proofFile
-      const resultP = await cloudinary.uploader.upload(file.path, {resource_type: "auto"});
-      fs.unlinkSync(proofFile.path);
+    file = proofFile
+    const resultP = await cloudinary.uploader.upload(file.path, {resource_type: "auto"});
+    fs.unlinkSync(proofFile.path);
 
-      file = proPic
-      const resultPP = await cloudinary.uploader.upload(file.path, {resource_type: "auto"});
-      fs.unlinkSync(proPic.path);
+    file = proPic
+    const resultPP = await cloudinary.uploader.upload(file.path, {resource_type: "auto"});
+    fs.unlinkSync(proPic.path);
     
 
     const newKyc = new KycModel({

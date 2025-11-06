@@ -1,4 +1,4 @@
-const {createAdmin,getAllAdmins,getOne,updateAdmin,deleteAdmin,verifyBusiness,verifyKyc} = require('../Controller/adminController')
+const {createAdmin,getAllAdmins,getOne,updateAdmin,deleteAdmin,verifyBusiness,verifyKyc, getAllKyc} = require('../Controller/adminController')
 
 const router = require('express').Router()
 
@@ -174,6 +174,104 @@ router.patch('/verifyBusiness',verifyBusiness)
  *                   example: Cannot read properties of undefined
  */
 router.patch('/verifyKyc',verifyKyc)
+
+/**
+ * @swagger
+ * /allKyc:
+ *   get:
+ *     summary: Get all KYC records
+ *     description: >
+ *       Fetches all KYC submissions from both **business owners** and **investors**.  
+ *       This route is typically restricted to **admin** access for review or verification purposes.
+ *     tags:
+ *       - Admin KYC
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved all KYC records
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: All KYCs in the DB
+ *                 businessOwners:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 101
+ *                       userId:
+ *                         type: integer
+ *                         example: 22
+ *                       firstName:
+ *                         type: string
+ *                         example: David
+ *                       lastName:
+ *                         type: string
+ *                         example: Okoro
+ *                       kycStatus:
+ *                         type: string
+ *                         example: under review
+ *                       governmentIdUrl:
+ *                         type: string
+ *                         example: https://res.cloudinary.com/demo/image/upload/v1712/govID.jpg
+ *                       proofOfAddressUrl:
+ *                         type: string
+ *                         example: https://res.cloudinary.com/demo/image/upload/v1712/addressProof.jpg
+ *                       profilePic:
+ *                         type: string
+ *                         example: https://res.cloudinary.com/demo/image/upload/v1712/profilePic.jpg
+ *                 investors:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 204
+ *                       userId:
+ *                         type: integer
+ *                         example: 45
+ *                       firstName:
+ *                         type: string
+ *                         example: Sarah
+ *                       lastName:
+ *                         type: string
+ *                         example: Johnson
+ *                       investmentType:
+ *                         type: string
+ *                         example: Angel Investor
+ *                       kycStatus:
+ *                         type: string
+ *                         example: under review
+ *                       governmentIdUrl:
+ *                         type: string
+ *                         example: https://res.cloudinary.com/demo/image/upload/v1712/investorGov.jpg
+ *                       proofOfAddressUrl:
+ *                         type: string
+ *                         example: https://res.cloudinary.com/demo/image/upload/v1712/investorProof.jpg
+ *                       profilePic:
+ *                         type: string
+ *                         example: https://res.cloudinary.com/demo/image/upload/v1712/investorPic.jpg
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
+ *                 error:
+ *                   type: string
+ *                   example: Cannot read properties of undefined
+ */
+router.get('/allKyc',getAllKyc)
 
 router.delete('/admin',deleteAdmin)
 

@@ -6,10 +6,11 @@ const investorModel = require('../models/investor');
 exports.createKycI = async (req, res) => {
   try {
     const userId = req.user.id;
-    const govFile = req.files.governmentId[0];
-    const proofFile = req.files.proofOfAddress[0];
-    const proPic = req.files.profilePic[0];
+    const govFile = req.files?.governmentId?.[0]
+    const proofFile = req.files?.proofOfAddress?.[0]
+    const proPic = req.files?.profilePic?.[0];
     const existingKyc = await KycModel.findOne({ where: { userId:userId } });
+    
     if (existingKyc) {
       fs.unlinkSync(govFile.path);
       fs.unlinkSync(proofFile.path);

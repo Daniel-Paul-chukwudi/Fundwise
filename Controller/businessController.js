@@ -237,7 +237,7 @@ exports.getOneById = async (req, res) => {
   }
 };
 
-exports.getByCategory = async (req, res) => {
+exports.getByIndustry = async (req, res) => {
   try {
     const { industry } = req.query;
     const targets = await businessModel.findAll({ where: { industry: industry } });

@@ -30,13 +30,23 @@ exports.createBusiness = async (req, res) => {
       
     } = req.body;
     const Bcheck = await business.findOne({where:{businessName:businessName}})
+    const pitchD = req.files.pitchDeck
+    const businessReg = req.files.businessRegistrationCertificate
     if(Bcheck){
+      fs.unlinkSync(pitchD[0].path)
+      fs.unlinkSync(businessReg[0].path)
       return res.status(403).json({
         message:"A business with this name already exists"
       })
-    }
+    }else {
     let file
-    let pitchD = req.files.pitchDeck 
+    if(!pitchD || !businessReg){
+      fs.unlinkSync(pitchD[0].path)
+      fs.unlinkSync(businessReg[0].path)
+      return res.status(403).json({
+        message:"some of the neccesary fields are missing"
+      })
+    }else{
     file = pitchD[0]
     console.log("here");
     
@@ -44,7 +54,6 @@ exports.createBusiness = async (req, res) => {
     fs.unlinkSync(file.path)
     // console.log("first",file.path);
 
-    const businessReg = req.files.businessRegistrationCertificate
     file = businessReg[0]
     const responseB = await cloudinary.uploader.upload(file.path, {resource_type: "auto"})
     fs.unlinkSync(file.path)
@@ -74,6 +83,8 @@ exports.createBusiness = async (req, res) => {
       message: "Business created successfully",
       data: newBusiness
     });
+    }
+  }
 
   } catch (error) {
     res.status(500).json({

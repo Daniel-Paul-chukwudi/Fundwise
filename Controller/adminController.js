@@ -5,7 +5,7 @@ const UserModel = require('../models/user')
 const investorModel = require('../models/investor')
 const KycModel = require('../models/kyc-businessOwner');
 const KycModelI = require('../models/kyc-investor');
-const investor = require('../models/investor')
+
 
 exports.createAdmin = async (req,res)=>{
     try {
@@ -151,16 +151,16 @@ exports.getOneKyc = async (req,res)=>{
         const investor = await investorModel.findByPk(userId)
         const user = await UserModel.findByPk(userId)
         if(!user && investor){
-            await investor.update({kycStatus:"verified"},{where:{userId:userId}})
+            const kycI = await KycModelI.findOne({where:{userId:userId}})
             return res.status(200).json({
-                message:"investor kyc verified successfully",
-                investor
+                message:"The kyc of this investor",
+                kycI
             })
         }else if(!investor && user){
-            await user.update({kycStatus:"verified"},{where:{id:userId}})
+            const kyc = await KycModel.findOne({where:{userId:userId}})
             return res.status(200).json({
-                message:"business Owner kyc verified successfully",
-                user
+                message:"The kyc of this user",
+                kyc
             })
         }else{
             return res.status(404).json({

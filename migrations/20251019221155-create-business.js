@@ -76,7 +76,7 @@ module.exports = {
         type: Sequelize.UUID,
       },
       businessStatus:{
-        type: Sequelize.ENUM('live','under Review','verified')
+        type: Sequelize.ENUM('under review','verified')
       },
       createdAt: {
         allowNull: false,

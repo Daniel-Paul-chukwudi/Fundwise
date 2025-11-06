@@ -171,7 +171,6 @@ exports.viewBusiness = async (req, res) => {
   }
 };
 
-
 exports.saveBusiness = async (req, res) => {
   try {
     const { businessId } = req.body;
@@ -204,10 +203,9 @@ exports.saveBusiness = async (req, res) => {
   }
 };
 
-
 exports.getBusiness = async (req, res) => {
   try {
-    const businesses = await businessModel.findAll();
+    const businesses = await businessModel.findAll({where:{businessStatus:'verified'}});
     res.status(200).json({
       message: "All businesses retrieved successfully",
       data: businesses
@@ -219,7 +217,6 @@ exports.getBusiness = async (req, res) => {
     });
   }
 };
-
 
 exports.getOneById = async (req, res) => {
   try {
@@ -239,7 +236,6 @@ exports.getOneById = async (req, res) => {
     });
   }
 };
-
 
 exports.getByCategory = async (req, res) => {
   try {

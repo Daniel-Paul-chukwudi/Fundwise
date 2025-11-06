@@ -3,12 +3,15 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('kyc_verifications', {
+    await queryInterface.createTable('kycbusinessowners', {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4
+      },
+      profilePic:{
+        type: Sequelize.STRING
       },
       userId: {
         type: Sequelize.UUID
@@ -74,6 +77,15 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      governmentIdPublicId:{
+        type: Sequelize.STRING
+      },
+      proofOfAddressPublicId:{
+        type: Sequelize.STRING
+      },
+      profilePicPublicId:{
+        type: Sequelize.STRING
+      },
       verificationStatus: {
         type: Sequelize.ENUM('pending', 'approved', 'rejected'),
         defaultValue: 'pending'
@@ -81,7 +93,6 @@ module.exports = {
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        
       },
       updatedAt: {
         allowNull: false,
@@ -92,6 +103,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('kyc_verifications');
+    await queryInterface.dropTable('kycbusinessowners');
   }
 };

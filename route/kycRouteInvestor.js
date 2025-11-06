@@ -1,14 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const {createKyc,getAllKycs,getKycById,updateKyc,deleteKyc} = require('../Controller/kycControllerInvestor');
+const {createKycI,getAllKycs,getKycById,updateKyc,deleteKyc} = require('../Controller/kycControllerInvestor');
+const {createKyc} = require('../Controller/kycControllerBusinessOwner');
 const { checkLogin,checkInvestorLogin } = require('../Middleware/authentication');
 const {uploads} = require('../Middleware/multer')
 
-// Create new KYC with file uploads
-router.post('/kycI',checkInvestorLogin,uploads.fields([
+router.post('/kyc',uploads.fields([
     { name: 'governmentId', maxCount: 1 },
-    { name: 'proofOfAddress', maxCount: 1 }
-  ]),createKyc );
+    { name: 'proofOfAddress', maxCount: 1 },
+    { name: 'profilePic', maxCount: 1 }
+]),checkLogin,createKyc)
+
+router.post('/kycI',uploads.fields([
+    { name: 'governmentId', maxCount: 1 },
+    { name: 'proofOfAddress', maxCount: 1 },
+    { name: 'profilePic', maxCount: 1 }
+  ]),checkInvestorLogin,createKycI );
 
 router.get('/kycs', getAllKycs);
 

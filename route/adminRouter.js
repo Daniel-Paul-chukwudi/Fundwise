@@ -1,4 +1,4 @@
-const {createAdmin,getAllAdmins,getOne,updateAdmin,deleteAdmin,verifyBusiness,verifyKyc, getAllKyc} = require('../Controller/adminController')
+const {createAdmin,getAllAdmins,getOne,updateAdmin,deleteAdmin,verifyBusiness,verifyKyc, getAllKyc, getOneKyc} = require('../Controller/adminController')
 
 const router = require('express').Router()
 
@@ -272,6 +272,129 @@ router.patch('/verifyKyc',verifyKyc)
  *                   example: Cannot read properties of undefined
  */
 router.get('/allKyc',getAllKyc)
+
+/**
+ * @swagger
+ * /oneKyc:
+ *   get:
+ *     summary: Get a single user's KYC record
+ *     description: >
+ *       Retrieves the KYC record of a specific **user** or **investor** using their `userId`.  
+ *       The route automatically determines if the user is a **business owner** or **investor** and fetches the corresponding KYC entry.
+ *     tags:
+ *       - KYC Management
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *             properties:
+ *               userId:
+ *                 type: integer
+ *                 description: The ID of the user or investor whose KYC record should be retrieved.
+ *                 example: 42
+ *     responses:
+ *       200:
+ *         description: KYC record retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               oneOf:
+ *                 - type: object
+ *                   properties:
+ *                     message:
+ *                       type: string
+ *                       example: The kyc of this user
+ *                     kyc:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                           example: 10
+ *                         userId:
+ *                           type: integer
+ *                           example: 42
+ *                         firstName:
+ *                           type: string
+ *                           example: Daniel
+ *                         lastName:
+ *                           type: string
+ *                           example: Saul
+ *                         kycStatus:
+ *                           type: string
+ *                           example: verified
+ *                         governmentIdUrl:
+ *                           type: string
+ *                           example: https://res.cloudinary.com/demo/image/upload/v1712/id.jpg
+ *                         proofOfAddressUrl:
+ *                           type: string
+ *                           example: https://res.cloudinary.com/demo/image/upload/v1712/proof.jpg
+ *                         profilePic:
+ *                           type: string
+ *                           example: https://res.cloudinary.com/demo/image/upload/v1712/profile.jpg
+ *                 - type: object
+ *                   properties:
+ *                     message:
+ *                       type: string
+ *                       example: The kyc of this investor
+ *                     kycI:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                           example: 8
+ *                         userId:
+ *                           type: integer
+ *                           example: 84
+ *                         firstName:
+ *                           type: string
+ *                           example: Sarah
+ *                         lastName:
+ *                           type: string
+ *                           example: Johnson
+ *                         investmentType:
+ *                           type: string
+ *                           example: Angel Investor
+ *                         kycStatus:
+ *                           type: string
+ *                           example: under review
+ *                         governmentIdUrl:
+ *                           type: string
+ *                           example: https://res.cloudinary.com/demo/image/upload/v1712/id_investor.jpg
+ *                         proofOfAddressUrl:
+ *                           type: string
+ *                           example: https://res.cloudinary.com/demo/image/upload/v1712/proof_investor.jpg
+ *                         profilePic:
+ *                           type: string
+ *                           example: https://res.cloudinary.com/demo/image/upload/v1712/profile_investor.jpg
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User not found
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
+ *                 error:
+ *                   type: string
+ *                   example: Cannot read properties of undefined
+ */
+router.get('/oneKyc',getOneKyc)
 
 router.delete('/admin',deleteAdmin)
 

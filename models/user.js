@@ -52,8 +52,8 @@ User.init(
         type: DataTypes.BIGINT
       },
       kycStatus:{
-        type: DataTypes.ENUM('empty','under review','verified'),
-        defaultValue:'empty'
+        type: DataTypes.ENUM('not provided','under review','verified'),
+        defaultValue:'not provided'
       }
   },
   {

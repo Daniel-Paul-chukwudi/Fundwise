@@ -48,7 +48,7 @@ module.exports = {
         type: Sequelize.BIGINT
       },
       kycStatus:{
-        type: Sequelize.ENUM('under review','verified')
+        type: Sequelize.ENUM('not provided','under review','verified')
       },
       createdAt: {
         allowNull: false,

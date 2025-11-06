@@ -239,10 +239,10 @@ exports.getOneById = async (req, res) => {
 
 exports.getByCategory = async (req, res) => {
   try {
-    const { category } = req.query;
-    const targets = await businessModel.findAll({ where: { category } });
+    const { industry } = req.query;
+    const targets = await businessModel.findAll({ where: { industry: industry } });
     res.status(200).json({
-      message:`Businesses in the ${category} category`,
+      message:`Businesses in the ${industry} industry`,
       data: targets
     });
   } catch (error) {

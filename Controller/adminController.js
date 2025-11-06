@@ -1,5 +1,8 @@
 const adminModel = require('../models/admin')
 const ticketModel = require('../models/supportticket')
+const businessModel = require('../models/business')
+const UserModel = require('../models/user')
+const investorModel = require('../models/investor')
 
 exports.createAdmin = async (req,res)=>{
     try {
@@ -88,3 +91,54 @@ exports.deleteAdmin = async (req,res)=>{
         })
     }
 }
+
+exports.verifyBusiness = async(req,res)=>{
+    try {
+        const {businessId} = req.body
+        const business = await businessModel.findByPk(businessId)
+        await business.update({businessStatus:"verified"},{where:{id:businessId}})
+        res.status(200).json({
+            message:"business verified successfully",
+            business
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            message:"Internal server error",
+            error:error.message
+        })
+    }
+}
+
+exports.verifyKyc= async(req,res)=>{
+    try {
+        const {userId} = req.body
+        const investor = await investorModel.findByPk(userId)
+        const user = await UserModel.findByPk(userId)
+        if(!user && investor){
+            await investor.update({kycStatus:"verified"},{where:{id:userId}})
+            return res.status(200).json({
+                message:"investor kyc verified successfully",
+                investor
+            })
+        }else if(!investor && user){
+            await user.update({kycStatus:"verified"},{where:{id:userId}})
+            return res.status(200).json({
+                message:"business Owner kyc verified successfully",
+                user
+            })
+        }else{
+            return res.status(404).json({
+                message:"User not found"
+            })
+        }
+        
+
+    } catch (error) {
+        res.status(500).json({
+            message:"Internal server error",
+            error:error.message
+        })
+    }
+}
+

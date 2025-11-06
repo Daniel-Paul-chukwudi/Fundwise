@@ -11,9 +11,9 @@ exports.createKyc = async (req, res) => {
     const proPic = req.files.profilePic[0];
     const existingKyc = await KycModel.findOne({ where: { userId:userId } });
     if (existingKyc) {
-      fs.unlinkSync(govFile[0].path);
-      fs.unlinkSync(proofFile[0].path);
-      fs.unlinkSync(proPic[0].path);
+      fs.unlinkSync(govFile.path);
+      fs.unlinkSync(proofFile.path);
+      fs.unlinkSync(proPic.path);
       return res.status(400).json({ message: 'KYC already exists for this user' });
     }
 

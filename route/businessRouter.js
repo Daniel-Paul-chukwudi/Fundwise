@@ -1,5 +1,5 @@
 const {createBusiness,getBusiness,getByIndustry,updateB,getOneById, deleteB,likeBusiness,viewBusiness,saveBusiness, requestDelete} = require('../Controller/businessController')
-const {checkLogin,checkSubscription,checkAdmin, checkInvestorLogin} = require('../Middleware/authentication')
+const {checkLogin,checkSubscription,checkAdmin, checkInvestorLogin, checkKyc} = require('../Middleware/authentication')
 const {createBusinessValidator} = require('../Middleware/validator')
 
 const express = require('express')
@@ -110,10 +110,10 @@ const {uploads,uploadDoc} = require('../Middleware/multer')
  *       500:
  *         description: Internal server error
  */
-router.post('/pitch',uploads.fields([
+router.post('/pitch', checkLogin,checkKyc,uploads.fields([
     { name: 'pitchDeck', maxCount: 1 },
     { name: 'businessRegistrationCertificate', maxCount: 1 },
-  ]), checkLogin, createBusiness);
+  ]), createBusiness);
 /**
  * @swagger
  * /pitch:

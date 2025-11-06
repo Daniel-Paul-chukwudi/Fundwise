@@ -70,7 +70,40 @@ exports.checkInvestorLogin  = async (req,res,next)=>{
 }
 
 
-
+exports.checkKyc = async (req,res,next)=>{
+    try {
+        
+        const userId =  req.user.id
+        const investor = await investorModel.findByPk(userId)
+        const user = await userModel.findByPk(userId)
+        if(!user && investor){
+            if(investor.kycStatus !== 'verified'){
+                return res.status(200).json({
+                message:"Please submit your KYC for verification"
+                })
+            }else{
+                next()
+            }
+        }else if(!investor && user){
+            if(user.kycStatus !== 'verified'){
+                return res.status(200).json({
+                message:"Please submit your KYC for verification"
+                })
+            }else{
+                next()
+            }
+        }else{
+            return res.status(404).json({
+                message:"User not found"
+            })
+        }
+    } catch (error) {
+        res.status(500).json({
+            message:"internal server error",
+            error: error.message
+        })
+    }
+}
 
 exports.checkAdmin = async (req,res,next)=>{
     try {

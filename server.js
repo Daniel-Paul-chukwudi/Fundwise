@@ -12,6 +12,7 @@ const adminRouter = require ('./route/adminRouter')
 const meetingRouter = require("./route/meetingRouter")
 const notificationRouter = require("./route/notificationRouter")
 const kycRouter = require('./route/kycRoute')
+const ndaRouter = require('./route/ndaRouter')
 const swaggerJSDoc = require('swagger-jsdoc')
 const swaggerUi  = require('swagger-ui-express')
 
@@ -76,6 +77,7 @@ app.use(paymentRouter);
 app.use(meetingRouter)
 app.use(notificationRouter)
 app.use(kycRouter)
+app.use(ndaRouter)
 app.use((error, req, res, next)=>{
   if (error) {
     res.send(error.message)

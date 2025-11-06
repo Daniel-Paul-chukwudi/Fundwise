@@ -81,8 +81,8 @@ Business.init(
       
     },
     businessStatus:{
-      type: DataTypes.ENUM('live','under Review','verified'),
-      defaultValue:'live'
+      type: DataTypes.ENUM('under review','verified'),
+      defaultValue:'under review'
     }
   },
   {

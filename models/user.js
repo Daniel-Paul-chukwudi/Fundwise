@@ -50,6 +50,10 @@ User.init(
       },
       otpExpiredAt:{
         type: DataTypes.BIGINT
+      },
+      kycStatus:{
+        type: DataTypes.ENUM('empty','under review','verified'),
+        defaultValue:'empty'
       }
   },
   {

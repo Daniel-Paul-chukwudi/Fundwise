@@ -1,9 +1,9 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
 const sequelize = require('../Database/database');
 
-class Kyc extends Model {}
+class kycinvestor extends Model {}
 
-Kyc.init(
+kycinvestor.init(
   {
     id: {
       allowNull: false,
@@ -74,6 +74,9 @@ Kyc.init(
       type: DataTypes.STRING,
       allowNull: false
     },
+    profilePicPublicId:{
+      type: DataTypes.STRING
+    },
     verificationStatus: {
       type: DataTypes.ENUM('pending', 'approved', 'rejected'),
       defaultValue: 'pending'
@@ -81,9 +84,9 @@ Kyc.init(
   },
   {
     sequelize,
-    modelName: 'kyc_verifications',
+    modelName: 'kycinvestor',
     timestamps: true
   }
 );
 
-module.exports = Kyc;
+module.exports = kycinvestor;

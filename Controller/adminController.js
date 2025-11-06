@@ -3,6 +3,9 @@ const ticketModel = require('../models/supportticket')
 const businessModel = require('../models/business')
 const UserModel = require('../models/user')
 const investorModel = require('../models/investor')
+const KycModel = require('../models/kyc-businessOwner');
+const KycModelI = require('../models/kyc-investor');
+const investor = require('../models/investor')
 
 exports.createAdmin = async (req,res)=>{
     try {
@@ -134,6 +137,57 @@ exports.verifyKyc= async(req,res)=>{
         }
         
 
+    } catch (error) {
+        res.status(500).json({
+            message:"Internal server error",
+            error:error.message
+        })
+    }
+}
+
+exports.getOneKyc = async (req,res)=>{
+     try {
+        const {userId} = req.body
+        const investor = await investorModel.findByPk(userId)
+        const user = await UserModel.findByPk(userId)
+        if(!user && investor){
+            await investor.update({kycStatus:"verified"},{where:{userId:userId}})
+            return res.status(200).json({
+                message:"investor kyc verified successfully",
+                investor
+            })
+        }else if(!investor && user){
+            await user.update({kycStatus:"verified"},{where:{id:userId}})
+            return res.status(200).json({
+                message:"business Owner kyc verified successfully",
+                user
+            })
+        }else{
+            return res.status(404).json({
+                message:"User not found"
+            })
+        }
+        
+
+    } catch (error) {
+        res.status(500).json({
+            message:"Internal server error",
+            error:error.message
+        })
+    }
+}
+
+exports.getAllKyc = async (req,res)=>{
+    try {
+        let KYC = []
+        const kycs = await KycModel.findAll()
+        const kycs2 = await KycModelI.findAll()
+
+        res.status(200).json({
+            message:"All kys in the DB",
+            businessOwners:kycs,
+            investors:kycs2
+        })
     } catch (error) {
         res.status(500).json({
             message:"Internal server error",

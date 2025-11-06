@@ -116,15 +116,18 @@ exports.verifyBusiness = async(req,res)=>{
 exports.verifyKyc= async(req,res)=>{
     try {
         const {userId} = req.body
+        let kyc
         const investor = await investorModel.findByPk(userId)
         const user = await UserModel.findByPk(userId)
         if(!user && investor){
+            kyc = await KycModelI.update({verificationStatus:"approved"},{where:{userId:userId}})
             await investor.update({kycStatus:"verified"},{where:{id:userId}})
             return res.status(200).json({
                 message:"investor kyc verified successfully",
                 investor
             })
         }else if(!investor && user){
+            kyc = await KycModel.update({verificationStatus:"approved"},{where:{userId:userId}})
             await user.update({kycStatus:"verified"},{where:{id:userId}})
             return res.status(200).json({
                 message:"business Owner kyc verified successfully",

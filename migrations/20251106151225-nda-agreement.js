@@ -14,6 +14,26 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false
       },
+      startupName: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      sentDate: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW
+      },
+      signedDate: {
+        type: Sequelize.DATE,
+        allowNull: true
+      },
+      expiryDate: {
+        type: Sequelize.DATE,
+        allowNull: true
+      },
+      status: {
+        type: Sequelize.ENUM('Pending', 'Active', 'Expired'),
+        defaultValue: 'Pending'
+      },
       agreementText: {
         type: Sequelize.TEXT,
         allowNull: false
@@ -21,10 +41,6 @@ module.exports = {
       agreed: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
-      },
-      signedAt: {
-        type: Sequelize.DATE,
-        allowNull: true
       },
       createdAt: {
         allowNull: false,

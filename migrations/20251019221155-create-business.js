@@ -60,9 +60,8 @@ module.exports = {
       businessRegisterationCertificatePublicId:{
         type: Sequelize.STRING
       },
-      fundGoal: {
+      fundRaised: {
         type: Sequelize.INTEGER,
-
       },
       likeCount: {
         type: Sequelize.INTEGER,
@@ -74,6 +73,9 @@ module.exports = {
       },
       businessOwner: {
         type: Sequelize.UUID,
+      },
+      businessOwnerName:{
+        type: Sequelize.STRING
       },
       businessStatus:{
         type: Sequelize.ENUM('under review','verified')

@@ -23,6 +23,9 @@ agreement.init(
         type: DataTypes.UUID,
         allowNull:false
       },
+      totalInvestment:{
+        type: DataTypes.INTEGER
+      },
       agrementStatus:{
         type: DataTypes.ENUM(['meetup','negociation','ongoing','finalized']),
         allowNull: false,

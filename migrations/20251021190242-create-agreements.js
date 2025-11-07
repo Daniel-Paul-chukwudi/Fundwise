@@ -19,6 +19,9 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull:false
       },
+      totalInvestment:{
+        type: Sequelize.INTEGER
+      },
       agrementStatus:{
         type:Sequelize.ENUM(['meetup','negociation','ongoing','finalized']),
         allowNull: false

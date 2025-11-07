@@ -64,9 +64,9 @@ Business.init(
     businessRegisterationCertificatePublicId:{
       type: DataTypes.STRING
     },
-    fundGoal: {
+    fundRaised: {
       type: DataTypes.INTEGER,
-      
+      defaultValue: 0
     },
     likeCount: {
       type: DataTypes.INTEGER,
@@ -78,7 +78,9 @@ Business.init(
     },
     businessOwner: {
       type: DataTypes.UUID,
-      
+    },
+    businessOwnerName:{
+      type: DataTypes.STRING
     },
     businessStatus:{
       type: DataTypes.ENUM('under review','verified'),

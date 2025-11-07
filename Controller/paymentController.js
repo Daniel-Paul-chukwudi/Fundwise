@@ -4,6 +4,10 @@ const businessModel = require('../models/business')
 const axios = require('axios')
 const paymentModel = require('../models/payment')
 const investorModel = require('../models/investor')
+const agreementModel = require('../models/agreement')
+
+
+
 
 
 exports.initializeSubscriptionPaymentInvestor = async (req, res) => {
@@ -274,45 +278,50 @@ exports.webHook = async (req, res) => {
     // status: 'success'
     // }
 
-    console.log(data)
-    console.log(payment);
+    // console.log(data)
+    // console.log(payment);
     
     if ( event === "charge.success") {
       payment.status = 'Successful'
       await payment.save();
-      if (payment.paymentType === 'subscription'){
-        if(payment.userType === 'Investor'){
+        if (payment.paymentType === 'subscription'){
+            if(payment.userType === 'Investor'){
+              const targetI = await investorModel.findByPk(payment.userId)
+              console.log('investor',targetI);
+              
+              targetI.subscribed = true
+              targetI.viewAllocation = 5
+              await targetI.save()
+            }else if(payment.userType === 'businessOwner'){
+              const targetB = await userModel.findByPk(payment.userId)
+              console.log('business',targetB);
+              
+              targetB.subscribed = true
+              console.log('business',targetB);
+              await targetB.save()
+            }
+        }else if(payment.paymentType === 'investment'){
           const targetI = await investorModel.findByPk(payment.userId)
-          console.log('investor',targetI);
-          
-          targetI.subscribed = true
-          targetI.viewAllocation = 5
-          await targetI.save()
-        }else if(payment.userType === 'businessOwner'){
-          const targetB = await userModel.findByPk(payment.userId)
-          console.log('business',targetB);
-          
-          targetB.subscribed = true
-          console.log('business',targetB);
-          await targetB.save()
+          targetI.totalInvestment += payment.price
+          const targetBusiness = await agreementModel.findOne({where:{businessId:payment.businessId}})
+
+          if(targetBusiness){
+            await agreementModel.update({totalInvestment: totalInvestment += payment.price},
+            {where:{businessId:payment.businessId}})
+          }else if(!targetBusiness){
+            const Business = await businessModel.findByPk(payment.businessId)
+            await agreementModel.create({
+              investorId:payment.userId,
+              businessOwner:Business.businessOwner,
+              businessId:payment.businessId,
+              totalInvestment:payment.price
+            })
+          }
         }
-      }else if(payment.paymentType === 'investment'){
-        const targetI = await investorModel.findByPk(payment.userId)
-        targetI.totalInvestment += payment.price
-      }
-
-    //   const user = await investorModel.findByPk(payment.userId)
-    //   user.subscribed = true
-    // //   user.viewAllocation = 10
-    //     user.save()
-    console.log("event",event);
-    console.log("data",data);
-    
-
-
       res.status(200).json({
         message: 'Payment Verified Successfully'
       })
+
     } else if (event === "charge.failed"){
       payment.status = 'Failed'
       await payment.save();

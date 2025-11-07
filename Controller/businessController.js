@@ -10,6 +10,7 @@ const likeModel = require('../models/like')
 const viewModel = require('../models/view')
 const saveModel = require('../models/save')
 const ticketModel = require('../models/supportticket')
+const agreementModel = require('../models/agreement')
 
 exports.createBusiness = async (req, res) => {
   try {
@@ -58,7 +59,7 @@ exports.createBusiness = async (req, res) => {
     const responseB = await cloudinary.uploader.upload(file.path, {resource_type: "auto"})
     fs.unlinkSync(file.path)
     // console.log("second", file.path)
-    
+    const user = await userModel.findByPk(userId)
 
     const newBusiness = new business({
       businessName,
@@ -75,7 +76,8 @@ exports.createBusiness = async (req, res) => {
       businessRegisterationCertificate:responseB.secure_url,
       pitchDeckPublicId:responseP.public_id,
       businessRegisterationCertificatePublicId:responseB.public_id,
-      businessOwner: userId
+      businessOwner: userId,
+      businessOwnerName:user.fullName
     });
     await newBusiness.save()
 
@@ -222,13 +224,29 @@ exports.getOneById = async (req, res) => {
   try {
     const id = req.params.id;
     const target = await businessModel.findByPk(id);
+    let remaining
     if (!target) {
       return res.status(404).json({ message: "Business not found" });
     }
-    res.status(200).json({
+    const diff = target.fundingRaised - target.fundingSought
+    const interests = await agreementModel.findAll({where:{businessId:id}})
+    if(diff <= 0){
+      remaining = 0
+      return res.status(200).json({
       message: "Business found",
-      data: target
+      data: target,
+      remaining,
+      investorIntrests:interests
     });
+    }else{
+      return res.status(200).json({
+      message: "Business found",
+      data: target,
+      remaining:diff,
+      investorIntrests:interests
+    });
+    }
+    
   } catch (error) {
     res.status(500).json({
       message: "Internal server error",

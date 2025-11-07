@@ -19,8 +19,6 @@ save.init(
         type: DataTypes.UUID,
         allowNull:false,
       },
-
-
   },
   {
     sequelize, 

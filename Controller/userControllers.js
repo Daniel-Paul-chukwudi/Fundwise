@@ -17,6 +17,7 @@ exports.signUp = async (req, res, next) => {
   try {
     const { fullName, phoneNumber, email, password,confirmPassword } = req.body
     const user = await userModel.findOne({where:{ email: email.toLowerCase() }})
+    const investor = await investorModel.findOne({where:{email:email.toLowerCase()}})
     // console.log(user);
     
     if (user !== null) {
@@ -24,6 +25,10 @@ exports.signUp = async (req, res, next) => {
         message: 'User already exists, Log in to your account',
       })
       return next(createError(404, "User not found"));
+    }else if(investor !==null){
+      return res.status(403).json({
+        message: 'User already exists, Log in to your account',
+      })
     }
     if(password !== confirmPassword){   
       return res.status(403).json({

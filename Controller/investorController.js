@@ -391,7 +391,8 @@ exports.getOne = async(req,res)=>{
         
         const response = {
           user,
-          savedBusinesses,
+          savecount:savedBusinesses.length,
+          savedBusinesses
         }
 
 

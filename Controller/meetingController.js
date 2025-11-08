@@ -182,22 +182,21 @@ exports.getMeetingById = async (req, res) => {
   }
 };
 
-exports.getMeetingByIdInvestor = async (req, res) => {
+exports.getMeetingByUserId = async (req, res) => {
   try {
-    const { id } = req.params;
-    // const meeting = await meetingModel.findByPk(id);
-    const investor = await investorModel.findByPk(id)
-        const user = await userModel.findByPk(id)
+    const { userId } = req.params;
+    const investor = await investorModel.findByPk(userId)
+    const user = await userModel.findByPk(userId)
         if(!user && investor){
-            const meetings = await meetingModel.findAll({where:{host:id}})
+            const meetings = await meetingModel.findAll({where:{host:userId}})
             return res.status(200).json({
                 message:"investor meetings",
                 meetings
             })
         }else if(!investor && user){
-            const meetings = await meetingModel.findAll({where:{guest:id}})
+            const meetings = await meetingModel.findAll({where:{guest:userId}})
             return res.status(200).json({
-                message:"investor meetings",
+                message:"User meetings",
                 meetings
             })
         }else{

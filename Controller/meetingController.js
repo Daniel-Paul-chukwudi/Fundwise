@@ -2,7 +2,8 @@ require('dotenv').config()
 const meetingModel = require('../models/meeting')
 const userModel = require('../models/user')
 const investorModel = require('../models/investor')
-const LINK = process.env.meetingLink
+const businessModel = require('../models/business')
+const links = require('../helper/meetingLinks') 
 
 
 exports.createMeetingInvestor = async (req, res) => {
@@ -35,6 +36,7 @@ exports.createMeetingInvestor = async (req, res) => {
         message: 'Investor not found' 
       });
     }
+    const LINK = links[Math.round(Math.random() *10)]
 
     const meeting = await meetingModel.create({
       host:id,
@@ -47,10 +49,13 @@ exports.createMeetingInvestor = async (req, res) => {
       note,
       meetingStatus:"Awaiting Approval"
     });
+    const peop = await businessModel({where:{host:id}})
 
     res.status(201).json({
       message: 'Meeting created successfully',
-      data: meeting
+      data: meeting,
+      businessOwnerName:UserB.fullName,
+      businssName: peop.businssName
     });
   } catch (error) {
     res.status(500).json({ 

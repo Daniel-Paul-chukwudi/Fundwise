@@ -9,6 +9,7 @@ const investorModel = require('../models/investor')
 const agreementModel = require('../models/agreement')
 const saveModel = require("../models/save")
 const businessModel = require('../models/business')
+const meetingModel = require('../models/meeting')
 
 
 exports.makeDeal = async (req,res)=>{
@@ -387,12 +388,14 @@ exports.getOne = async(req,res)=>{
         const user = await investorModel.findByPk(id)
         const savedBusinesses = await saveModel.findAll({where:{userId:id}})
         // console.log(savedBusinesses);
+        const meetings = await meetingModel.findAll({where:{host:id}})
         
         
         const response = {
           user,
           savecount:savedBusinesses.length,
-          savedBusinesses
+          savedBusinesses,
+          meetings
         }
 
 

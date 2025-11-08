@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {meetingValidator} = require('../Middleware/validator');
-const {getAllMeetings,getMeetingById,updateMeeting,deleteMeeting, createMeetingInvestor,approveMeeting,requestReschedule,respondReschedule, declineMeeting, rescheduleMeeting} = require('../Controller/meetingController');
+const {getAllMeetings,getMeetingById,updateMeeting,deleteMeeting, createMeetingInvestor,approveMeeting,requestReschedule,respondReschedule, declineMeeting, rescheduleMeeting,getMeetingByUserId} = require('../Controller/meetingController');
 const {checkInvestorLogin, checkLogin, checkAdmin} = require('../Middleware/authentication')
 
 
@@ -380,6 +380,133 @@ router.get('/meetings', getAllMeetings);
  *                   example: Meeting not found
  */
 router.get('/meeting/:id', getMeetingById);
+
+/**
+ * @swagger
+ * /meetings/{userId}:
+ *   get:
+ *     summary: Get all meetings for a specific user or investor
+ *     description: >
+ *       Retrieves all meetings associated with a specific **user** or **investor** based on their ID.  
+ *       The endpoint automatically checks if the ID belongs to a business owner (user) or an investor, and then returns the appropriate meetings.
+ *     tags:
+ *       - Meeting Management
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         description: The ID of the user or investor whose meetings should be retrieved.
+ *         schema:
+ *           type: integer
+ *           example: 15
+ *     responses:
+ *       200:
+ *         description: Meetings retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               oneOf:
+ *                 - type: object
+ *                   properties:
+ *                     message:
+ *                       type: string
+ *                       example: investor meetings
+ *                     meetings:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                             example: 5
+ *                           host:
+ *                             type: integer
+ *                             example: 15
+ *                           guest:
+ *                             type: integer
+ *                             example: 27
+ *                           meetingTitle:
+ *                             type: string
+ *                             example: Investment Discussion with TechCorp
+ *                           date:
+ *                             type: string
+ *                             format: date
+ *                             example: 2025-10-10
+ *                           time:
+ *                             type: string
+ *                             example: 14:30
+ *                           meetingType:
+ *                             type: string
+ *                             example: virtual
+ *                           meetingStatus:
+ *                             type: string
+ *                             example: Approved and Upcoming
+ *                           note:
+ *                             type: string
+ *                             example: Please join using the Zoom link shared in email.
+ *                 - type: object
+ *                   properties:
+ *                     message:
+ *                       type: string
+ *                       example: user meetings
+ *                     meetings:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                             example: 8
+ *                           guest:
+ *                             type: integer
+ *                             example: 32
+ *                           host:
+ *                             type: integer
+ *                             example: 21
+ *                           meetingTitle:
+ *                             type: string
+ *                             example: Follow-up Meeting with Investor Group
+ *                           date:
+ *                             type: string
+ *                             format: date
+ *                             example: 2025-10-12
+ *                           time:
+ *                             type: string
+ *                             example: 11:00
+ *                           meetingType:
+ *                             type: string
+ *                             example: physical
+ *                           meetingStatus:
+ *                             type: string
+ *                             example: Declined
+ *                           note:
+ *                             type: string
+ *                             example: Investor requested to reschedule.
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User not found
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error fetching meeting
+ *                 error:
+ *                   type: string
+ *                   example: Cannot read properties of undefined (reading 'findByPk')
+ */
+router.get('/meetings/:userId', getMeetingByUserId);
 
 /**
  * @swagger

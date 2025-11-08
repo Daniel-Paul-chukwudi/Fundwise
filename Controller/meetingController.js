@@ -40,7 +40,8 @@ exports.createMeetingInvestor = async (req, res) => {
     console.log(LINK);
     
     const peop = await businessModel.findOne({where:{businessOwner:guest}})
-
+    // console.log(peop);
+    
     const meeting = await meetingModel.create({
       host:id,
       guest,
@@ -53,7 +54,7 @@ exports.createMeetingInvestor = async (req, res) => {
       meetingStatus:"Awaiting Approval",
       businessOwnerName:UserB.fullName,
       hostName:UserI.fullName,
-      businssName: peop.businessName
+      businessName: peop.businessName
     });
 
     res.status(201).json({

@@ -50,14 +50,15 @@ exports.createMeetingInvestor = async (req, res) => {
       time,
       meetingType,
       note,
-      meetingStatus:"Awaiting Approval"
+      meetingStatus:"Awaiting Approval",
+      businessOwnerName:UserB.fullName,
+      hostName:UserI.fullName,
+      businssName: peop.businessName
     });
 
     res.status(201).json({
       message: 'Meeting created successfully',
-      data: meeting,
-      businessOwnerName:UserB.fullName,
-      businssName: peop.businessName
+      data: meeting
     });
   } catch (error) {
     res.status(500).json({ 

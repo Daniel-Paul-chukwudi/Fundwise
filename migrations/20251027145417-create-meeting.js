@@ -46,7 +46,7 @@ module.exports = {
         type: Sequelize.STRING,
       },
       meetingStatus:{
-        type: Sequelize.ENUM('Awaiting Approval','Approved','Pending','Reschedule Requested','Concluded')
+        type: Sequelize.ENUM('Awaiting Approval','Approved and Upcoming','Reschedule Requested','Declined','Concluded'),
       },
       createdAt: {
         allowNull: false,

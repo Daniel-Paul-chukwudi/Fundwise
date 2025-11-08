@@ -4,6 +4,8 @@ const userModel = require('../models/user')
 const investorModel = require('../models/investor')
 const businessModel = require('../models/business')
 const links = require('../helper/meetingLinks') 
+const meeting = require('../models/meeting')
+const { Where } = require('sequelize/lib/utils')
 
 
 exports.createMeetingInvestor = async (req, res) => {
@@ -80,8 +82,7 @@ exports.approveMeeting = async (req,res)=>{
         message:"Oops it seems like the meeting does not exist "
       })
     }
-    target.meetingStatus = "Approved and Upcoming"
-    await target.save()
+    await target.update({meetingStatus:"Approved and Upcoming"})
 
     res.status(200).json({
       message:"Approved meeting",
@@ -130,8 +131,8 @@ exports.declineMeeting = async(req,res)=>{
         message:"Oops it seems like the meeting does not exist "
       })
     }
-    target.meetingStatus = "Declined"
-    await target.save()
+    await meetingModel.update({meetingStatus:"Declined"},{where:{id:meetingId}})
+    
 
     res.status(200).json({
       message:"Declined meeting",
@@ -173,6 +174,37 @@ exports.getMeetingById = async (req, res) => {
     res.status(200).json({ 
       data: meeting 
     });
+  } catch (error) {
+    res.status(500).json({ 
+      message: 'Error fetching meeting', 
+      error: error.message 
+    });
+  }
+};
+
+exports.getMeetingByIdInvestor = async (req, res) => {
+  try {
+    const { id } = req.params;
+    // const meeting = await meetingModel.findByPk(id);
+    const investor = await investorModel.findByPk(id)
+        const user = await userModel.findByPk(id)
+        if(!user && investor){
+            const meetings = await meetingModel.findAll({where:{host:id}})
+            return res.status(200).json({
+                message:"investor meetings",
+                meetings
+            })
+        }else if(!investor && user){
+            const meetings = await meetingModel.findAll({where:{guest:id}})
+            return res.status(200).json({
+                message:"investor meetings",
+                meetings
+            })
+        }else{
+            return res.status(404).json({
+                message:"User not found"
+            })
+        }
   } catch (error) {
     res.status(500).json({ 
       message: 'Error fetching meeting', 

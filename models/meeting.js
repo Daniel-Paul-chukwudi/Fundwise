@@ -20,6 +20,15 @@ meeting.init(
       meetingLink:{
         type: DataTypes.STRING
       },
+      hostName:{
+        type: DataTypes.STRING
+      },
+      businessOwnerName:{
+        type: DataTypes.STRING
+      },
+      businessName:{
+        type: DataTypes.STRING
+      },
       meetingTitle: {
         type: DataTypes.STRING,
         allowNull:false,

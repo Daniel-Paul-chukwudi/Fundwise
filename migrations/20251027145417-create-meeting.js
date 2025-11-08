@@ -16,6 +16,15 @@ module.exports = {
       },
       meetingLink:{
         type: Sequelize.STRING
+      },
+      hostName:{
+        type: Sequelize.STRING
+      },
+      businessOwnerName:{
+        type: Sequelize.STRING
+      },
+      businessName:{
+        type: Sequelize.STRING
       }, 
       meetingTitle: {
         type: Sequelize.STRING,

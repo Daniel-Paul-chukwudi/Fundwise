@@ -6,3 +6,5 @@ meetingLinks = [
     "https://meet.google.com/psn-dtiy-xrn",
     "https://meet.google.com/vof-dtdb-yti"
 ]
+
+module.exports = meetingLinks

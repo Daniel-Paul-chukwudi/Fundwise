@@ -37,6 +37,9 @@ exports.createMeetingInvestor = async (req, res) => {
       });
     }
     const LINK = links[Math.round(Math.random() *10)]
+    console.log(LINK);
+    
+    const peop = await businessModel.findOne({where:{businessOwner:guest}})
 
     const meeting = await meetingModel.create({
       host:id,
@@ -49,13 +52,12 @@ exports.createMeetingInvestor = async (req, res) => {
       note,
       meetingStatus:"Awaiting Approval"
     });
-    const peop = await businessModel({where:{host:id}})
 
     res.status(201).json({
       message: 'Meeting created successfully',
       data: meeting,
       businessOwnerName:UserB.fullName,
-      businssName: peop.businssName
+      businssName: peop.businessName
     });
   } catch (error) {
     res.status(500).json({ 

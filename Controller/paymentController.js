@@ -55,16 +55,17 @@ exports.initializeSubscriptionPaymentInvestor = async (req, res) => {
     if (data?.status === true) {
       await payment.save();
     }
-
-    res.status(200).json({
-      message: 'Payment Initialized successfuly',
-      data: {
-        reference: data?.data?.reference,
-        url: data?.data?.checkout_url
-      },
-      payment,
-      paymentData
-    })
+    const link = data?.data?.checkout_url
+    res.redirect(link)
+    // res.status(200).json({
+    //   message: 'Payment Initialized successfuly',
+    //   data: {
+    //     reference: data?.data?.reference,
+    //     url: data?.data?.checkout_url
+    //   },
+    //   payment,
+    //   paymentData
+    // })
   } catch (error) {
     res.status(500).json({
       message: 'Error initializing payment: ' + error.message,
@@ -119,15 +120,17 @@ exports.initializeSubscriptionPaymentBusinessOwner = async (req, res) => {
       await payment.save();
     }
 
-    res.status(200).json({
-      message: 'Payment Initialized successfuly',
-      data: {
-        reference: data?.data?.reference,
-        url: data?.data?.checkout_url
-      },
-      payment,
-      paymentData
-    })
+    const link = data?.data?.checkout_url
+    res.redirect(link)
+    // res.status(200).json({
+    //   message: 'Payment Initialized successfuly',
+    //   data: {
+    //     reference: data?.data?.reference,
+    //     url: data?.data?.checkout_url
+    //   },
+    //   payment,
+    //   paymentData
+    // })
   } catch (error) {
     res.status(500).json({
       message: 'Error initializing payment: ' + error.message,
@@ -180,15 +183,17 @@ exports.initializeInvestementPaymentInvestor = async (req, res) => {
       await payment.save();
     }
 
-    res.status(200).json({
-      message: 'Payment Initialized successfuly',
-      data: {
-        reference: data?.data?.reference,
-        url: data?.data?.checkout_url
-      },
-      payment,
-      paymentData
-    })
+    const link = data?.data?.checkout_url
+    res.redirect(link)
+    // res.status(200).json({
+    //   message: 'Payment Initialized successfuly',
+    //   data: {
+    //     reference: data?.data?.reference,
+    //     url: data?.data?.checkout_url
+    //   },
+    //   payment,
+    //   paymentData
+    // })
   } catch (error) {
     res.status(500).json({
       message: 'Error initializing payment: ' + error.message,

@@ -332,7 +332,7 @@ exports.getOne = async(req,res)=>{
   try {
         const id  = req.params.id
         const user = await userModel.findByPk(id)
-        console.log(user);
+        // console.log(user);
         
         // const savedBusinesses = await saveModel.findAll({where:{userId:id}})
         // console.log(savedBusinesses);

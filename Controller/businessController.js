@@ -236,14 +236,16 @@ exports.getOneById = async (req, res) => {
       message: "Business found",
       data: target,
       remaining,
-      investorIntrests:interests
+      investorIntrests:interests,
+      investorCount:interests.length
     });
     }else{
       return res.status(200).json({
       message: "Business found",
       data: target,
       remaining:diff,
-      investorIntrests:interests
+      investorIntrests:interests,
+      investorCount:interests.length
     });
     }
     

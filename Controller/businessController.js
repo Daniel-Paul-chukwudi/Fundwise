@@ -11,6 +11,7 @@ const viewModel = require('../models/view')
 const saveModel = require('../models/save')
 const ticketModel = require('../models/supportticket')
 const agreementModel = require('../models/agreement')
+const notificationModel = require('../models/notification')
 
 exports.createBusiness = async (req, res) => {
   try {
@@ -80,6 +81,7 @@ exports.createBusiness = async (req, res) => {
       businessOwnerName:user.fullName
     });
     await newBusiness.save()
+
 
     res.status(201).json({
       message: "Business created successfully",
@@ -228,9 +230,12 @@ exports.getOneById = async (req, res) => {
     if (!target) {
       return res.status(404).json({ message: "Business not found" });
     }
-    const diff = target.fundingRaised - target.fundingSought
+    const diff = target.fundRaised - target.fundingSought
+    // console.log(target.fundRaised);
+    // console.log(target.fundingSought);
+    
     const interests = await agreementModel.findAll({where:{businessId:id}})
-    if(diff <= 0){
+    if(diff <= 0 ){
       remaining = 0
       return res.status(200).json({
       message: "Business found",

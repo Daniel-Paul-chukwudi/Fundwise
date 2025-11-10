@@ -88,96 +88,97 @@ exports.createKyc = async (req, res) => {
     });
   }
 };
-exports.getAllKycs = async (req, res) => {
-  try {
-    const kycs = await KycModel.findAll();
 
-    res.status(200).json({
-      message: 'All KYCs fetched successfully',
-      count: kycs.length,
-      data: kycs
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: 'Internal server error',
-      error: error.message
-    });
-  }
-};
+// exports.getAllKycs = async (req, res) => {
+//   try {
+//     const kycs = await KycModel.findAll();
 
-exports.getKycById = async (req, res) => {
-  try {
-    const id = req.user.id;
-    const kyc = await KycModel.findByPk(id);
+//     res.status(200).json({
+//       message: 'All KYCs fetched successfully',
+//       count: kycs.length,
+//       data: kycs
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       message: 'Internal server error',
+//       error: error.message
+//     });
+//   }
+// };
 
-    if (!kyc) {
-      return res.status(404).json({ message: 'KYC not found' });
-    }
+// exports.getKycById = async (req, res) => {
+//   try {
+//     const id = req.user.id;
+//     const kyc = await KycModel.findByPk(id);
 
-    res.status(200).json({
-      message: 'KYC found',
-      data: kyc
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: 'Internal server error',
-      error: error.message
-    });
-  }
-};
+//     if (!kyc) {
+//       return res.status(404).json({ message: 'KYC not found' });
+//     }
 
-exports.updateKyc = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const kyc = await KycModel.findByPk(id);
-    if (!kyc) return res.status(404).json({ message: 'KYC not found' });
+//     res.status(200).json({
+//       message: 'KYC found',
+//       data: kyc
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       message: 'Internal server error',
+//       error: error.message
+//     });
+//   }
+// };
 
-    const updateData = { ...req.body };
-    if (req.files?.governmentId?.[0]) {
-      const govFile = req.files.governmentId[0];
-      const result = await cloudinary.uploader.upload(govFile.path, {
-        folder: 'kyc_documents'
-      });
-      updateData.governmentIdUrl = result.secure_url;
-      fs.unlinkSync(govFile.path);
-    }
-    if (req.files?.proofOfAddress?.[0]) {
-      const proofFile = req.files.proofOfAddress[0];
-      const result = await cloudinary.uploader.upload(proofFile.path, {
-        folder: 'kyc_documents'
-      });
-      updateData.proofOfAddressUrl = result.secure_url;
-      fs.unlinkSync(proofFile.path);
-    }
+// exports.updateKyc = async (req, res) => {
+//   try {
+//     const id = req.params.id;
+//     const kyc = await KycModel.findByPk(id);
+//     if (!kyc) return res.status(404).json({ message: 'KYC not found' });
 
-    const updated = await kyc.update(updateData);
+//     const updateData = { ...req.body };
+//     if (req.files?.governmentId?.[0]) {
+//       const govFile = req.files.governmentId[0];
+//       const result = await cloudinary.uploader.upload(govFile.path, {
+//         folder: 'kyc_documents'
+//       });
+//       updateData.governmentIdUrl = result.secure_url;
+//       fs.unlinkSync(govFile.path);
+//     }
+//     if (req.files?.proofOfAddress?.[0]) {
+//       const proofFile = req.files.proofOfAddress[0];
+//       const result = await cloudinary.uploader.upload(proofFile.path, {
+//         folder: 'kyc_documents'
+//       });
+//       updateData.proofOfAddressUrl = result.secure_url;
+//       fs.unlinkSync(proofFile.path);
+//     }
 
-    res.status(200).json({
-      message: 'KYC updated successfully',
-      data: updated
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: 'Internal server error',
-      error: error.message
-    });
-  }
-};
+//     const updated = await kyc.update(updateData);
 
-exports.deleteKyc = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const kyc = await KycModel.findByPk(id);
-    if (!kyc) return res.status(404).json({ message: 'KYC not found' });
+//     res.status(200).json({
+//       message: 'KYC updated successfully',
+//       data: updated
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({
+//       message: 'Internal server error',
+//       error: error.message
+//     });
+//   }
+// };
 
-    await kyc.destroy();
+// exports.deleteKyc = async (req, res) => {
+//   try {
+//     const id = req.params.id;
+//     const kyc = await KycModel.findByPk(id);
+//     if (!kyc) return res.status(404).json({ message: 'KYC not found' });
 
-    res.status(200).json({ message: 'KYC deleted successfully' });
-  } catch (error) {
-    res.status(500).json({
-      message: 'Internal server error',
-      error: error.message
-    });
-  }
-};
+//     await kyc.destroy();
+
+//     res.status(200).json({ message: 'KYC deleted successfully' });
+//   } catch (error) {
+//     res.status(500).json({
+//       message: 'Internal server error',
+//       error: error.message
+//     });
+//   }
+// };

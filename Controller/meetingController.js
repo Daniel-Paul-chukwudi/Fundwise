@@ -15,7 +15,7 @@ exports.createMeetingInvestor = async (req, res) => {
     const {id} = req.user
     const { meetingTitle, date, time, meetingType, note , guest } = req.body;
 
-    if(!meetingTitle || !date || !time || !meetingType || !note || !guest){
+    if(!meetingTitle || !date || !time || !meetingType || !guest){
       return res.status(403).json({ 
         message: 'Please make sure all fields are filled' 
       });

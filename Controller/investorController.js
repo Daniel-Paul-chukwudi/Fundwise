@@ -104,6 +104,7 @@ exports.signUp = async (req, res, next) => {
       fullName,
       phoneNumber,
       password: hashedPassword,
+      viewAllocation:5,
       email:email.toLowerCase(),
       otp: otp,
       otpExpiredAt:(Date.now() + 1000 * 300)

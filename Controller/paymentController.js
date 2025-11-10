@@ -181,6 +181,7 @@ exports.initializeInvestementPaymentInvestor = async (req, res) => {
       amount: price,
       currency: 'NGN',
       reference: ref,
+      redirect_url: link2,
       customer: {
         email: user.email,
         name: `${user.fullName}`
@@ -322,8 +323,8 @@ exports.webHook = async (req, res) => {
               userId:payment.userId,
               businessId,
               title:`Your subscription was successful `,
-              description:`hello ${targetI.fullName} your subscription was successful and you have been allocated 5 view points.\n
-              Thank you for putting your trust in TrustForge 👊😁\n one quicky for you 😉`
+              description:`hello ${targetI.fullName} your subscription was successful and you have been allocated 5 view points.
+              Thank you for putting your trust in TrustForge 👊😁`
               })
               targetI.subscribed = true
               targetI.viewAllocation = 5
@@ -337,8 +338,8 @@ exports.webHook = async (req, res) => {
               userId:payment.userId,
               businessId,
               title:`Your subscription was successful `,
-              description:`hello ${targetB.fullName} your subscription was successful and your business has been added to the promoted section.\n
-              Thank you for putting your trust in TrustForge 👊😁\n one quicky for you 😉`
+              description:`hello ${targetB.fullName} your subscription was successful and your business has been added to the promoted section.
+              Thank you for putting your trust in TrustForge 👊😁`
               })
             }
         }else if(payment.paymentType === 'investment'){
@@ -351,18 +352,18 @@ exports.webHook = async (req, res) => {
           Business.fundRaised += payment.price
           Business.save()
           await notificationModel.create({
-            userId:payment.userId,
-            businessId:payment.businessId,
-            title:`Your investment was successful `,
-            description:`hello ${targetI.fullName} your investment payment into ${Business.businessName} was successful .\n
-            Thank you for putting your trust in TrustForge 👊😁\n one quicky for you 😉`
+          userId:payment.userId,
+          businessId:payment.businessId,
+          title:`Your investment was successful `,
+          description:`hello ${targetI.fullName} your investment payment into ${Business.businessName} was successful .
+          Thank you for putting your trust in TrustForge 👊😁`
             })
-            await notificationModel.create({
-              userId:Business.businessOwner,
+          await notificationModel.create({
+          userId:Business.businessOwner,
           businessId:payment.businessId,
           title:`You just got an investor `,
-          description:`hello ${Business.businessOwnerName} your ${Business.businessName} was just funded with the sum of ${payment.price} by ${targetI.fullName} .\n
-          Thank you for putting your trust in TrustForge 👊😁\n one quicky for you 😉`
+          description:`hello ${Business.businessOwnerName} your ${Business.businessName} was just funded with the sum of ${payment.price} by ${targetI.fullName}.
+          Thank you for putting your trust in TrustForge 👊😁`
             })
         
           const targetBusiness = await agreementModel.findOne({where:{businessId:payment.businessId,investorId:targetI.id}})

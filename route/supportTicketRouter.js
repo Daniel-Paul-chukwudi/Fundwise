@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { checkLogin, checkAdmin } = require('../Middleware/authentication');
+const { checkLogin, checkInvestorLogin,checkAdmin } = require('../Middleware/authentication');
 
 const {createTicket, getAllTickets, getTicketById, updateTicket, deleteTicket} = require('../Controller/supportTicketController')
 const supportController = require('../Controller/supportTicketController');
@@ -48,6 +48,105 @@ const supportController = require('../Controller/supportTicketController');
  *         description: Missing or invalid data
  */
 router.post('/support', checkLogin, createTicket);
+
+/**
+ * @swagger
+ * /supportI:
+ *   post:
+ *     summary: Create a support ticket (Investor)
+ *     description: Allows a logged-in investor to create a support ticket when they encounter an issue or need assistance.
+ *     tags:
+ *       - Support
+ *     security:
+ *       - bearerAuth: []   # Assumes JWT authentication for investor login
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - description
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: "Issue with investment payment"
+ *               description:
+ *                 type: string
+ *                 example: "I made a payment for an investment but it hasn't reflected on my dashboard."
+ *     responses:
+ *       201:
+ *         description: Support ticket created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Support ticket created successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 12
+ *                     userId:
+ *                       type: integer
+ *                       example: 45
+ *                     title:
+ *                       type: string
+ *                       example: "Issue with investment payment"
+ *                     description:
+ *                       type: string
+ *                       example: "I made a payment for an investment but it hasn't reflected on my dashboard."
+ *                     ticketStatus:
+ *                       type: string
+ *                       example: "open"
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-10-07T09:00:00Z"
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-10-07T09:00:00Z"
+ *       400:
+ *         description: Missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Please fill all required fields
+ *       401:
+ *         description: Unauthorized (Investor not logged in)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Unauthorized - please log in as investor
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error creating ticket
+ *                 error:
+ *                   type: string
+ *                   example: "Database connection failed"
+ */
+router.post('/supportI', checkInvestorLogin, createTicket);
 
 /**
  * @swagger

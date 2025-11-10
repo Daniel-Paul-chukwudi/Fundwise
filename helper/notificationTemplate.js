@@ -5,6 +5,6 @@ exports.notify = async (options)=>{
         userId:options.userId,
         businessId:options.businessId,
         title:options.title,
-        description:`${options.description}.\n Thank you for putting your trust in TrustForge 👊😁\n one quicky for you 😉`
+        description:`${options.description}. Thank you for putting your trust in TrustForge 👊😁`
         })
 }

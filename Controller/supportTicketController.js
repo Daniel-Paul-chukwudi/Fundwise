@@ -6,17 +6,16 @@ const supportTicketModel = require('../models/supportticket');
 exports.createTicket = async (req, res) => {
   try {
     const { id } = req.user
-    const { businessId, title, description } = req.body;
+    const {title, description } = req.body;
 
    
-    if (!businessId || !title || !description) {
+    if (!title || !description) {
       return res.status(400).json({ message: 'Please fill all required fields' });
     }
 
    
     const ticket = await supportTicketModel.create({
       userId: id,
-      businessId,
       title,
       description,
       ticketStatus: 'open'

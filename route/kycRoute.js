@@ -529,6 +529,6 @@ router.get('/kycs', getAllKycs);
 router.get('/kyc/:id', getKycByUserId);
 
 
-router.delete('/:id', checkLogin, deleteKyc);
+router.delete('/kyc/:id', deleteKyc);
 
 module.exports = router;

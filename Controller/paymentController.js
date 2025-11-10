@@ -158,13 +158,15 @@ exports.initializeInvestementPaymentInvestor = async (req, res) => {
         message: 'User not found'
       })
     }
-    const link = `https://thetrustforge.vercel.app/dashboard/investor/payment-success/${user.id}/${user.fullName}/${ref}/${price}`
+    // const link = `https://thetrustforge.vercel.app/dashboard/investor/payment-success/${user.id}/${user.fullName}/${ref}/${price}`
+    const link2 = `https://thetrustforge.vercel.app/dashboard/investor/payment-success?id=${user.id}&investorName=${user.fullName}&referenceId=${ref}&amount=${price}`
     
 
     const paymentData = {
       amount: price,
       currency: 'NGN',
       reference: ref,
+      redirect_url:link2,
       customer: {
         email: user.email,
         name: `${user.fullName}`

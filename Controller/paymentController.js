@@ -5,6 +5,8 @@ const axios = require('axios')
 const paymentModel = require('../models/payment')
 const investorModel = require('../models/investor')
 const agreementModel = require('../models/agreement')
+const notificationModel = require('../models/notification')
+
 
 
 
@@ -287,6 +289,7 @@ exports.webHook = async (req, res) => {
     // console.log(payment);
     
     if ( event === "charge.success") {
+      let link = ''
       payment.status = 'Successful'
       await payment.save();
       console.log(payment);
@@ -323,21 +326,28 @@ exports.webHook = async (req, res) => {
           targetI.totalInvestment += payment.price
           console.log(targetI);
           await targetI.save()
-          const targetBusiness = await agreementModel.findOne({where:{businessId:payment.businessId}})
           const Business = await businessModel.findByPk(payment.businessId)
           Business.fundRaised += payment.price
           Business.save()
           await notificationModel.create({
-          userId:payment.userId,
+            userId:payment.userId,
+            businessId:payment.businessId,
+            title:`Your investment was successful `,
+            description:`hello ${targetI.fullName} your investment payment into ${Business.businessName} was successful .\n
+            Thank you for putting your trust in TrustForge 👊😁\n one quicky for you 😉`
+            })
+            await notificationModel.create({
+              userId:Business.businessOwner,
           businessId:payment.businessId,
-          title:`Your subscription was successful `,
-          description:`hello ${targetI.fullName} your investment payment into ${Business.businessName} was successful .\n
+          title:`You just got an investor `,
+          description:`hello ${Business.businessOwnerName} your ${Business.businessName} was just funded with the sum of ${payment.price} by ${targetI.fullName} .\n
           Thank you for putting your trust in TrustForge 👊😁\n one quicky for you 😉`
-          })
-
+            })
+        
+          const targetBusiness = await agreementModel.findOne({where:{businessId:payment.businessId,investorId:targetI.id}})
           if(targetBusiness){
-            await agreementModel.update({totalInvestment: totalInvestment += payment.price},
-            {where:{businessId:payment.businessId}})
+            await agreementModel.update({totalInvestment: targetBusiness.totalInvestment += payment.price},
+            {where:{businessId:payment.businessId,investorId:targetI.id}})
           }else if(!targetBusiness){
             await agreementModel.create({
               investorId:payment.userId,
@@ -346,9 +356,11 @@ exports.webHook = async (req, res) => {
               totalInvestment:payment.price
             })
           }
+          link = `https://thetrustforge.vercel.app/payment-success/${targetI.id}/${targetI.fullName}/${payment.reference}/${payment.price}`
         }
       res.status(200).json({
-        message: 'Payment Verified Successfully'
+        message: 'Payment Verified Successfully',
+        redirectLink: link
       })
 
     } else if (event === "charge.failed"){

@@ -1,4 +1,4 @@
-const {createAdmin,getAllAdmins,getOne,updateAdmin,deleteAdmin,verifyBusiness,verifyKyc, getAllKyc, getOneKyc} = require('../Controller/adminController')
+const {createAdmin,getAllAdmins,getOne,updateAdmin,deleteAdmin,verifyBusiness,verifyKyc, getAllKyc, getOneKyc, getAllAgreements} = require('../Controller/adminController')
 
 const router = require('express').Router()
 
@@ -9,6 +9,8 @@ router.get('/allAdmins',getAllAdmins)
 router.get('/admin/:id',getOne)
 
 router.patch('/admin',updateAdmin)
+
+router.get('/allAgreements',getAllAgreements)
 
 /**
  * @swagger

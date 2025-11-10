@@ -92,11 +92,13 @@ exports.initializeSubscriptionPaymentBusinessOwner = async (req, res) => {
         message: 'user not found'
       })
     }
+    const link = `https://thetrustforge.vercel.app/payment-success/${user.id}/${user.fullName}/${ref}/${price}`
 
     const paymentData = {
       amount: price,
       currency: 'NGN',
       reference: ref,
+      redirect_url:link,
       customer: {
         email: user.email,
         name: `${user.fullName}`
@@ -156,11 +158,13 @@ exports.initializeInvestementPaymentInvestor = async (req, res) => {
         message: 'User not found'
       })
     }
+    const link = `https://thetrustforge.vercel.app/payment-success/${user.id}/${user.fullName}/${ref}/${price}`
 
     const paymentData = {
       amount: price,
       currency: 'NGN',
       reference: ref,
+      redirect_url:link,
       customer: {
         email: user.email,
         name: `${user.fullName}`

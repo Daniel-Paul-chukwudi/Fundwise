@@ -311,15 +311,224 @@ router.post('/kycI',checkInvestorLogin,uploads.fields([
     { name: 'profilePic', maxCount: 1 }
   ]),createKycI );
 
+
+/**
+ * @swagger
+ * /kycs:
+ *   get:
+ *     summary: Get all KYCs
+ *     description: Retrieve a list of all KYC records from the database.
+ *     tags:
+ *       - KYC Management
+ *     responses:
+ *       200:
+ *         description: Successfully fetched all KYC records
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: All KYCs fetched successfully
+ *                 count:
+ *                   type: integer
+ *                   example: 4
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 3
+ *                       userId:
+ *                         type: integer
+ *                         example: 27
+ *                       firstName:
+ *                         type: string
+ *                         example: Daniel
+ *                       lastName:
+ *                         type: string
+ *                         example: Saul
+ *                       dateOfBirth:
+ *                         type: string
+ *                         format: date
+ *                         example: 1998-04-15
+ *                       phoneNumber:
+ *                         type: string
+ *                         example: "+2348123456789"
+ *                       email:
+ *                         type: string
+ *                         example: "danielsaul@example.com"
+ *                       nationality:
+ *                         type: string
+ *                         example: "Nigerian"
+ *                       residentialAddress:
+ *                         type: string
+ *                         example: "23 Broad Street, Lagos"
+ *                       city:
+ *                         type: string
+ *                         example: "Lagos"
+ *                       state:
+ *                         type: string
+ *                         example: "Lagos"
+ *                       accountName:
+ *                         type: string
+ *                         example: "Daniel Saul"
+ *                       accountNumber:
+ *                         type: string
+ *                         example: "1234567890"
+ *                       bankName:
+ *                         type: string
+ *                         example: "Access Bank"
+ *                       governmentIdUrl:
+ *                         type: string
+ *                         example: "https://res.cloudinary.com/demo/image/upload/v1234567/idcard.png"
+ *                       proofOfAddressUrl:
+ *                         type: string
+ *                         example: "https://res.cloudinary.com/demo/image/upload/v1234567/addressproof.png"
+ *                       profilePic:
+ *                         type: string
+ *                         example: "https://res.cloudinary.com/demo/image/upload/v1234567/profile.png"
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2025-10-07T09:00:00Z"
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2025-10-07T09:10:00Z"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
+ *                 error:
+ *                   type: string
+ *                   example: "Database connection failed"
+ */
 router.get('/kycs', getAllKycs);
 
-// Get one KYC 
+/**
+ * @swagger
+ * /kyc/{id}:
+ *   get:
+ *     summary: Get a user's KYC by user ID
+ *     description: Fetches the KYC record associated with a given user or investor by their ID.
+ *     tags:
+ *       - KYC Management
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The user or investor ID.
+ *         example: 42
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved the user's KYC record
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User KYC found
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 15
+ *                     userId:
+ *                       type: integer
+ *                       example: 42
+ *                     firstName:
+ *                       type: string
+ *                       example: "Daniel"
+ *                     lastName:
+ *                       type: string
+ *                       example: "Saul"
+ *                     dateOfBirth:
+ *                       type: string
+ *                       format: date
+ *                       example: "1998-04-15"
+ *                     phoneNumber:
+ *                       type: string
+ *                       example: "+2348123456789"
+ *                     email:
+ *                       type: string
+ *                       example: "danielsaul@example.com"
+ *                     nationality:
+ *                       type: string
+ *                       example: "Nigerian"
+ *                     residentialAddress:
+ *                       type: string
+ *                       example: "23 Broad Street, Lagos"
+ *                     city:
+ *                       type: string
+ *                       example: "Lagos"
+ *                     state:
+ *                       type: string
+ *                       example: "Lagos"
+ *                     investmentType:
+ *                       type: string
+ *                       example: "Real Estate"
+ *                     governmentIdUrl:
+ *                       type: string
+ *                       example: "https://res.cloudinary.com/demo/image/upload/v1234567/idcard.png"
+ *                     proofOfAddressUrl:
+ *                       type: string
+ *                       example: "https://res.cloudinary.com/demo/image/upload/v1234567/addressproof.png"
+ *                     profilePic:
+ *                       type: string
+ *                       example: "https://res.cloudinary.com/demo/image/upload/v1234567/profile.png"
+ *                     kycStatus:
+ *                       type: string
+ *                       example: "verified"
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-10-07T09:00:00Z"
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-10-07T09:10:00Z"
+ *       404:
+ *         description: User or KYC record not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: KYC not found
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
+ *                 error:
+ *                   type: string
+ *                   example: "Database connection failed"
+ */
 router.get('/kyc/:id', getKycByUserId);
 
-// Update KYC 
 
-
-// Delete a KYC
 router.delete('/:id', checkLogin, deleteKyc);
 
 module.exports = router;

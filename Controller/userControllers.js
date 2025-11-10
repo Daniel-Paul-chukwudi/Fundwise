@@ -107,7 +107,7 @@ exports.verifyOtp = async (req, res, next) => {
     });
     await user.save();
 
-    const token = await jwt.sign({id:user.id},process.env.JWT_SECRET,{expiresIn:"1d"})
+    const token = await jwt.sign({id:user.id},process.env.JWT_SECRET)
     return res.status(200).json({ 
       message: 'Email verified successfully',
       data:user ,
@@ -144,9 +144,7 @@ exports.loginUser = async (req, res, next) => {
     
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '1d' }
-    );
+      process.env.JWT_SECRET);
     const response = {
       id:user.id,
       role:user.role

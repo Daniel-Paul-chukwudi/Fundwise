@@ -5,7 +5,9 @@ const investorModel = require('../models/investor')
 const businessModel = require('../models/business')
 const links = require('../helper/meetingLinks') 
 const meeting = require('../models/meeting')
-const { Where } = require('sequelize/lib/utils')
+const notificationModel = require('../models/notification')
+const {notify} = require('../helper/notificationTemplate')
+
 
 
 exports.createMeetingInvestor = async (req, res) => {
@@ -41,8 +43,8 @@ exports.createMeetingInvestor = async (req, res) => {
     const LINK = links[Math.floor(Math.random() * links.length)]
     console.log(LINK);
     
-    const peop = await businessModel.findOne({where:{businessOwner:guest}})
-    // console.log(peop);
+    const Business = await businessModel.findOne({where:{businessOwner:guest}})
+    // console.log(Business);
     
     const meeting = await meetingModel.create({
       host:id,
@@ -56,8 +58,16 @@ exports.createMeetingInvestor = async (req, res) => {
       meetingStatus:"Awaiting Approval",
       businessOwnerName:UserB.fullName,
       hostName:UserI.fullName,
-      businessName: peop.businessName
+      businessName: Business.businessName
     });
+
+    await notificationModel.create({
+    userId:UserI,
+    businessId:Business.id,
+    title:`The meeting beteen you and ${UserB.fullName} `,
+    description:`hello ${UserI.fullName} your meeting with ${UserB.fullName} about ${meetingTitle} to hold ${date} by ${time} has been scheduled and is awaiting approval .\n
+    Thank you for putting your trust in TrustForge 👊😁\n one quicky for you 😉`
+    })
 
     res.status(201).json({
       message: 'Meeting created successfully',
@@ -76,6 +86,7 @@ exports.approveMeeting = async (req,res)=>{
     const {id} = req.user
     const {meetingId}  = req.body
     const target = await meetingModel.findOne({where:{id:meetingId}})
+    const Business = await businessModel.findOne({where:{businessOwner:target.guest}})
 
     if(!target){
       return res.status(404).json({
@@ -83,7 +94,18 @@ exports.approveMeeting = async (req,res)=>{
       })
     }
     await target.update({meetingStatus:"Approved and Upcoming"})
-
+    notify({
+      userId:target.host,
+      businessId:Business.id,
+      title: 'meeting has been approved',
+      description:`The meeting between you and ${target.businessOwnerName} has been approved and is upcoming`
+    })
+    notify({
+      userId:target.guest,
+      businessId:Business.id,
+      title: 'meeting has been approved',
+      description:`The meeting between you and ${target.hostName} has been approved and is upcoming`
+    })
     res.status(200).json({
       message:"Approved meeting",
       data:target

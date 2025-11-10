@@ -165,7 +165,6 @@ exports.initializeInvestementPaymentInvestor = async (req, res) => {
       amount: price,
       currency: 'NGN',
       reference: ref,
-      redirect_url:link,
       customer: {
         email: user.email,
         name: `${user.fullName}`
@@ -365,7 +364,8 @@ exports.webHook = async (req, res) => {
           
         }
       res.status(200).json({
-        message: 'Payment Verified Successfully'
+        message: 'Payment Verified Successfully',
+
       })
 
     } else if (event === "charge.failed"){

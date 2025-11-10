@@ -38,7 +38,7 @@ exports.createMeetingInvestor = async (req, res) => {
         message: 'Investor not found' 
       });
     }
-    const LINK = links[Math.round(Math.random() *10)]
+    const LINK = links[Math.floor(Math.random() * links.length)]
     console.log(LINK);
     
     const peop = await businessModel.findOne({where:{businessOwner:guest}})

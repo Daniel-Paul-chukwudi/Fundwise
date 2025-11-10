@@ -2,6 +2,7 @@ const fs = require('fs');
 const cloudinary = require('../config/cloudinary');
 const KycModel = require('../models/kyc-investor');
 const investorModel = require('../models/investor');
+const userModel = require('../models/user')
 
 exports.createKycI = async (req, res) => {
   try {
@@ -97,19 +98,35 @@ exports.getAllKycs = async (req, res) => {
   }
 };
 
-exports.getKycById = async (req, res) => {
+exports.getKycByUserId = async (req, res) => {
   try {
-    const id = req.user.id;
-    const kyc = await KycModel.findByPk(id);
-
-    if (!kyc) {
+    const id = req.params.id;
+    const user = await userModel.findByPk(id)
+    const investor = await investorModel.findByPk(id)
+    if(!investor && user){
+      const kyc = await KycModel.findOne({where:{userId:id}});
+      if (!kyc) {
       return res.status(404).json({ message: 'KYC not found' });
-    }
-
-    res.status(200).json({
-      message: 'KYC found',
+      }
+      res.status(200).json({
+      message: 'User KYC found',
       data: kyc
-    });
+      });
+    }else if(!user && investor){
+      const kyc = await KycModel.findOne({where:{userId:id}});
+      if (!kyc) {
+      return res.status(404).json({ message: 'KYC not found' });
+      }
+      res.status(200).json({
+      message: 'User KYC found',
+      data: kyc
+      });
+    }else{
+      res.status(404).json({
+      message: 'User not found'
+      });
+    }
+    
   } catch (error) {
     res.status(500).json({
       message: 'Internal server error',

@@ -19,7 +19,7 @@ exports.initializeSubscriptionPaymentInvestor = async (req, res) => {
       const code = await otpGen.generate(12, { upperCaseAlphabets: false, lowerCaseAlphabets: true, digits: true, specialChars: false })
       const ref = `TF-${code}-INS`
       const {price} = req.body
-
+      const link = `https://thetrustforge.vercel.app/payment-success/${user.id}/${user.fullName}/${ref}/${price}`
       
 
     if (user === null) {
@@ -32,6 +32,7 @@ exports.initializeSubscriptionPaymentInvestor = async (req, res) => {
       amount: price,
       currency: 'NGN',
       reference: ref,
+      redirect_url:link,
       customer: {
         email: user.email,
         name: `${user.fullName}`
@@ -356,11 +357,10 @@ exports.webHook = async (req, res) => {
               totalInvestment:payment.price
             })
           }
-          link = `https://thetrustforge.vercel.app/payment-success/${targetI.id}/${targetI.fullName}/${payment.reference}/${payment.price}`
+          
         }
       res.status(200).json({
-        message: 'Payment Verified Successfully',
-        redirectLink: link
+        message: 'Payment Verified Successfully'
       })
 
     } else if (event === "charge.failed"){

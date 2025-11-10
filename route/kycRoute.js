@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {createKycI,getAllKycs,getKycById,updateKyc,deleteKyc} = require('../Controller/kycControllerInvestor');
+const {createKycI,getAllKycs,getKycByUserId,updateKyc,deleteKyc} = require('../Controller/kycControllerInvestor');
 const {createKyc} = require('../Controller/kycControllerBusinessOwner');
 const { checkLogin,checkInvestorLogin } = require('../Middleware/authentication');
 const {uploads} = require('../Middleware/multer')
@@ -314,7 +314,7 @@ router.post('/kycI',checkInvestorLogin,uploads.fields([
 router.get('/kycs', getAllKycs);
 
 // Get one KYC 
-router.get('/:id', getKycById);
+router.get('/kyc/:id', getKycByUserId);
 
 // Update KYC 
 

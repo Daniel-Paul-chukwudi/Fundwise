@@ -5,6 +5,7 @@ const UserModel = require('../models/user')
 const investorModel = require('../models/investor')
 const KycModel = require('../models/kyc-businessOwner');
 const KycModelI = require('../models/kyc-investor');
+const agreementModel = require('../models/agreement')
 
 
 exports.createAdmin = async (req,res)=>{
@@ -51,6 +52,21 @@ exports.getOne = async (req,res)=>{
             message:`Admin ${admin.fullName}'s full details`,
             data:admin,
             tasks
+        })
+    } catch (error) {
+        res.status(500).json({
+            message:"Internal server error",
+            error:error.message
+        })
+    }
+}
+
+exports.getAllAgreements = async( req,res)=>{
+    try {
+        const allAgreements = await agreementModel.findAll()
+        res.status(200).json({
+            message:"All agreements",
+            data:allAgreements
         })
     } catch (error) {
         res.status(500).json({

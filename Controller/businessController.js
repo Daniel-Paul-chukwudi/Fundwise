@@ -259,9 +259,14 @@ exports.getOneById = async (req, res) => {
     if (!target) {
       return res.status(404).json({ message: "Business not found" });
     }
-    const diff = target.fundRaised - target.fundingSought
-    // console.log(target.fundRaised);
-    // console.log(target.fundingSought);
+
+    let diff
+    if (target.fundRaised > target.fundingSought){
+       diff = 0
+    }else if(target.fundRaised < target.fundingSought){
+       diff =  target.fundingSought - target.fundRaised
+    }
+    
     
     const interests = await agreementModel.findAll({where:{businessId:id}})
     if(diff <= 0 ){

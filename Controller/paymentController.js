@@ -55,17 +55,17 @@ exports.initializeSubscriptionPaymentInvestor = async (req, res) => {
     if (data?.status === true) {
       await payment.save();
     }
-    const link = data?.data?.checkout_url
-    res.redirect(link)
-    // res.status(200).json({
-    //   message: 'Payment Initialized successfuly',
-    //   data: {
-    //     reference: data?.data?.reference,
-    //     url: data?.data?.checkout_url
-    //   },
-    //   payment,
-    //   paymentData
-    // })
+    // const link = data?.data?.checkout_url
+    // res.redirect(link)
+    res.status(200).json({
+      message: 'Payment Initialized successfuly',
+      data: {
+        reference: data?.data?.reference,
+        url: data?.data?.checkout_url
+      },
+      payment,
+      paymentData
+    })
   } catch (error) {
     res.status(500).json({
       message: 'Error initializing payment: ' + error.message,
@@ -120,17 +120,17 @@ exports.initializeSubscriptionPaymentBusinessOwner = async (req, res) => {
       await payment.save();
     }
 
-    const link = data?.data?.checkout_url
-    res.redirect(link)
-    // res.status(200).json({
-    //   message: 'Payment Initialized successfuly',
-    //   data: {
-    //     reference: data?.data?.reference,
-    //     url: data?.data?.checkout_url
-    //   },
-    //   payment,
-    //   paymentData
-    // })
+    // const link = data?.data?.checkout_url
+    // res.redirect(link)
+    res.status(200).json({
+      message: 'Payment Initialized successfuly',
+      data: {
+        reference: data?.data?.reference,
+        url: data?.data?.checkout_url
+      },
+      payment,
+      paymentData
+    })
   } catch (error) {
     res.status(500).json({
       message: 'Error initializing payment: ' + error.message,
@@ -183,17 +183,17 @@ exports.initializeInvestementPaymentInvestor = async (req, res) => {
       await payment.save();
     }
 
-    const link = data?.data?.checkout_url
-    res.redirect(link)
-    // res.status(200).json({
-    //   message: 'Payment Initialized successfuly',
-    //   data: {
-    //     reference: data?.data?.reference,
-    //     url: data?.data?.checkout_url
-    //   },
-    //   payment,
-    //   paymentData
-    // })
+    // const link = data?.data?.checkout_url
+    // res.redirect(link)
+    res.status(200).json({
+      message: 'Payment Initialized successfuly',
+      data: {
+        reference: data?.data?.reference,
+        url: data?.data?.checkout_url
+      },
+      payment,
+      paymentData
+    })
   } catch (error) {
     res.status(500).json({
       message: 'Error initializing payment: ' + error.message,
@@ -292,23 +292,41 @@ exports.webHook = async (req, res) => {
         if (payment.paymentType === 'subscription'){
             if(payment.userType === 'Investor'){
               const targetI = await investorModel.findByPk(payment.userId)
-              console.log('investor',targetI);
-              
+              // console.log('investor',targetI);
+              await notificationModel.create({
+              userId:payment.userId,
+              businessId,
+              title:`Your subscription was successful `,
+              description:`hello ${targetI.fullName} your subscription was successful and you have been allocated 5 view points.\n
+              Thank you for putting your trust in TrustForge 👊😁\n one quicky for you 😉`
+              })
               targetI.subscribed = true
               targetI.viewAllocation = 5
               await targetI.save()
             }else if(payment.userType === 'businessOwner'){
               const targetB = await userModel.findByPk(payment.userId)
-              console.log('business',targetB);
-              
+              // console.log('business',targetB);
               targetB.subscribed = true
-              console.log('business',targetB);
               await targetB.save()
+              await notificationModel.create({
+              userId:payment.userId,
+              businessId,
+              title:`Your subscription was successful `,
+              description:`hello ${targetB.fullName} your subscription was successful and your business has been added to the promoted section.\n
+              Thank you for putting your trust in TrustForge 👊😁\n one quicky for you 😉`
+              })
             }
         }else if(payment.paymentType === 'investment'){
           const targetI = await investorModel.findByPk(payment.userId)
           targetI.totalInvestment += payment.price
           const targetBusiness = await agreementModel.findOne({where:{businessId:payment.businessId}})
+          await notificationModel.create({
+          userId:payment.userId,
+          businessId:payment.businessId,
+          title:`Your subscription was successful `,
+          description:`hello ${targetI.fullName} your investment payment into ${targetBusiness.businessName} was successful .\n
+          Thank you for putting your trust in TrustForge 👊😁\n one quicky for you 😉`
+          })
 
           if(targetBusiness){
             await agreementModel.update({totalInvestment: totalInvestment += payment.price},

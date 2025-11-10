@@ -12,6 +12,7 @@ const saveModel = require('../models/save')
 const ticketModel = require('../models/supportticket')
 const agreementModel = require('../models/agreement')
 const notificationModel = require('../models/notification')
+const investorModel = require('../models/investor')
 
 exports.createBusiness = async (req, res) => {
   try {
@@ -81,7 +82,13 @@ exports.createBusiness = async (req, res) => {
       businessOwnerName:user.fullName
     });
     await newBusiness.save()
-
+    await notificationModel.create({
+      userId,
+      businessId:newBusiness.id,
+      title:`Your ${businessName} has been created successfully`,
+      description:`hello ${user.fullName} your business has been created but is currently under review , once verified it will be live.\n
+      thank you for putting your trust in TrustForge 👊😁`
+    })
 
     res.status(201).json({
       message: "Business created successfully",
@@ -104,6 +111,7 @@ exports.likeBusiness = async (req, res) => {
     const { id } = req.user;
 
     const business = await businessModel.findByPk(businessId);
+    const user = await investorModel.findByPk(id)
     if (!business) {
       return res.status(404).json({ message: "Business not found" });
     }
@@ -122,6 +130,13 @@ exports.likeBusiness = async (req, res) => {
       await likeModel.create({ userId: id, businessId });
       business.likeCount += 1;
       await business.save();
+      await notificationModel.create({
+      userId:business.businessOwner,
+      businessId,
+      title:`someone just liked your business`,
+      description:`hello ${business.businessOwnerName} an investor just liked your business hopefully this like will turn into an investment.\n 
+      TrustForge Team 👊😁`
+      })
       return res.status(200).json({
         message: "Liked successfully",
         businesslikes: business.likeCount
@@ -161,6 +176,13 @@ exports.viewBusiness = async (req, res) => {
       if (user.viewAllocation <= 0) user.subscribed = false;
       await user.save();
     }
+    await notificationModel.create({
+      userId:business.businessOwner,
+      businessId,
+      title:`someone just viewed your business`,
+      description:`hello ${business.businessOwnerName} an investor just viewed your business hope they are convinced into making an investment.\n 
+      TrustForge Team 👊😁`
+      })
 
     return res.status(200).json({
       message: "Viewed successfully",
@@ -194,6 +216,13 @@ exports.saveBusiness = async (req, res) => {
       });
     } else {
       await saveModel.create({ userId: id, businessId });
+      await notificationModel.create({
+      userId:business.businessOwner,
+      businessId,
+      title:`someone just saved your business`,
+      description:`hello ${business.businessOwnerName} an investor just saved your business, you are one step closer to securing an investment.\n 
+      TrustForge Team 👊😁`
+      })
       return res.status(200).json({
         message: "Saved successfully",
         data: business

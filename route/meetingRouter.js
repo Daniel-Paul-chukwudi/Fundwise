@@ -91,7 +91,7 @@ const {checkInvestorLogin, checkLogin, checkAdmin} = require('../Middleware/auth
  *                   type: string
  *                   example: Sarah Daniels
  */
-router.post('/meeting',meetingValidator, checkInvestorLogin, createMeetingInvestor);
+router.post('/meeting', checkInvestorLogin, createMeetingInvestor);
 
 /**
  * @swagger

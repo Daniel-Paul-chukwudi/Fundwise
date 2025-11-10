@@ -68,14 +68,14 @@ exports.verify = (firstName,otp)=>{
             <body>
             <div class="container">
             <div class="header">
-            <h1>Welcome to FirstBite </h1>
+            <h1>Welcome to TrustForge </h1>
             </div>
             <div class="content">
             <p>Hello ${firstName},</p>
             <p>this is your otp use it to verify ${otp} it expires in 5 mins</p>
                 
                 <p>Have a wonderful day</p>
-                <p>Best regards,<br>firstBite Team</p>
+                <p>Best regards,<br>TrustForge Team</p>
             </div>
             <div class="footer">
                 <p>&copy; ${new Date().getFullYear()} . All rights reserved.</p>

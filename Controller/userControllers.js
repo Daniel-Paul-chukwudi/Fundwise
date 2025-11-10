@@ -9,6 +9,8 @@ const {verify,forgotPassword}= require('../Middleware/emailTemplates')
 const sendEmail = require('../Middleware/Bmail')
 const bcrypt = require('bcrypt')
 const agreementModel = require('../models/agreement')
+const notificationModel = require('../models/notification')
+
 
 
 
@@ -105,7 +107,7 @@ exports.verifyOtp = async (req, res, next) => {
     });
     await user.save();
 
-    const token = await jwt.sign({id:user.id},process.env.JWT_SECRET,{expiresIn:"1h"})
+    const token = await jwt.sign({id:user.id},process.env.JWT_SECRET,{expiresIn:"1d"})
     return res.status(200).json({ 
       message: 'Email verified successfully',
       data:user ,
@@ -143,7 +145,7 @@ exports.loginUser = async (req, res, next) => {
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '1d' }
     );
     const response = {
       id:user.id,
@@ -347,6 +349,7 @@ exports.getOne = async(req,res)=>{
     
         const meetings = await meetingModel.findAll({where:{guest:id}})
         const agreements = await agreementModel.findAll({where:{businessOwner:id}})
+        const notifications = await notificationModel.findAll({where:{userId:id}})
         const response = {
           user,
           businesscount:businesses.length,
@@ -354,7 +357,8 @@ exports.getOne = async(req,res)=>{
           totalViews,
           businesses,
           meetings,
-          investorInterests:agreements.length
+          investorInterests:agreements.length,
+          notifications
         }
 
 

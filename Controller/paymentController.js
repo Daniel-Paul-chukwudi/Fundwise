@@ -181,6 +181,7 @@ exports.initializeInvestementPaymentInvestor = async (req, res) => {
       amount: price,
       currency: 'NGN',
       reference: ref,
+      redirect_url: link2,
       customer: {
         email: user.email,
         name: `${user.fullName}`

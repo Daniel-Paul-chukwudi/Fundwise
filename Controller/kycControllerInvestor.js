@@ -118,7 +118,7 @@ exports.getKycByUserId = async (req, res) => {
       return res.status(404).json({ message: 'KYC not found' });
       }
       res.status(200).json({
-      message: 'User KYC found',
+      message: 'investor KYC found',
       data: kyc
       });
     }else{

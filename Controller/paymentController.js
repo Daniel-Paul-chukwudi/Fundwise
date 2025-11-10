@@ -12,6 +12,7 @@ const notificationModel = require('../models/notification')
 
 
 
+
 exports.initializeSubscriptionPaymentInvestor = async (req, res) => {
   try {
       const { id } = req.user;
@@ -158,6 +159,20 @@ exports.initializeInvestementPaymentInvestor = async (req, res) => {
         message: 'User not found'
       })
     }
+    
+    const business = await businessModel.findByPk(businessId)
+    const diff = business.fundingSought - business.fundRaised
+    if(diff === 0){
+      return res.status(403).json({
+        message:"funding goal already met"
+      })
+    }else if(price > diff){
+      return res.status(403).json({
+        message:`you can only invest ${diff} in order to meet the funding goal`
+      })
+    }
+    
+    
     // const link = `https://thetrustforge.vercel.app/dashboard/investor/payment-success/${user.id}/${user.fullName}/${ref}/${price}`
     const link2 = `https://thetrustforge.vercel.app/dashboard/investor/payment-success?id=${user.id}&investorName=${user.fullName}&referenceId=${ref}&amount=${price}`
     

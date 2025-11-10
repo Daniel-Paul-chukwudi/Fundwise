@@ -122,8 +122,7 @@ exports.meetingValidator = (req, res, next) => {
     guest: Joi.string().required().messages({
       "string.empty": "guestId is required"
     }),
-    meetingType: Joi.string().optional(),
-    note: Joi.string().optional()
+    meetingType: Joi.string().optional()
   });
   validate(schema, req, res, next);
 };

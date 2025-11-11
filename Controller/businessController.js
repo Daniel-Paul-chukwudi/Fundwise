@@ -162,7 +162,7 @@ exports.viewBusiness = async (req, res) => {
 
     const viewCheck = await viewModel.findOne({ where: { userId: id, businessId } });
 
-    if (!user.subscribed) {
+    if (user.subscribed === false) {
       return res.status(401).json({
         message:`Hello ${user.fullName}, your subscription has expired`
       });

@@ -419,21 +419,21 @@ router.get('/kycs', getAllKycs);
  * @swagger
  * /kyc/{id}:
  *   get:
- *     summary: Get a user's KYC by user ID
- *     description: Fetches the KYC record associated with a given user or investor by their ID.
+ *     summary: Get KYC details by user ID
+ *     description: Fetches the KYC record for a specific user or investor, depending on their account type.
  *     tags:
- *       - KYC Management
+ *       - KYC
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
+ *         description: The unique ID of the user or investor
  *         schema:
- *           type: integer
- *         description: The user or investor ID.
- *         example: 42
+ *           type: string
+ *           example: "d48f7b5e-1b2a-4e9a-83c0-92f25d93f8bb"
  *     responses:
  *       200:
- *         description: Successfully retrieved the user's KYC record
+ *         description: KYC found successfully
  *         content:
  *           application/json:
  *             schema:
@@ -441,69 +441,42 @@ router.get('/kycs', getAllKycs);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: User KYC found
+ *                   example: "User KYC found"
  *                 data:
  *                   type: object
  *                   properties:
  *                     id:
- *                       type: integer
- *                       example: 15
+ *                       type: string
+ *                       example: "a67b9d10-f2b7-4a60-bd0a-cb58ad492f4f"
  *                     userId:
- *                       type: integer
- *                       example: 42
+ *                       type: string
+ *                       example: "d48f7b5e-1b2a-4e9a-83c0-92f25d93f8bb"
  *                     firstName:
  *                       type: string
- *                       example: "Daniel"
+ *                       example: "John"
  *                     lastName:
  *                       type: string
- *                       example: "Saul"
- *                     dateOfBirth:
- *                       type: string
- *                       format: date
- *                       example: "1998-04-15"
- *                     phoneNumber:
- *                       type: string
- *                       example: "+2348123456789"
+ *                       example: "Doe"
  *                     email:
  *                       type: string
- *                       example: "danielsaul@example.com"
+ *                       example: "johndoe@example.com"
  *                     nationality:
  *                       type: string
  *                       example: "Nigerian"
  *                     residentialAddress:
  *                       type: string
- *                       example: "23 Broad Street, Lagos"
- *                     city:
- *                       type: string
- *                       example: "Lagos"
- *                     state:
- *                       type: string
- *                       example: "Lagos"
- *                     investmentType:
- *                       type: string
- *                       example: "Real Estate"
+ *                       example: "23 Isaac John Street, Ikeja, Lagos"
  *                     governmentIdUrl:
  *                       type: string
- *                       example: "https://res.cloudinary.com/demo/image/upload/v1234567/idcard.png"
+ *                       example: "https://res.cloudinary.com/app/image/upload/v1234567890/idcard.png"
  *                     proofOfAddressUrl:
  *                       type: string
- *                       example: "https://res.cloudinary.com/demo/image/upload/v1234567/addressproof.png"
+ *                       example: "https://res.cloudinary.com/app/image/upload/v1234567890/utilitybill.png"
  *                     profilePic:
  *                       type: string
- *                       example: "https://res.cloudinary.com/demo/image/upload/v1234567/profile.png"
- *                     kycStatus:
- *                       type: string
- *                       example: "verified"
- *                     createdAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2025-10-07T09:00:00Z"
- *                     updatedAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2025-10-07T09:10:00Z"
+ *                       example: "https://res.cloudinary.com/app/image/upload/v1234567890/profilepic.png"
  *       404:
- *         description: User or KYC record not found
+ *         description: KYC not found or user does not exist
  *         content:
  *           application/json:
  *             schema:
@@ -511,7 +484,7 @@ router.get('/kycs', getAllKycs);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: KYC not found
+ *                   example: "User not found"
  *       500:
  *         description: Internal server error
  *         content:
@@ -521,7 +494,7 @@ router.get('/kycs', getAllKycs);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Internal server error
+ *                   example: "Internal server error"
  *                 error:
  *                   type: string
  *                   example: "Database connection failed"

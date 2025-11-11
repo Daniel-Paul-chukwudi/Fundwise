@@ -162,11 +162,11 @@ exports.viewBusiness = async (req, res) => {
 
     const viewCheck = await viewModel.findOne({ where: { userId: id, businessId } });
 
-    // if (!user.subscribed) {
-    //   return res.status(401).json({
-    //     message:`Hello ${user.firstName}, your subscription has expired`
-    //   });
-    // }
+    if (!user.subscribed) {
+      return res.status(401).json({
+        message:`Hello ${user.firstName}, your subscription has expired`
+      });
+    }
 
     if (!viewCheck) {
       await viewModel.create({ userId: id, businessId });

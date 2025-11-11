@@ -131,6 +131,7 @@ exports.signUp = async (req, res, next) => {
   }
 }
 
+
 exports.verifyOtp = async (req, res, next) => {
   try {
     const { email, otp } = req.body;

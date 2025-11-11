@@ -174,6 +174,7 @@ exports.initializeInvestementPaymentInvestor = async (req, res) => {
     
     
     const link = `https://thetrustforge.vercel.app/dashboard/investor/payment-success/${user.id}/${user.fullName}/${ref}/${price}`
+    const link3 = `https://thetrustforge.vercel.app/dashboard/investor/payment-success/4a277227-e3d3-4a59-8b1f-fcbe085b79f1/paula/TF-dv4l5vgxsgop-ININ/100000`
     const link2 = `https://thetrustforge.vercel.app/dashboard/investor/payment-success?id=${user.id}&investorName=${user.fullName}&referenceId=${ref}&amount=${price}`
     
 

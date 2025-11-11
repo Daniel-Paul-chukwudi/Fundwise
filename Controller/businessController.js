@@ -152,15 +152,15 @@ exports.likeBusiness = async (req, res) => {
 
 exports.viewBusiness = async (req, res) => {
   try {
-    const { businessId ,userId} = req.body;
-    // const { id } = req.user;
+    const { businessId } = req.body;
+    const { id } = req.user;
 
-    const user = await userModel.findByPk(userId);
+    const user = await userModel.findByPk(id);
     const business = await businessModel.findByPk(businessId);
 
     if (!business) return res.status(404).json({ message: "Business not found" });
 
-    const viewCheck = await viewModel.findOne({ where: { userId: userId, businessId } });
+    const viewCheck = await viewModel.findOne({ where: { userId: id, businessId } });
 
     if (!user.subscribed) {
       return res.status(401).json({
@@ -169,7 +169,7 @@ exports.viewBusiness = async (req, res) => {
     }
 
     if (!viewCheck) {
-      await viewModel.create({ userId: userId, businessId });
+      await viewModel.create({ userId: id, businessId });
       business.viewCount += 1;
       await business.save();
       user.viewAllocation -= 1;

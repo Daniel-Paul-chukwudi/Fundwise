@@ -2,7 +2,7 @@ const express = require('express')
 // const {register,getAll,login,changeRole,forgotPassword,resetPassword} = require("../Controller/userController")
 const {checkLogin,checkAdmin} = require('../Middleware/authentication')
 const {registerValidator, loginValidator, verifyValidator,changePasswordValidator,forgotPasswordValidator, resendValidator, resetPasswordValidator,deleteUserValidator} = require('../Middleware/validator')
-const { signUp, loginUser,forgotPassword,changePassword,resetPassword,getAll,deleteUser,getOne,verifyOtp, userResendOtp} = require('../Controller/userControllers')
+const { signUp, loginUser,forgotPassword,changePassword,resetPassword,getAll,deleteUser,getOne,verifyOtp, userResendOtp,fundingHistory} = require('../Controller/userControllers')
 
 const router = express.Router()
 
@@ -767,6 +767,99 @@ router.patch('/reset-password/:token',resetPasswordValidator, resetPassword);
  *                   example: SequelizeDatabaseError
  */
 router.delete('/kill',deleteUserValidator, deleteUser); 
+
+/**
+ * @swagger
+ * /fundingHistory:
+ *   get:
+ *     summary: Get the funding history of a specific business
+ *     description: Fetches all investments made by investors in a business owned by the logged-in business owner.
+ *     tags:
+ *       - Funding
+ *     security:
+ *       - bearerAuth: []   # Requires login (Business owner authentication)
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - businessId
+ *             properties:
+ *               businessId:
+ *                 type: integer
+ *                 example: 23
+ *     responses:
+ *       200:
+ *         description: Funding history fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: all of the business investors
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       investorName:
+ *                         type: string
+ *                         example: "Jane Doe"
+ *                       totalInvestment:
+ *                         type: number
+ *                         example: 50000
+ *       400:
+ *         description: Missing required fields or invalid request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "businessId is required"
+ *       401:
+ *         description: Unauthorized - User not logged in
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorized - please log in as a business owner"
+ *       404:
+ *         description: No investments found for this business
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "No funding history found for this business"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "internal server error"
+ *                 clue:
+ *                   type: string
+ *                   example: "error getting funding history"
+ *                 error:
+ *                   type: string
+ *                   example: "Database connection failed"
+ */
+router.get('/fundingHistory',checkLogin, fundingHistory);
 
 module.exports = router
 

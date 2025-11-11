@@ -131,6 +131,42 @@ exports.signUp = async (req, res, next) => {
   }
 }
 
+exports.fundingHistory = async (req,res)=>{
+  try {
+    const {id} = req.user
+    const investments = await agreementModel.findAll({where:{investorId:id,agrementStatus:"ongoing"}})
+    let response
+    let ans = []
+    let business
+    let totInvestment = 0 
+    for (const x of investments){
+      business = await businessModel.findByPk(x.businessId)
+      response = {
+        businessName:business?.businessName ?? 'Anonymous',
+        investmentAmount:x.totalInvestment,
+        status:x.agrementStatus,
+        date:x.createdAt,
+      }
+      ans.push(response)
+      totInvestment += x.totalInvestment
+
+    }
+
+    res.status(200).json({
+      message:"all of the users investments",
+      totalInvestment:totInvestment,
+      activeInvestments:investments.length,
+      investments:ans
+    })
+    
+  } catch (error) {
+    res.status(500).json({
+            message:"internal server error",
+            clue:"error getting funding history",
+            error:error.message
+        })
+  }
+}
 
 exports.verifyOtp = async (req, res, next) => {
   try {

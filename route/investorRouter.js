@@ -2,7 +2,7 @@ const express = require('express')
 // const {register,getAll,login,changeRole,forgotPassword,resetPassword} = require("../Controller/userController")
 const {checkInvestorLogin,checkAdmin, checkLogin} = require('../Middleware/authentication')
 const {registerValidator, loginValidator, verifyValidator,changePasswordValidator,forgotPasswordValidator, resendValidator, resetPasswordValidator,deleteUserValidator} = require('../Middleware/validator')
-const { signUp, logininvestor,forgotPassword,changePassword,resetPassword,getAll,deleteUser,getOne,verifyOtp, subscriptionBypass,investorResendOtp,makeDeal} = require('../Controller/investorController')
+const { signUp, logininvestor,forgotPassword,changePassword,resetPassword,getAll,deleteUser,getOne,verifyOtp, subscriptionBypass,investorResendOtp,makeDeal, fundingHistory} = require('../Controller/investorController')
 
 const router = express.Router()
 
@@ -878,6 +878,90 @@ router.patch('/reset-passwordi/:token', resetPassword);
  *                   example: "SequelizeConnectionError: ..."
  */
 router.delete('/killi', deleteUser);
+
+/**
+ * @swagger
+ * /fundHistory:
+ *   get:
+ *     summary: Get the investor’s funding history
+ *     description: Returns all ongoing investments made by the currently logged-in investor, along with total investment amount and count.
+ *     tags:
+ *       - Funding
+ *     security:
+ *       - bearerAuth: []   # Requires investor authentication
+ *     responses:
+ *       200:
+ *         description: Funding history fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: all of the users investments
+ *                 totalInvestment:
+ *                   type: number
+ *                   example: 125000
+ *                 activeInvestments:
+ *                   type: integer
+ *                   example: 3
+ *                 investments:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       businessName:
+ *                         type: string
+ *                         example: "EcoWave Technologies"
+ *                       investmentAmount:
+ *                         type: number
+ *                         example: 50000
+ *                       status:
+ *                         type: string
+ *                         example: "ongoing"
+ *                       date:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2025-09-30T12:45:32.000Z"
+ *       401:
+ *         description: Unauthorized - Investor not logged in
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorized - please log in as an investor"
+ *       404:
+ *         description: No investments found for this investor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "No ongoing investments found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "internal server error"
+ *                 clue:
+ *                   type: string
+ *                   example: "error getting funding history"
+ *                 error:
+ *                   type: string
+ *                   example: "Database connection failed"
+ */
+router.get('/fundHistory',checkInvestorLogin, fundingHistory)
 
 
 module.exports = router

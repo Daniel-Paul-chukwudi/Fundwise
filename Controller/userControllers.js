@@ -10,6 +10,7 @@ const sendEmail = require('../Middleware/Bmail')
 const bcrypt = require('bcrypt')
 const agreementModel = require('../models/agreement')
 const notificationModel = require('../models/notification')
+const { response } = require('express')
 
 
 
@@ -395,5 +396,38 @@ exports.deleteUser = async (req,res)=>{
   }
 }
 
+exports.fundingHistory = async (req,res)=>{
+  try {
+    const {id} = req.user
+    const {businessId} = req.body
+    const investments = await agreementModel.findAll({where:{businessOwner:id,businessId: businessId}})
+    let ans = []
+    let response
+    let investor
+    for(const x of investments) {
+      investor = await investorModel.findByPk(x.investorId)
+      console.log(investor);
+      
+      response = {
+        investorName:investor?.fullName ?? 'Anonymous',
+        totalInvestment:x.totalInvestment
+      }
+      ans.push(response)
+    }
+
+
+    res.status(200).json({
+      message:"all of the business investors",
+      data: ans
+    })
+    
+  } catch (error) {
+    res.status(500).json({
+            message:"internal server error",
+            clue:"error getting funding history",
+            error:error.message
+        })
+  }
+}
 
 

@@ -27,7 +27,7 @@ agreement.init(
         type: DataTypes.INTEGER
       },
       agrementStatus:{
-        type: DataTypes.ENUM(['meetup','negociation','ongoing','finalized']),
+        type: DataTypes.ENUM('meetup','negociation','ongoing','finalized'),
         allowNull: false,
         defaultValue:"meetup"
       },

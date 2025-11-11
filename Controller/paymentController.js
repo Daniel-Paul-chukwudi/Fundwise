@@ -369,14 +369,15 @@ exports.webHook = async (req, res) => {
         
           const targetBusiness = await agreementModel.findOne({where:{businessId:payment.businessId,investorId:targetI.id}})
           if(targetBusiness){
-            await agreementModel.update({totalInvestment: targetBusiness.totalInvestment += payment.price},
+            await agreementModel.update({totalInvestment: targetBusiness.totalInvestment += payment.price,agrementStatus:"ongoing"},
             {where:{businessId:payment.businessId,investorId:targetI.id}})
           }else if(!targetBusiness){
             await agreementModel.create({
               investorId:payment.userId,
               businessOwner:Business.businessOwner,
               businessId:payment.businessId,
-              totalInvestment:payment.price
+              totalInvestment:payment.price,
+              agrementStatus:"ongoing"
             })
           }
           

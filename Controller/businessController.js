@@ -155,7 +155,7 @@ exports.viewBusiness = async (req, res) => {
     const { businessId } = req.body;
     const { id } = req.user;
 
-    const user = await userModel.findByPk(id);
+    const user = await investorModel.findByPk(id);
     const business = await businessModel.findByPk(businessId);
 
     if (!business) return res.status(404).json({ message: "Business not found" });
@@ -164,7 +164,7 @@ exports.viewBusiness = async (req, res) => {
 
     if (!user.subscribed) {
       return res.status(401).json({
-        message:`Hello ${user.firstName}, your subscription has expired`
+        message:`Hello ${user.fullName}, your subscription has expired`
       });
     }
 

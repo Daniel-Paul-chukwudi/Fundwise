@@ -150,6 +150,7 @@ exports.fundingHistory = async (req,res)=>{
     for (const x of investments){
       business = await businessModel.findByPk(x.businessId)
       response = {
+        businessId:business.id,
         businessName:x.businessName,
         businessModel:business.businessModel,
         businessOwnerName:business.businessOwnerName,

@@ -406,7 +406,7 @@ exports.fundingHistory = async (req,res)=>{
     let investor
     for(const x of investments) {
       investor = await investorModel.findByPk(x.investorId)
-      console.log(investor);
+      // console.log(investor);
       
       response = {
         investorName:investor?.fullName ?? 'Anonymous',

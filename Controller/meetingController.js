@@ -22,12 +22,12 @@ exports.createMeetingInvestor = async (req, res) => {
     }
 
     // Check if the title already exists
-    const existingMeeting = await meetingModel.findOne({ where: { meetingTitle } });
-    if (existingMeeting) {
-      return res.status(403).json({ 
-        message: 'Meeting title already exists' 
-      });
-    }
+    // const existingMeeting = await meetingModel.findOne({ where: { meetingTitle } });
+    // if (existingMeeting) {
+    //   return res.status(403).json({ 
+    //     message: 'Meeting title already exists' 
+    //   });
+    // }
     const UserB = await userModel.findByPk(guest)
     if (!UserB) {
       return res.status(404).json({ 
@@ -66,7 +66,7 @@ exports.createMeetingInvestor = async (req, res) => {
     businessId:Business.id,
     title:`The meeting beteen you and ${UserB.fullName} `,
     description:`hello ${UserI.fullName} your meeting with ${UserB.fullName} about ${meetingTitle} to hold ${date} by ${time} has been scheduled and is awaiting approval .\n
-    Thank you for putting your trust in TrustForge 👊😁\n one quicky for you 😉`
+    Thank you for putting your trust in TrustForge 👊😁`
     })
 
     res.status(201).json({

@@ -36,7 +36,6 @@ kycinvestor.init(
     email: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true
     },
     nationality: {
       type: DataTypes.STRING,

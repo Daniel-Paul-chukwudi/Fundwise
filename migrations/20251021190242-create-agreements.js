@@ -12,8 +12,14 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull:false
       },
+      businessName:{
+        type: Sequelize.STRING
+      },
       businessOwner:{
         type: Sequelize.UUID
+      },
+      businessOwnerName:{
+        type: Sequelize.STRING
       },
       businessId: {
         type: Sequelize.UUID,
@@ -23,7 +29,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       agrementStatus:{
-        type:Sequelize.ENUM(['meetup','negociation','ongoing','finalized']),
+        type:Sequelize.ENUM('meetup','negociation','ongoing','finalized'),
         allowNull: false
       },
       createdAt: {

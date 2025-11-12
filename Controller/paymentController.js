@@ -372,6 +372,8 @@ exports.webHook = async (req, res) => {
             {where:{businessId:payment.businessId,investorId:targetI.id}})
           }else if(!targetBusiness){
             await agreementModel.create({
+              businessName:Business.businessName,
+              businessOwnerName:Business.businessOwnerName,
               investorId:payment.userId,
               businessOwner:Business.businessOwner,
               businessId:payment.businessId,

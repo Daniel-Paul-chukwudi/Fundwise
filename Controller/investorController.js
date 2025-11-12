@@ -10,6 +10,7 @@ const agreementModel = require('../models/agreement')
 const saveModel = require("../models/save")
 const businessModel = require('../models/business')
 const meetingModel = require('../models/meeting')
+const userModel = require('../models/user')
 
 
 exports.makeDeal = async (req,res)=>{
@@ -78,15 +79,21 @@ exports.investorResendOtp = async (req,res)=>{
 exports.signUp = async (req, res, next) => {
   try {
     const { fullName, phoneNumber,email, password,confirmPassword } = req.body
-    const user = await investorModel.findOne({where:{ email: email.toLowerCase() }})
+    const user = await userModel.findOne({where:{ email: email.toLowerCase() }})
+    const investor = await investorModel.findOne({where:{email:email.toLowerCase()}})
     
     
     if (user !== null) {
       return res.status(403).json({
-        message: 'investor already exists, Log in to your account',
+        message: 'User already exists, Log in to your account',
       })
-      
+      return next(createError(404, "User not found"));
+    }else if(investor !==null){
+      return res.status(403).json({
+        message: 'User already exists, Log in to your account',
+      })
     }
+    
     if(password !== confirmPassword){   
       return res.status(403).json({
         message:"Passwords dont match"
@@ -140,9 +147,9 @@ exports.fundingHistory = async (req,res)=>{
     let business
     let totInvestment = 0 
     for (const x of investments){
-      business = await businessModel.findByPk(x.businessId)
+      // business = await businessModel.findByPk(x.businessId)
       response = {
-        businessName:business?.businessName ?? 'Anonymous',
+        businessName:x.businessName,
         investmentAmount:x.totalInvestment,
         status:x.agrementStatus,
         date:x.createdAt,

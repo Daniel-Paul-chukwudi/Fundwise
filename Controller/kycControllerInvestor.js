@@ -1,6 +1,7 @@
 const fs = require('fs');
 const cloudinary = require('../config/cloudinary');
 const KycModel = require('../models/kyc-investor');
+const KycModelU = require('../models/kyc-businessOwner');
 const investorModel = require('../models/investor');
 const userModel = require('../models/user')
 
@@ -104,7 +105,7 @@ exports.getKycByUserId = async (req, res) => {
     const user = await userModel.findByPk(id)
     const investor = await investorModel.findByPk(id)
     if(!investor && user){
-      const kyc = await KycModel.findOne({where:{userId:id}});
+      const kyc = await KycModelU.findOne({where:{userId:id}});
       if (!kyc) {
       return res.status(404).json({ message: 'KYC not found' });
       }

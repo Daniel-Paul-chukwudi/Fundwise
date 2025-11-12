@@ -399,7 +399,7 @@ exports.deleteUser = async (req,res)=>{
 exports.fundingHistory = async (req,res)=>{
   try {
     const {id} = req.user
-    const {businessId} = req.body
+    const {businessId} = req.params
     const investments = await agreementModel.findAll({where:{businessOwner:id,businessId: businessId}})
     let ans = []
     let response

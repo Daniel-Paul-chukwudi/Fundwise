@@ -770,29 +770,25 @@ router.delete('/kill',deleteUserValidator, deleteUser);
 
 /**
  * @swagger
- * /fundingHistory:
+ * /fundingHistory/{businessId}:
  *   get:
- *     summary: Get the funding history of a specific business
- *     description: Fetches all investments made by investors in a business owned by the logged-in business owner.
+ *     summary: Get funding history for a specific business
+ *     description: Returns all investors and their total investments for a particular business owned by the logged-in user.
  *     tags:
  *       - Funding
  *     security:
- *       - bearerAuth: []   # Requires login (Business owner authentication)
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - businessId
- *             properties:
- *               businessId:
- *                 type: integer
- *                 example: 23
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: businessId
+ *         required: true
+ *         description: The unique ID of the business to fetch funding history for
+ *         schema:
+ *           type: string
+ *           example: "7c9e9e5f-bb8c-4a14-bf25-9d1b6c8826aa"
  *     responses:
  *       200:
- *         description: Funding history fetched successfully
+ *         description: Funding history retrieved successfully
  *         content:
  *           application/json:
  *             schema:
@@ -800,7 +796,7 @@ router.delete('/kill',deleteUserValidator, deleteUser);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: all of the business investors
+ *                   example: "All of the business investors"
  *                 data:
  *                   type: array
  *                   items:
@@ -811,29 +807,9 @@ router.delete('/kill',deleteUserValidator, deleteUser);
  *                         example: "Jane Doe"
  *                       totalInvestment:
  *                         type: number
- *                         example: 50000
- *       400:
- *         description: Missing required fields or invalid request
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "businessId is required"
- *       401:
- *         description: Unauthorized - User not logged in
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Unauthorized - please log in as a business owner"
+ *                         example: 15000
  *       404:
- *         description: No investments found for this business
+ *         description: Business or investments not found
  *         content:
  *           application/json:
  *             schema:
@@ -841,9 +817,9 @@ router.delete('/kill',deleteUserValidator, deleteUser);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "No funding history found for this business"
+ *                   example: "Business not found"
  *       500:
- *         description: Internal server error
+ *         description: Internal server error or failed to fetch investments
  *         content:
  *           application/json:
  *             schema:
@@ -851,15 +827,12 @@ router.delete('/kill',deleteUserValidator, deleteUser);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "internal server error"
- *                 clue:
- *                   type: string
- *                   example: "error getting funding history"
+ *                   example: "Internal server error. Error getting funding history"
  *                 error:
  *                   type: string
  *                   example: "Database connection failed"
  */
-router.get('/fundingHistory',checkLogin, fundingHistory);
+router.get('/fundingHistory/:businessId',checkLogin, fundingHistory);
 
 module.exports = router
 

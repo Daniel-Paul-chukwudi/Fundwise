@@ -465,6 +465,7 @@ exports.deleteUser = async (req,res)=>{
         message:"the guy no dey DB"
       })
     }else{
+      
       user.destroy()
       res.status(200).json({
       message:"i don commot am"

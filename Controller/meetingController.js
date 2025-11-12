@@ -14,20 +14,21 @@ exports.createMeetingInvestor = async (req, res) => {
   try {
     const {id} = req.user
     const { meetingTitle, date, time, meetingType, note , guest } = req.body;
+    // const { meetingTitle, date, time, meetingType, note ,businessId , guest } = req.body;
 
     if(!meetingTitle || !date || !time || !meetingType || !guest){
       return res.status(403).json({ 
         message: 'Please make sure all fields are filled' 
       });
     }
-
-    // Check if the title already exists
-    // const existingMeeting = await meetingModel.findOne({ where: { meetingTitle } });
-    // if (existingMeeting) {
+    // if(!meetingTitle || !date || !time || !meetingType || !guest || !businessId ){
     //   return res.status(403).json({ 
-    //     message: 'Meeting title already exists' 
+    //     message: 'Please make sure all fields are filled' 
     //   });
     // }
+    const Business = await businessModel.findOne({where:{businessOwner:guest}})
+    // const Business = await businessModel.findOne({where:{businessOwner:guest,id:businessId}})
+
     const UserB = await userModel.findByPk(guest)
     if (!UserB) {
       return res.status(404).json({ 
@@ -39,12 +40,16 @@ exports.createMeetingInvestor = async (req, res) => {
       return res.status(404).json({ 
         message: 'Investor not found' 
       });
+    }else if( UserI.kycStatus === 'not provided' ){
+      return res.status(401).json({
+        message: 'Please submit your KYC for verification before you can schedule a meeting '
+      })
+    }else if( UserI.kycStatus === 'under review' ){
+      return res.status(401).json({
+        message: 'Your KYC is currently under review, please wait for it to be verified before you can schedule a meeting'
+      })
     }
     const LINK = links[Math.floor(Math.random() * links.length)]
-    console.log(LINK);
-    
-    const Business = await businessModel.findOne({where:{businessOwner:guest}})
-    // console.log(Business);
     
     const meeting = await meetingModel.create({
       host:id,

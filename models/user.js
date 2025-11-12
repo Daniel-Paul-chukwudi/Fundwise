@@ -45,16 +45,6 @@ User.init(
         allowNull:false,
         defaultValue:false
       },
-      subscriptionTier:{
-        type: DataTypes.ENUM('free','basic','premium'),
-        defaultValue:'free'
-      },
-      subscriptionStart:{
-        type: DataTypes.BIGINT,
-      },
-      subscriptionEnd:{
-        type: DataTypes.BIGINT
-      },
       otp:{
         type: DataTypes.STRING
       },

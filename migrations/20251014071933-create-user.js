@@ -30,15 +30,6 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         allowNull:false,
       },
-      subscriptionTier:{
-        type: Sequelize.ENUM('free','basic','premium')
-      },
-      subscriptionStart:{
-        type: Sequelize.BIGINT
-      },
-      subscriptionEnd:{
-        type: Sequelize.BIGINT
-      },
       role:{
         type: Sequelize.STRING,
         allowNull:false

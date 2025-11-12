@@ -11,6 +11,7 @@ const bcrypt = require('bcrypt')
 const agreementModel = require('../models/agreement')
 const notificationModel = require('../models/notification')
 const { response } = require('express')
+const { subscribe } = require('../route/businessRouter')
 
 
 
@@ -52,6 +53,8 @@ exports.signUp = async (req, res, next) => {
       phoneNumber,
       password: hashedPassword,
       email:email.toLowerCase(),
+      subscribed:true,
+      subscriptionTier:'free',
       otp: otp,
       otpExpiredAt:(Date.now() + 1000 * 300)
     })

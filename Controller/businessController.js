@@ -17,6 +17,7 @@ const investorModel = require('../models/investor')
 exports.createBusiness = async (req, res) => {
   try {
     const userId = req.user.id;
+
     const {
       businessName,
       description,
@@ -33,8 +34,33 @@ exports.createBusiness = async (req, res) => {
       
     } = req.body;
     const Bcheck = await business.findOne({where:{businessName:businessName}})
+    const businessCount = await business.findAll({where:{businessOwner: userId}})
+    const user = await userModel.findByPk(userId)
+
+
     const pitchD = req.files.pitchDeck
     const businessReg = req.files.businessRegistrationCertificate
+    // if(user.subscriptionTier === 'free' && businessCount.length == 2 ){
+    //   fs.unlinkSync(pitchD[0].path)
+    //   fs.unlinkSync(businessReg[0].path)
+    //   return res.status(401).json({
+    //     message:'Sorry you have already reached the maximum number of businesses for this subscription tier. Please upgrade in order add more businesses.'
+    //   })
+    // }else if (user.subscriptionTier === 'basic' && businessCount.length == 3){
+    //   fs.unlinkSync(pitchD[0].path)
+    //   fs.unlinkSync(businessReg[0].path)
+    //   return res.status(401).json({
+    //     message:'Sorry you have already reached the maximum number of businesses for this subscription tier. Please upgrade in order to add more businesses.'
+    //   })
+    // }else if (user.subscriptionTier === 'premium' && businessCount.length == 5){
+    //   fs.unlinkSync(pitchD[0].path)
+    //   fs.unlinkSync(businessReg[0].path)
+    //   return res.status(401).json({
+    //     message:'Sorry you have already reached the maximum number of businesses possible.'
+    //   })
+    // }
+    
+
     if(Bcheck){
       fs.unlinkSync(pitchD[0].path)
       fs.unlinkSync(businessReg[0].path)
@@ -51,17 +77,13 @@ exports.createBusiness = async (req, res) => {
       })
     }else{
     file = pitchD[0]
-    // console.log("here");
     
     const responseP = await cloudinary.uploader.upload(file.path, {resource_type: "auto"})
     fs.unlinkSync(file.path)
-    // console.log("first",file.path);
 
     file = businessReg[0]
     const responseB = await cloudinary.uploader.upload(file.path, {resource_type: "auto"})
     fs.unlinkSync(file.path)
-    // console.log("second", file.path)
-    const user = await userModel.findByPk(userId)
 
     const newBusiness = new business({
       businessName,
@@ -87,7 +109,7 @@ exports.createBusiness = async (req, res) => {
       businessId:newBusiness.id,
       title:`Your ${businessName} has been created successfully`,
       description:`hello ${user.fullName} your business has been created but is currently under review , once verified it will be live.\n
-      thank you for putting your trust in TrustForge 👊😁`
+      Thank you for putting your trust in TrustForge 👊😁`
     })
 
     res.status(201).json({
@@ -164,7 +186,7 @@ exports.viewBusiness = async (req, res) => {
 
     if (user.subscribed === false) {
       return res.status(401).json({
-        message:`Hello ${user.fullName}, your subscription has expired`
+        message:`Hello ${user.fullName}, your subscription has expired please subscribe to continue`
       });
     }
 

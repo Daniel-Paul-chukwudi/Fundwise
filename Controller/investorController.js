@@ -10,6 +10,7 @@ const agreementModel = require('../models/agreement')
 const saveModel = require("../models/save")
 const businessModel = require('../models/business')
 const meetingModel = require('../models/meeting')
+const notificationModel = require('../models/notification')
 
 
 
@@ -147,9 +148,11 @@ exports.fundingHistory = async (req,res)=>{
     let business
     let totInvestment = 0 
     for (const x of investments){
-      // business = await businessModel.findByPk(x.businessId)
+      business = await businessModel.findByPk(x.businessId)
       response = {
         businessName:x.businessName,
+        businessModel:business.businessModel,
+        businessOwnerName:business.businessOwnerName,
         investmentAmount:x.totalInvestment,
         status:x.agrementStatus,
         date:x.createdAt,
@@ -433,13 +436,15 @@ exports.getOne = async(req,res)=>{
         const savedBusinesses = await saveModel.findAll({where:{userId:id}})
         // console.log(savedBusinesses);
         const meetings = await meetingModel.findAll({where:{host:id}})
+        const notifications = await notificationModel.findAll({where:{userId:id}})
         
         
         const response = {
           user,
           savecount:savedBusinesses.length,
           savedBusinesses,
-          meetings
+          meetings,
+          notifications
         }
 
 

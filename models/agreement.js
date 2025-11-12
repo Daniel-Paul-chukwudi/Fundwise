@@ -16,8 +16,14 @@ agreement.init(
         type: DataTypes.UUID,
         allowNull:false
       },
+      businessName:{
+        type: DataTypes.STRING
+      },
       businessOwner:{
         type:DataTypes.UUID
+      },
+      businessOwnerName:{
+        type:DataTypes.STRING
       },
       businessId: {
         type: DataTypes.UUID,

@@ -63,7 +63,7 @@ exports.checkInvestorLogin  = async (req,res,next)=>{
             })
         }
         res.status(500).json({
-            message:"internal server error",
+            message:"internal server error from the authentication",
             error: error.message
         })
     }

@@ -31,7 +31,9 @@ exports.createKycI = async (req, res) => {
       residentialAddress,
       city,
       state,
-      investmentType
+      investmentType,
+      governmentId,
+      proofOfAddress
     } = req.body;
     
     let file
@@ -77,7 +79,7 @@ exports.createKycI = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      message: 'Internal server error',
+      message: 'Internal server error from the controller',
       error: error.message
     });
   }

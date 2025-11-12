@@ -171,10 +171,9 @@ exports.fundingHistory = async (req,res)=>{
     
   } catch (error) {
     res.status(500).json({
-            message:"internal server error",
-            clue:"error getting funding history",
-            error:error.message
-        })
+      message:"internal server error getting funding history",
+      error:error.message
+    })
   }
 }
 

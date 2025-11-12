@@ -16,18 +16,12 @@ exports.createMeetingInvestor = async (req, res) => {
     const { meetingTitle, date, time, meetingType, note , guest } = req.body;
     // const { meetingTitle, date, time, meetingType, note ,businessId , guest } = req.body;
 
-    if(!meetingTitle || !date || !time || !meetingType || !guest){
+    if(!meetingTitle || !date || !time || !meetingType || !guest || !businessId ){
       return res.status(403).json({ 
         message: 'Please make sure all fields are filled' 
       });
     }
-    // if(!meetingTitle || !date || !time || !meetingType || !guest || !businessId ){
-    //   return res.status(403).json({ 
-    //     message: 'Please make sure all fields are filled' 
-    //   });
-    // }
-    const Business = await businessModel.findOne({where:{businessOwner:guest}})
-    // const Business = await businessModel.findOne({where:{businessOwner:guest,id:businessId}})
+    const Business = await businessModel.findOne({where:{businessOwner:guest,id:businessId}})
 
     const UserB = await userModel.findByPk(guest)
     if (!UserB) {

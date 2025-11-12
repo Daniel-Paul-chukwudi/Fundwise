@@ -10,8 +10,8 @@ const sendEmail = require('../Middleware/Bmail')
 const bcrypt = require('bcrypt')
 const agreementModel = require('../models/agreement')
 const notificationModel = require('../models/notification')
-const { response } = require('express')
-const { subscribe } = require('../route/businessRouter')
+const paymentModel = require('../models/payment')
+
 
 
 
@@ -403,17 +403,18 @@ exports.fundingHistory = async (req,res)=>{
   try {
     const {id} = req.user
     const {businessId} = req.params
-    const investments = await agreementModel.findAll({where:{businessOwner:id,businessId: businessId}})
+    // const investments = await agreementModel.findAll({where:{businessOwner:id,businessId: businessId}})
+    const funds = await paymentModel.findAll({where:{businessId: businessId,paymentType:'investment',status:'Successful'}})
     let ans = []
     let response
     let investor
-    for(const x of investments) {
-      investor = await investorModel.findByPk(x.investorId)
+    for(const x of funds) {
+      investor = await investorModel.findByPk(x.userId)
       // console.log(investor);
-      
       response = {
         investorName:investor?.fullName ?? 'Anonymous',
-        totalInvestment:x.totalInvestment
+        amount: x.price,
+        date:x.createdAt
       }
       ans.push(response)
     }

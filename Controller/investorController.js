@@ -10,7 +10,7 @@ const agreementModel = require('../models/agreement')
 const saveModel = require("../models/save")
 const businessModel = require('../models/business')
 const meetingModel = require('../models/meeting')
-const userModel = require('../models/user')
+
 
 
 exports.makeDeal = async (req,res)=>{

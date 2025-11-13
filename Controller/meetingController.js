@@ -13,8 +13,7 @@ const {notify} = require('../helper/notificationTemplate')
 exports.createMeetingInvestor = async (req, res) => {
   try {
     const {id} = req.user
-    const { meetingTitle, date, time, meetingType, note , guest } = req.body;
-    // const { meetingTitle, date, time, meetingType, note ,businessId , guest } = req.body;
+    const { meetingTitle, date, time, meetingType, note ,businessId , guest } = req.body;
 
     if(!meetingTitle || !date || !time || !meetingType || !guest || !businessId ){
       return res.status(403).json({ 

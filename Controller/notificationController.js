@@ -55,6 +55,48 @@ exports.allNotifications = async (req,res)=>{
     }
 }
 
+exports.oneNotification = async(req,res)=>{
+    try {
+        const {notificationId} = req.body
+        const notification = await notificationModel.findByPk(notificationId)
+        if (!notification){
+            return res.status(404).json({
+            message:"notification not found"
+        })
+        }
+        res.status(200).json({
+            message:"notification found",
+            data: notification
+        })
+    } catch (error) {
+        res.status(500).json({ 
+            message: 'internal server error', 
+            error: error.message 
+        });
+    }
+}
+
+exports.readOneNotification = async(req,res)=>{
+    try {
+        const {notificationId} = req.body
+        const notification = await notificationModel.findByPk(notificationId)
+        notification.update({status:'read'})
+        if (!notification){
+            return res.status(404).json({
+            message:"notification not found"
+        })
+        }
+        res.status(200).json({
+            message:"notification found"
+        })
+    } catch (error) {
+        res.status(500).json({ 
+            message: 'internal server error', 
+            error: error.message 
+        });
+    }
+}
+
 exports.allNotificationsById = async (req,res)=>{
     try {
         const {id} = req.user

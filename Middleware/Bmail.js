@@ -8,7 +8,8 @@ const sendEmail = async (options) => {
             to: [{ email: options.email }],
             subject: options.subject,
             htmlContent: options.html
-        }, {
+        }, 
+        {
             headers: {
                 'api-key': process.env.BREVO_API_KEY,
                 'Content-Type': 'application/json'

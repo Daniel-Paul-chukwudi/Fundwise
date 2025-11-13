@@ -85,6 +85,13 @@ Business.init(
     businessStatus:{
       type: DataTypes.ENUM('under review','verified'),
       defaultValue:'under review'
+    },
+    businessViewCount:{
+      type: DataTypes.INTEGER,
+      defaultValue:0
+    },
+    businessViewStatus:{
+      type: DataTypes.ENUM('active','disabled')
     }
   },
   {

@@ -80,6 +80,12 @@ module.exports = {
       businessStatus:{
         type: Sequelize.ENUM('under review','verified')
       },
+      businessViewCount:{
+        type: Sequelize.INTEGER
+      },
+      businessViewStatus:{
+        type: Sequelize.ENUM('active','disabled')
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

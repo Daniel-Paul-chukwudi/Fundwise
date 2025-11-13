@@ -341,16 +341,17 @@ exports.webHook = async (req, res) => {
               const targetB = await userModel.findByPk(payment.userId)
               if(payment.price === 5000){
                 targetB.subscribed = true
-                targetB.subscriptionTier = 'basic'
+                targetB.subscriptionTier = 'growth'
                 targetB.subscriptionStart = Date.now() 
-                targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 5)
+                targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 2)
                 // targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 24 * 30)
                 await targetB.save()
               }else if(payment.price === 10000){
                 targetB.subscribed = true
                 targetB.subscriptionTier = 'premium'
                 targetB.subscriptionStart = Date.now() 
-                targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 24 * 30)
+                targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 2)
+                // targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 24 * 30)
                 await targetB.save()
               }
               await notificationModel.create({

@@ -19,7 +19,7 @@ const paymentModel = require('../models/payment')
 
 exports.signUp = async (req, res, next) => {
   try {
-    const { fullName, phoneNumber, email, password,confirmPassword } = req.body
+    const { fullName, phoneNumber, email,subscriptionTier, password,confirmPassword } = req.body
     const user = await userModel.findOne({where:{ email: email.toLowerCase() }})
     const investor = await investorModel.findOne({where:{email:email.toLowerCase()}})
     // console.log(user);
@@ -36,9 +36,22 @@ exports.signUp = async (req, res, next) => {
     }
     if(password !== confirmPassword){   
       return res.status(403).json({
-        message:"Passwords dont match"
+        message:"Passwords don,t match"
       })
     }
+    let choice
+    if (subscriptionTier === 'growth' || subscriptionTier === 'premium'){
+      choice = {
+        SubT:subscriptionTier,
+        SD:Date.now(),
+        ED:(Date.now() + 1000 * 60 * 60 * 24 * 7)
+      }
+    }else {
+      choice = {
+        SubT:'free',
+      }
+    }
+    //add a check for renew
 
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt)
@@ -49,12 +62,13 @@ exports.signUp = async (req, res, next) => {
 
     const newUser = new userModel({
       fullName,
-      fullName,
       phoneNumber,
       password: hashedPassword,
       email:email.toLowerCase(),
       subscribed:true,
-      subscriptionTier:'free',
+      subscriptionTier: choice.SubT,
+      subscriptionStart:choice.SD ?? 0,
+      subscriptionEnd:choice.ED ?? 0,
       otp: otp,
       otpExpiredAt:(Date.now() + 1000 * 300)
     })
@@ -62,16 +76,12 @@ exports.signUp = async (req, res, next) => {
     
     //Date.now() + 1000 * 120
     await newUser.save()
-    
-    
-
     const verifyMail = {
       email:newUser.email,
       subject:`Please verify your email ${newUser.fullName}`,
-      html:verify(newUser.fullName,newUser.otp)//email template 
+      html:verify(newUser.fullName,newUser.otp)
     }
     sendEmail(verifyMail)
-
 
     return res.status(201).json({
       message: 'User created successfully',

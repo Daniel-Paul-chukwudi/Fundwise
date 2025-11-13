@@ -1,4 +1,4 @@
-const {markAllRead,allNotifications,allNotificationsById,deleteNotification, createNofification} = require('../Controller/notificationController')
+const {markAllRead,allNotifications,allNotificationsById,deleteNotification, createNofification,oneNotification,readOneNotification} = require('../Controller/notificationController')
 const { checkLogin, checkInvestorLogin } = require('../Middleware/authentication')
 
 const router = require('express').Router()
@@ -66,6 +66,138 @@ const router = require('express').Router()
  *                       type: string
  */
 router.post('/addNotification',createNofification)
+
+/**
+ * @swagger
+ * /oneNotification:
+ *   post:
+ *     summary: Get a single notification by ID
+ *     description: Fetches a specific notification record using its ID.
+ *     tags:
+ *       - Notifications
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - notificationId
+ *             properties:
+ *               notificationId:
+ *                 type: string
+ *                 description: The unique ID of the notification
+ *                 example: "b64c89f1-7f22-4b9f-a0a8-fc94a8eaa932"
+ *     responses:
+ *       200:
+ *         description: Notification found successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "notification found"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "b64c89f1-7f22-4b9f-a0a8-fc94a8eaa932"
+ *                     title:
+ *                       type: string
+ *                       example: "New investment update"
+ *                     message:
+ *                       type: string
+ *                       example: "Your recent investment has been approved"
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-10-07T12:30:00Z"
+ *       404:
+ *         description: Notification not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "notification not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "internal server error"
+ *                 error:
+ *                   type: string
+ *                   example: "Database connection failed"
+ */
+router.post('/oneNotification',oneNotification)
+
+/**
+ * @swagger
+ * /read:
+ *   post:
+ *     summary: Mark a notification as read
+ *     description: Updates the status of a specific notification to "read" using its ID.
+ *     tags:
+ *       - Notifications
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - notificationId
+ *             properties:
+ *               notificationId:
+ *                 type: string
+ *                 description: The unique ID of the notification
+ *                 example: "e3f4c52b-5a1a-4e39-bb47-0a5d2b6f567c"
+ *     responses:
+ *       200:
+ *         description: Notification marked as read successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "notification found"
+ *       404:
+ *         description: Notification not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "notification not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "internal server error"
+ *                 error:
+ *                   type: string
+ *                   example: "Database connection failed"
+ */
+router.post('/read',readOneNotification)
 
 /**
  * @swagger

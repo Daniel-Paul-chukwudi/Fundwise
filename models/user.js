@@ -46,8 +46,12 @@ User.init(
         defaultValue:false
       },
       subscriptionTier:{
-        type: DataTypes.ENUM('free','basic','premium'),
+        type: DataTypes.ENUM('free','growth','premium'),
         defaultValue:'free'
+      },
+      renew:{
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
       },
       subscriptionStart:{
         type: DataTypes.BIGINT,

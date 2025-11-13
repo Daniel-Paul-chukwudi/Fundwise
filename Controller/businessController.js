@@ -37,16 +37,26 @@ exports.createBusiness = async (req, res) => {
     const businessCount = await business.findAll({where:{businessOwner: userId}})
     const user = await userModel.findByPk(userId)
 
+    if(user.kycStatus === 'not provided'){
+      return res.status(401).json({
+        message: 'Please submit your KYC for verification before you can create a business '
+      })
+    }else if(user.kycStatus === 'under review'){
+      return res.status(401).json({
+        message: 'Your KYC is currently under review, please wait for it to be verified before you can create a business'
+      })
+    }
+
 
     const pitchD = req.files.pitchDeck
     const businessReg = req.files.businessRegistrationCertificate
-    if(user.subscriptionTier === 'free' && businessCount.length == 2 ){
+    if(user.subscriptionTier === 'free' && businessCount.length == 1 ){
       fs.unlinkSync(pitchD[0].path)
       fs.unlinkSync(businessReg[0].path)
       return res.status(401).json({
         message:'Sorry you have already reached the maximum number of businesses for this subscription tier. Please upgrade in order add more businesses.'
       })
-    }else if (user.subscriptionTier === 'basic' && businessCount.length == 3){
+    }else if (user.subscriptionTier === 'growth' && businessCount.length == 3){
       fs.unlinkSync(pitchD[0].path)
       fs.unlinkSync(businessReg[0].path)
       return res.status(401).json({

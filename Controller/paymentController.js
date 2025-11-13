@@ -339,15 +339,26 @@ exports.webHook = async (req, res) => {
               await targetI.save()
             }else if(payment.userType === 'businessOwner'){
               const targetB = await userModel.findByPk(payment.userId)
-              // console.log('business',targetB);
-              targetB.subscribed = true
-              await targetB.save()
+              if(payment.price === 5000){
+                targetB.subscribed = true
+                targetB.subscriptionTier = 'basic'
+                targetB.subscriptionStart = Date.now() 
+                targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 5)
+                // targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 24 * 30)
+                await targetB.save()
+              }else if(payment.price === 10000){
+                targetB.subscribed = true
+                targetB.subscriptionTier = 'premium'
+                targetB.subscriptionStart = Date.now() 
+                targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 24 * 30)
+                await targetB.save()
+              }
               await notificationModel.create({
               userId:payment.userId,
               businessId,
               title:`Your subscription was successful `,
               description:`hello ${targetB.fullName} your subscription was successful and your business has been added to the promoted section.
-              Thank you for putting your trust in TrustForge 👊😁`
+              Thank you for putting your trust in TrustForge`
               })
             }
         }else if(payment.paymentType === 'investment'){

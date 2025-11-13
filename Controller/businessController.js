@@ -40,25 +40,25 @@ exports.createBusiness = async (req, res) => {
 
     const pitchD = req.files.pitchDeck
     const businessReg = req.files.businessRegistrationCertificate
-    // if(user.subscriptionTier === 'free' && businessCount.length == 2 ){
-    //   fs.unlinkSync(pitchD[0].path)
-    //   fs.unlinkSync(businessReg[0].path)
-    //   return res.status(401).json({
-    //     message:'Sorry you have already reached the maximum number of businesses for this subscription tier. Please upgrade in order add more businesses.'
-    //   })
-    // }else if (user.subscriptionTier === 'basic' && businessCount.length == 3){
-    //   fs.unlinkSync(pitchD[0].path)
-    //   fs.unlinkSync(businessReg[0].path)
-    //   return res.status(401).json({
-    //     message:'Sorry you have already reached the maximum number of businesses for this subscription tier. Please upgrade in order to add more businesses.'
-    //   })
-    // }else if (user.subscriptionTier === 'premium' && businessCount.length == 5){
-    //   fs.unlinkSync(pitchD[0].path)
-    //   fs.unlinkSync(businessReg[0].path)
-    //   return res.status(401).json({
-    //     message:'Sorry you have already reached the maximum number of businesses possible.'
-    //   })
-    // }
+    if(user.subscriptionTier === 'free' && businessCount.length == 2 ){
+      fs.unlinkSync(pitchD[0].path)
+      fs.unlinkSync(businessReg[0].path)
+      return res.status(401).json({
+        message:'Sorry you have already reached the maximum number of businesses for this subscription tier. Please upgrade in order add more businesses.'
+      })
+    }else if (user.subscriptionTier === 'basic' && businessCount.length == 3){
+      fs.unlinkSync(pitchD[0].path)
+      fs.unlinkSync(businessReg[0].path)
+      return res.status(401).json({
+        message:'Sorry you have already reached the maximum number of businesses for this subscription tier. Please upgrade in order to add more businesses.'
+      })
+    }else if (user.subscriptionTier === 'premium' && businessCount.length == 5){
+      fs.unlinkSync(pitchD[0].path)
+      fs.unlinkSync(businessReg[0].path)
+      return res.status(401).json({
+        message:'Sorry you have already reached the maximum number of businesses possible.'
+      })
+    }
     
 
     if(Bcheck){

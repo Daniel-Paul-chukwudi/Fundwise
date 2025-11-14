@@ -255,8 +255,9 @@ exports.changePassword = async (req, res, next) => {
 exports.forgotPassword = async (req,res) => {
     try {
       const {email} = req.body
-      const user = await userModel.findOne({where:{email}});
-      if (!user) {
+      const user = await userModel.findOne({where:{email:email.toLowerCase()}});
+      // const investor = await investorModel.findOne({where:{email:email.toLowerCase()}});
+      if (!user ) {
         return res.status(404).json({
             message:'user not found'
         })
@@ -264,9 +265,10 @@ exports.forgotPassword = async (req,res) => {
       const token = jwt.sign({id:user.id}, process.env.JWT_SECRET,{
         expiresIn:'10m',
       });
-      const link = `http://localhost:5173/resetpassword/${token}`;
+      const link = `${req.protocol}://${req.get('host')}/reset-password/${token}`
+      // `http://localhost:5173/resetpassword/${token}`;
       // http://localhost:5173
-      // `${req.protocol}://${req.get('host')}/reset-password/${token}`
+      
    
        await sendEmail({email,
         subject:'Password reset link',

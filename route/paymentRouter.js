@@ -1,5 +1,5 @@
 const {initializeInvestementPaymentInvestor,webHook,verifyPayment, getAll, initializeSubscriptionPaymentInvestor, initializeSubscriptionPaymentBusinessOwner} = require('../Controller/paymentController')
-const {checkInvestorLogin, checkLogin} = require('../Middleware/authentication')
+const {checkInvestorLogin, checkLogin, checkKyc} = require('../Middleware/authentication')
 const {paymentValidator} = require('../Middleware/validator')
 
 const router = require('express').Router()
@@ -370,7 +370,7 @@ router.post('/subscribeBusinessOwner', checkLogin, initializeSubscriptionPayment
  *                     status: false
  *                     message: "Invalid API key"
  */
-router.post('/makeInvestment', checkInvestorLogin, initializeInvestementPaymentInvestor);
+router.post('/makeInvestment', checkInvestorLogin,checkKyc,initializeInvestementPaymentInvestor);
 
 /**
  * @swagger

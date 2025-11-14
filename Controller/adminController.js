@@ -6,6 +6,7 @@ const investorModel = require('../models/investor')
 const KycModel = require('../models/kyc-businessOwner');
 const KycModelI = require('../models/kyc-investor');
 const agreementModel = require('../models/agreement')
+const {notify} = require('../helper/notificationTemplate')
 
 
 exports.createAdmin = async (req,res)=>{
@@ -116,6 +117,13 @@ exports.verifyBusiness = async(req,res)=>{
         const {businessId} = req.body
         const business = await businessModel.findByPk(businessId)
         await business.update({businessStatus:"verified"},{where:{id:businessId}})
+        notify({
+            userId:business.businessOwner,
+            title:`Your business has been approved`,
+            businessId:businessId,
+            description:`hello ${business.businessOwnerName} your business has been approved .\n
+            Thank you for putting your trust in TrustForge 👊😁`
+            }) 
         res.status(200).json({
             message:"business verified successfully",
             business
@@ -138,6 +146,12 @@ exports.verifyKyc= async(req,res)=>{
         if(!user && investor){
             kyc = await KycModelI.update({verificationStatus:"approved"},{where:{userId:userId}})
             await investor.update({kycStatus:"verified"},{where:{id:userId}})
+            notify({
+                userId:investor.id,
+                title:`Your kyc has been approved`,
+                description:`hello ${investor.fullName} your kyc has been approved .\n
+                Thank you for putting your trust in TrustForge 👊😁`
+                })            
             return res.status(200).json({
                 message:"investor kyc verified successfully",
                 investor
@@ -145,6 +159,12 @@ exports.verifyKyc= async(req,res)=>{
         }else if(!investor && user){
             kyc = await KycModel.update({verificationStatus:"approved"},{where:{userId:userId}})
             await user.update({kycStatus:"verified"},{where:{id:userId}})
+            notify({
+                userId:user.id,
+                title:`Your kyc has been approved`,
+                description:`hello ${user.fullName} your kyc has been approved .\n
+                Thank you for putting your trust in TrustForge 👊😁`
+                }) 
             return res.status(200).json({
                 message:"business Owner kyc verified successfully",
                 user

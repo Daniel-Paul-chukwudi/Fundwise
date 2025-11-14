@@ -69,6 +69,41 @@ exports.checkInvestorLogin  = async (req,res,next)=>{
     }
 }
 
+exports.checkLoginUniversal  = async (req,res,next)=>{
+    try {
+        const token = req.headers.authorization?.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({
+                message: 'Please login again to continue'
+            })
+        }
+        const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+        
+        const user = await investorModel.findByPk(decoded.id);
+        const investor = await investorModel.findByPk(decoded.id)
+        if(!user && investor){
+            req.user = decoded;
+            next()
+        }else if(!investor && user){
+            req.user = decoded;
+            next()
+        }else{
+            return res.status(404).json({
+                message:"User not found"
+            })
+        }
+    } catch (error) {
+        if (error instanceof jwt.TokenExpiredError) {
+            return res.status(401).json({
+                message: 'Session expired, Please login again to continue'
+            })
+        }
+        res.status(500).json({
+            message:"internal server error from the authentication",
+            error: error.message
+        })
+    }
+}
 
 exports.checkKyc = async (req,res,next)=>{
     try {
@@ -83,7 +118,7 @@ exports.checkKyc = async (req,res,next)=>{
                 })
             }else if (investor.kycStatus === 'under review'){
                 return res.status(200).json({
-                message:"your kyc is under review wait for it to be verified"
+                message:"your kyc is under review, wait for it to be verified"
                 })
             }else{
                 next()

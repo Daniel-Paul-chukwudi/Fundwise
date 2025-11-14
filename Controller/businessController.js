@@ -37,15 +37,15 @@ exports.createBusiness = async (req, res) => {
     const businessCount = await business.findAll({where:{businessOwner: userId}})
     const user = await userModel.findByPk(userId)
 
-    if(user.kycStatus === 'not provided'){
-      return res.status(401).json({
-        message: 'Please submit your KYC for verification before you can create a business '
-      })
-    }else if(user.kycStatus === 'under review'){
-      return res.status(401).json({
-        message: 'Your KYC is currently under review, please wait for it to be verified before you can create a business'
-      })
-    }
+    // if(user.kycStatus === 'not provided'){
+    //   return res.status(401).json({
+    //     message: 'Please submit your KYC for verification before you can create a business '
+    //   })
+    // }else if(user.kycStatus === 'under review'){
+    //   return res.status(401).json({
+    //     message: 'Your KYC is currently under review, please wait for it to be verified before you can create a business'
+    //   })
+    // }
 
 
     const pitchD = req.files.pitchDeck

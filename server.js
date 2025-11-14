@@ -14,6 +14,11 @@ const notificationRouter = require("./route/notificationRouter")
 const kycRouter = require('./route/kycRoute')
 const swaggerJSDoc = require('swagger-jsdoc')
 const swaggerUi  = require('swagger-ui-express')
+const {subEnder} = require('./helper/subchecker')
+
+// console.log(Date.now());
+subEnder()
+
 
 
 const app = express()

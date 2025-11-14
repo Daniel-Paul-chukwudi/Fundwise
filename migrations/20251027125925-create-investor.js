@@ -40,6 +40,18 @@ module.exports = {
       totalInvestment:{
         type: Sequelize.BIGINT
       },
+      subscriptionTier:{
+        type: Sequelize.ENUM('free','growth','premium')
+      },
+      renew:{
+        type: Sequelize.BOOLEAN,
+      },
+      subscriptionStart:{
+        type: Sequelize.BIGINT
+      },
+      subscriptionEnd:{
+        type: Sequelize.BIGINT
+      },
       otp:{
         type: Sequelize.STRING
       },

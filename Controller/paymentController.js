@@ -6,6 +6,7 @@ const paymentModel = require('../models/payment')
 const investorModel = require('../models/investor')
 const agreementModel = require('../models/agreement')
 const notificationModel = require('../models/notification')
+const {notify} = require('../helper/notificationTemplate')
 
 
 
@@ -316,25 +317,48 @@ exports.webHook = async (req, res) => {
     // console.log(data)
     // console.log(payment);
     
-    if ( event === "charge.success") {
-      let link = ''
+    if ( event === "charge.success"){
+
       payment.status = 'Successful'
       await payment.save();
       console.log(payment);
         if (payment.paymentType === 'subscription'){
             if(payment.userType === 'investor'){
               const targetI = await investorModel.findByPk(payment.userId)
-              // console.log('investor',targetI);
-              await notificationModel.create({
-              userId:payment.userId,
-              businessId,
-              title:`Your subscription was successful `,
-              description:`hello ${targetI.fullName} your subscription was successful and you have been allocated 5 view points.
-              Thank you for putting your trust in TrustForge 👊😁`
-              })
-              targetI.subscribed = true
-              targetI.viewAllocation = 5
-              await targetI.save()
+              if(payment.price === 10000){
+                targetI.subscribed = true
+                targetI.subscriptionTier = 'growth'
+                targetI.viewAllocation = 10
+                targetI.subscriptionStart = Date.now() 
+                targetI.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 2)
+                targetI.renew = false
+                // targetI.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 24 * 30)
+                await targetI.save()
+                notify({
+                userId:payment.userId,
+                businessId,
+                title:`Your subscription was successful `,
+                description:`hello ${targetI.fullName} your subscription was successful and you have been allocated 10 view points.
+                Thank you for putting your trust in TrustForge 👊😁`
+                  })
+              }else if(payment.price === 20000){
+                targetI.subscribed = true
+                targetI.subscriptionTier = 'premium'
+                targetI.viewAllocation = 10
+                targetI.subscriptionStart = Date.now() 
+                targetI.renew = false
+                targetI.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 2)
+                // targetI.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 24 * 30)
+                await targetI.save()
+                notify({
+                userId:payment.userId,
+                businessId,
+                title:`Your subscription was successful `,
+                description:`hello ${targetI.fullName} your subscription was successful and you have been allocated 15 view points.
+                Thank you for putting your trust in TrustForge 👊😁`
+                  })
+              }
+              
             }else if(payment.userType === 'businessOwner'){
               const targetB = await userModel.findByPk(payment.userId)
               if(payment.price === 10000){
@@ -342,6 +366,7 @@ exports.webHook = async (req, res) => {
                 targetB.subscriptionTier = 'growth'
                 targetB.subscriptionStart = Date.now() 
                 targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 2)
+                targetB.renew = false
                 // targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 24 * 30)
                 await targetB.save()
               }else if(payment.price === 20000){

@@ -20,8 +20,9 @@ exports.createMeetingInvestor = async (req, res) => {
         message: 'Please make sure all fields are filled' 
       });
     }
+    
     const Business = await businessModel.findOne({where:{businessOwner:guest,id:businessId}})
-
+    
     const UserB = await userModel.findByPk(guest)
     if (!UserB) {
       return res.status(404).json({ 

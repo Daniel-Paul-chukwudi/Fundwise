@@ -53,6 +53,20 @@ investor.init(
         type: DataTypes.BIGINT,
         defaultValue:0
       },
+      subscriptionTier:{
+        type: DataTypes.ENUM('free','growth','premium'),
+        defaultValue:'free'
+      },
+      renew:{
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+      },
+      subscriptionStart:{
+        type: DataTypes.BIGINT,
+      },
+      subscriptionEnd:{
+        type: DataTypes.BIGINT
+      },
       otp:{
         type: DataTypes.STRING
       },

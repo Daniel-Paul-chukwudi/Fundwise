@@ -4,6 +4,7 @@ const KycModel = require('../models/kyc-investor');
 const KycModelU = require('../models/kyc-businessOwner');
 const investorModel = require('../models/investor');
 const userModel = require('../models/user')
+const {notify} = require('../helper/notificationTemplate')
 
 exports.createKycI = async (req, res) => {
   try {
@@ -71,6 +72,12 @@ exports.createKycI = async (req, res) => {
       profilePicPublicId:resultPP.public_id
     });
     await newKyc.save()
+    notify({
+      userId:userId,
+      title:`Your kyc has been submitted successfully`,
+      description:`hello ${newKyc.firstName} your kyc has been submitted and is awaiting approval .\n
+      Thank you for putting your trust in TrustForge 👊😁`
+    })
     await investorModel.update({kycStatus:'under review'},{where:{id:userId}})
 
     res.status(201).json({

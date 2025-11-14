@@ -30,19 +30,19 @@ exports.createMeetingInvestor = async (req, res) => {
       });
     }
     const UserI = await investorModel.findByPk(id)
-    if (!UserI) {
-      return res.status(404).json({ 
-        message: 'Investor not found' 
-      });
-    }else if( UserI.kycStatus === 'not provided' ){
-      return res.status(401).json({
-        message: 'Please submit your KYC for verification before you can schedule a meeting '
-      })
-    }else if( UserI.kycStatus === 'under review' ){
-      return res.status(401).json({
-        message: 'Your KYC is currently under review, please wait for it to be verified before you can schedule a meeting'
-      })
-    }
+    // if (!UserI) {
+    //   return res.status(404).json({ 
+    //     message: 'Investor not found' 
+    //   });
+    // }else if( UserI.kycStatus === 'not provided' ){
+    //   return res.status(401).json({
+    //     message: 'Please submit your KYC for verification before you can schedule a meeting '
+    //   })
+    // }else if( UserI.kycStatus === 'under review' ){
+    //   return res.status(401).json({
+    //     message: 'Your KYC is currently under review, please wait for it to be verified before you can schedule a meeting'
+    //   })
+    // }
     const LINK = links[Math.floor(Math.random() * links.length)]
     
     const meeting = await meetingModel.create({
@@ -129,6 +129,18 @@ exports.rescheduleMeeting = async(req,res)=>{
       })
     }
     await target.update({date,time,meetingStatus:"Reschedule Requested"})
+    notify({
+    userId:target.host,
+    title:`Your meeting was rescheduled`,
+    description:`hello ${target.hostName} your meeting was rescheduled.
+    Thank you for putting your trust in TrustForge 👊😁`
+    }) 
+    notify({
+    userId:target.guest,
+    title:`Your meeting was rescheduled`,
+    description:`hello ${target.businessOwnerName} your meeting was rescheduled.
+    Thank you for putting your trust in TrustForge 👊😁`
+    })
     res.status(200).json({
       message:"changes made awaiting approval",
       data:target
@@ -153,7 +165,18 @@ exports.declineMeeting = async(req,res)=>{
       })
     }
     await meetingModel.update({meetingStatus:"Declined"},{where:{id:meetingId}})
-    
+    notify({
+    userId:target.host,
+    title:`Your meeting was declined`,
+    description:`hello ${target.hostName} your meeting was declined.
+    Thank you for putting your trust in TrustForge 👊😁`
+    }) 
+    notify({
+    userId:target.guest,
+    title:`Your meeting was declined`,
+    description:`hello ${target.businessOwnerName} your meeting was declined.
+    Thank you for putting your trust in TrustForge 👊😁`
+    }) 
 
     res.status(200).json({
       message:"Declined meeting",

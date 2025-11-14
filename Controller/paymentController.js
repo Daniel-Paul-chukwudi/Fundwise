@@ -154,19 +154,19 @@ exports.initializeInvestementPaymentInvestor = async (req, res) => {
       const business = await businessModel.findByPk(businessId)
       
 
-    if (user === null) {
-      return res.status(404).json({
-        message: 'User not found'
-      })
-    }else if( user.kycStatus === 'not provided' ){
-      return res.status(401).json({
-        message: 'Please submit your KYC for verification before you can make an investment'
-      })
-    }else if( user.kycStatus === 'under review' ){
-      return res.status(401).json({
-        message: 'Your KYC is currently under review, please wait for it to be verified before you can make an investment'
-      })
-    }
+    // if (user === null) {
+    //   return res.status(404).json({
+    //     message: 'User not found'
+    //   })
+    // }else if( user.kycStatus === 'not provided' ){
+    //   return res.status(401).json({
+    //     message: 'Please submit your KYC for verification before you can make an investment'
+    //   })
+    // }else if( user.kycStatus === 'under review' ){
+    //   return res.status(401).json({
+    //     message: 'Your KYC is currently under review, please wait for it to be verified before you can make an investment'
+    //   })
+    // }
     
     const diff = business.fundingSought - business.fundRaised
     if(diff === 0){

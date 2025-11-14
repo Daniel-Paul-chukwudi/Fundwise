@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {meetingValidator} = require('../Middleware/validator');
 const {getAllMeetings,getMeetingById,updateMeeting,deleteMeeting, createMeetingInvestor,approveMeeting,requestReschedule,respondReschedule, declineMeeting, rescheduleMeeting,getMeetingByUserId} = require('../Controller/meetingController');
-const {checkInvestorLogin, checkLogin, checkAdmin} = require('../Middleware/authentication')
+const {checkInvestorLogin, checkLogin, checkAdmin, checkKyc, checkLoginUniversal} = require('../Middleware/authentication')
 
 
 /**
@@ -91,7 +91,7 @@ const {checkInvestorLogin, checkLogin, checkAdmin} = require('../Middleware/auth
  *                   type: string
  *                   example: Sarah Daniels
  */
-router.post('/meeting', checkInvestorLogin, createMeetingInvestor);
+router.post('/meeting', checkInvestorLogin,checkKyc, createMeetingInvestor);
 
 /**
  * @swagger
@@ -140,7 +140,7 @@ router.post('/meeting', checkInvestorLogin, createMeetingInvestor);
  *                       type: string
  *                       example: "Approved and Upcoming"
  */
-router.post('/approve-meeting',checkLogin,approveMeeting)
+router.post('/approve-meeting',checkLoginUniversal,approveMeeting)
 
 /**
  * @swagger
@@ -216,7 +216,7 @@ router.post('/approve-meeting',checkLogin,approveMeeting)
  *                   type: string
  *                   example: Oops it seems like the meeting does not exist
  */
-router.post('/reschedule-meeting',checkLogin,rescheduleMeeting)
+router.post('/reschedule-meeting',checkLoginUniversal,rescheduleMeeting)
 
 /**
  * @swagger
@@ -275,7 +275,7 @@ router.post('/reschedule-meeting',checkLogin,rescheduleMeeting)
  *                   type: string
  *                   example: Oops it seems like the meeting does not exist
  */
-router.post('/decline-meeting',checkLogin,declineMeeting)
+router.post('/decline-meeting',checkLoginUniversal,declineMeeting)
 
 /**
  * @swagger

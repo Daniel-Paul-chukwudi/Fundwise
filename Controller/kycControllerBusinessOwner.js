@@ -2,6 +2,7 @@ const fs = require('fs');
 const cloudinary = require('../config/cloudinary');
 const KycModel = require('../models/kyc-businessOwner');
 const UserModel = require('../models/user');
+const {notify} = require('../helper/notificationTemplate')
 
 exports.createKyc = async (req, res) => {
   try {
@@ -75,6 +76,12 @@ exports.createKyc = async (req, res) => {
     });
     await newKyc.save()
     await UserModel.update({kycStatus:'under review'},{where:{id:userId}})
+    notify({
+      userId:userId,
+      title:`Your kyc has been submitted successfully`,
+      description:`hello ${newKyc.firstName} your kyc has been submitted and is awaiting approval .\n
+      Thank you for putting your trust in TrustForge 👊😁`
+    })
 
     res.status(201).json({
       message: 'KYC created successfully',

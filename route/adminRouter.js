@@ -1,4 +1,4 @@
-const {createAdmin,getAllAdmins,getOne,updateAdmin,deleteAdmin,verifyBusiness,verifyKyc, getAllKyc, getOneKyc, getAllAgreements} = require('../Controller/adminController')
+const {createAdmin,getAllAdmins,getOne,updateAdmin,deleteAdmin,verifyBusiness,verifyKyc, getAllKyc, getOneKyc, getAllAgreements, UnVerifyKyc} = require('../Controller/adminController')
 
 const router = require('express').Router()
 
@@ -176,6 +176,8 @@ router.patch('/verifyBusiness',verifyBusiness)
  *                   example: Cannot read properties of undefined
  */
 router.patch('/verifyKyc',verifyKyc)
+
+router.patch('/unverifyKyc',UnVerifyKyc)
 
 /**
  * @swagger

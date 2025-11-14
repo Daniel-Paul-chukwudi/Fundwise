@@ -184,6 +184,41 @@ exports.verifyKyc= async(req,res)=>{
     }
 }
 
+exports.UnVerifyKyc= async(req,res)=>{
+    try {
+        const {userId} = req.body
+        let kyc
+        const investor = await investorModel.findByPk(userId)
+        const user = await UserModel.findByPk(userId)
+        if(!user && investor){
+            kyc = await KycModelI.destroy({where:{userId:userId}})
+            await investor.update({kycStatus:"not provided"},{where:{id:userId}})          
+            return res.status(200).json({
+                message:"investor kyc Unverified successfully",
+                investor
+            })
+        }else if(!investor && user){
+            kyc = await KycModel.destroy({where:{userId:userId}})
+            await user.update({kycStatus:"not provided"},{where:{id:userId}})
+            return res.status(200).json({
+                message:"business Owner kyc Unverified successfully",
+                user
+            })
+        }else{
+            return res.status(404).json({
+                message:"User not found"
+            })
+        }
+        
+
+    } catch (error) {
+        res.status(500).json({
+            message:"Internal server error",
+            error:error.message
+        })
+    }
+}
+
 exports.getOneKyc = async (req,res)=>{
      try {
         const {userId} = req.body

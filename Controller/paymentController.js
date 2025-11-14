@@ -33,7 +33,6 @@ exports.initializeSubscriptionPaymentInvestor = async (req, res) => {
       amount: price,
       currency: 'NGN',
       reference: ref,
-      redirect_url:link,
       customer: {
         email: user.email,
         name: `${user.fullName}`
@@ -99,7 +98,6 @@ exports.initializeSubscriptionPaymentBusinessOwner = async (req, res) => {
       amount: price,
       currency: 'NGN',
       reference: ref,
-      redirect_url:link,
       customer: {
         email: user.email,
         name: `${user.fullName}`

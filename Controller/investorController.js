@@ -79,7 +79,7 @@ exports.investorResendOtp = async (req,res)=>{
 
 exports.signUp = async (req, res, next) => {
   try {
-    const { fullName, phoneNumber,email, password,confirmPassword } = req.body
+    const { fullName, phoneNumber,email,subscriptionTier, password,confirmPassword } = req.body
     const user = await userModel.findOne({where:{ email: email.toLowerCase() }})
     const investor = await investorModel.findOne({where:{email:email.toLowerCase()}})
     
@@ -100,6 +100,26 @@ exports.signUp = async (req, res, next) => {
         message:"Passwords dont match"
       })
     }
+    let choice
+    if (subscriptionTier === 'growth' ){
+      choice = {
+        SubT:subscriptionTier,
+        SD:Date.now(),
+        ED:(Date.now() + 1000 * 60 * 60 * 24 * 7),
+        VA:10
+      }
+    }else if ( subscriptionTier === 'premium'){
+      choice = {
+        SubT:subscriptionTier,
+        SD:Date.now(),
+        ED:(Date.now() + 1000 * 60 * 60 * 24 * 7),
+        VA: 15
+      }
+    }else {
+      choice = {
+        SubT:'free',
+      }
+    }
 
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt)
@@ -112,8 +132,11 @@ exports.signUp = async (req, res, next) => {
       fullName,
       phoneNumber,
       password: hashedPassword,
-      viewAllocation:5,
+      viewAllocation:choice.VA ?? 5,
       subscribed:true,
+      subscriptionTier: choice.SubT,
+      subscriptionStart:choice.SD ?? 0,
+      subscriptionEnd:choice.ED ?? 0,
       email:email.toLowerCase(),
       otp: otp,
       otpExpiredAt:(Date.now() + 1000 * 300)

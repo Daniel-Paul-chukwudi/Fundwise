@@ -120,7 +120,7 @@ exports.approveMeeting = async (req,res)=>{
 exports.rescheduleMeeting = async(req,res)=>{
   try {
     const {id} = req.user
-    const {meetingId, date, time}  = req.body
+    const {meetingId, date, time,note}  = req.body
     const target = await meetingModel.findOne({where:{id:meetingId}})
     const user = await userModel.findByPk(id);
     const investor = await investorModel.findByPk(id)
@@ -136,7 +136,7 @@ exports.rescheduleMeeting = async(req,res)=>{
       rescheduleRole = user.role
     }
 
-    await target.update({date,time,meetingStatus:"Reschedule Requested",rescheduleRole})
+    await target.update({date,time,meetingStatus:"Reschedule Requested",rescheduleRole,note})
     notify({
     userId:target.host,
     title:`Your meeting was rescheduled`,

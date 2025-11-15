@@ -21,19 +21,20 @@ exports.initializeSubscriptionPaymentInvestor = async (req, res) => {
       const code = await otpGen.generate(12, { upperCaseAlphabets: false, lowerCaseAlphabets: true, digits: true, specialChars: false })
       const ref = `TF-${code}-INS`
       const {price} = req.body
-      const link = `https://thetrustforge.vercel.app/payment-success/${user.id}/${user.fullName}/${ref}/${price}`
       
-
-    if (user === null) {
-      return res.status(404).json({
+      
+      if (user === null) {
+        return res.status(404).json({
         message: 'Investor not found'
       })
     }
+    const link = `https://thetrustforge.vercel.app/investor/subscription-success/${user.id}/${user.fullName}/${ref}/${price}`
 
     const paymentData = {
       amount: price,
       currency: 'NGN',
       reference: ref,
+      redirect_url:link,
       customer: {
         email: user.email,
         name: `${user.fullName}`
@@ -41,13 +42,15 @@ exports.initializeSubscriptionPaymentInvestor = async (req, res) => {
     }
     console.log(paymentData);
     
-
+    
     const { data } = await axios.post('https://api.korapay.com/merchant/api/v1/charges/initialize', paymentData, {
       headers: {
         Authorization: `Bearer ${process.env.KORA_SECRET_KEY}`
       }
     });
-
+    
+    // `https://thetrustforge.vercel.app/investor/subscription-success/:id/:fullName/:referenceId/:amount`
+    // `https://thetrustforge.vercel.app/payment-success/${user.id}/${user.fullName}/${ref}/${price}`
     const payment = new paymentModel({
       userId: id,
       paymentType:'subscription',
@@ -93,12 +96,14 @@ exports.initializeSubscriptionPaymentBusinessOwner = async (req, res) => {
         message: 'user not found'
       })
     }
-    const link = `https://thetrustforge.vercel.app/payment-success/${user.id}/${user.fullName}/${ref}/${price}`
+    const link = `https://thetrustforge.vercel.app/business_owner/subscription-success//${user.id}/${user.fullName}/${ref}/${price}`
+    // `https://thetrustforge.vercel.app/payment-success/${user.id}/${user.fullName}/${ref}/${price}`
 
     const paymentData = {
       amount: price,
       currency: 'NGN',
       reference: ref,
+      redirect_url:link,
       customer: {
         email: user.email,
         name: `${user.fullName}`
@@ -189,6 +194,7 @@ exports.initializeInvestementPaymentInvestor = async (req, res) => {
       amount: price,
       currency: 'NGN',
       reference: ref,
+      redirect_url:link,
       customer: {
         email: user.email,
         name: `${user.fullName}`

@@ -82,7 +82,7 @@ exports.createMeetingInvestor = async (req, res) => {
 
 exports.approveMeeting = async (req,res)=>{
   try {
-    const {id} = req.user
+    // const {id} = req.user
     const {meetingId}  = req.body
     const target = await meetingModel.findOne({where:{id:meetingId}})
     const Business = await businessModel.findOne({where:{businessOwner:target.guest}})
@@ -119,7 +119,7 @@ exports.approveMeeting = async (req,res)=>{
 
 exports.rescheduleMeeting = async(req,res)=>{
   try {
-    const {id} = req.user
+    // const {id} = req.user
     const {meetingId, date, time}  = req.body
     const target = await meetingModel.findOne({where:{id:meetingId}})
 

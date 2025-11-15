@@ -79,7 +79,7 @@ exports.checkLoginUniversal  = async (req,res,next)=>{
         }
         const decoded = await jwt.verify(token, process.env.JWT_SECRET);
         
-        const user = await investorModel.findByPk(decoded.id);
+        const user = await userModel.findByPk(decoded.id);
         const investor = await investorModel.findByPk(decoded.id)
         if(!user && investor){
             req.user = decoded;

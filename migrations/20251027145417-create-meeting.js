@@ -39,6 +39,9 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull:false
       },
+      rescheduleRole:{
+        type: Sequelize.STRING
+      },
       meetingType:{
         type: Sequelize.STRING,
       },

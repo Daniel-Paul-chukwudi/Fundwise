@@ -29,6 +29,9 @@ meeting.init(
       businessName:{
         type: DataTypes.STRING
       },
+      rescheduleRole:{
+        type: DataTypes.STRING
+      },
       meetingTitle: {
         type: DataTypes.STRING,
         allowNull:false,

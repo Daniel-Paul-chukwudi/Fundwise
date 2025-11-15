@@ -119,16 +119,24 @@ exports.approveMeeting = async (req,res)=>{
 
 exports.rescheduleMeeting = async(req,res)=>{
   try {
-    // const {id} = req.user
+    const {id} = req.user
     const {meetingId, date, time}  = req.body
     const target = await meetingModel.findOne({where:{id:meetingId}})
-
+    const user = await userModel.findByPk(id);
+    const investor = await investorModel.findByPk(id)
+    let rescheduleRole
     if(!target){
       return res.status(404).json({
         message:"Oops it seems like the meeting does not exist "
       })
     }
-    await target.update({date,time,meetingStatus:"Reschedule Requested"})
+    if(!user && investor){
+      rescheduleRole = investor.role
+    }else if(!investor && user){
+      rescheduleRole = user.role
+    }
+
+    await target.update({date,time,meetingStatus:"Reschedule Requested",rescheduleRole})
     notify({
     userId:target.host,
     title:`Your meeting was rescheduled`,

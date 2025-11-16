@@ -86,6 +86,10 @@ module.exports = {
       businessViewStatus:{
         type: Sequelize.ENUM('active','disabled')
       },
+      subscriptionTier:{
+        type: Sequelize.ENUM('free','growth','premium'),
+        defaultValue:'free'
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

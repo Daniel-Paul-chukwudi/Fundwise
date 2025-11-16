@@ -28,7 +28,7 @@ exports.initializeSubscriptionPaymentInvestor = async (req, res) => {
         message: 'Investor not found'
       })
     }
-    const link = `https://thetrustforge.vercel.app/investor/subscription-success/${user.id}/${user.fullName}/${ref}/${price}`
+    const link = `https://thetrustforge.vercel.app/investor/subscription-success?id=${user.id}&fullName=${user.fullName}&referenceId=${ref}&amount=${price}`
 
     const paymentData = {
       amount: price,
@@ -96,8 +96,9 @@ exports.initializeSubscriptionPaymentBusinessOwner = async (req, res) => {
         message: 'user not found'
       })
     }
-    const link = `https://thetrustforge.vercel.app/business_owner/subscription-success//${user.id}/${user.fullName}/${ref}/${price}`
+    const link = `https://thetrustforge.vercel.app/business_owner/subscription-success?id=${user.id}&fullName=${user.fullName}&referenceId=${ref}&amount=${price}`
     // `https://thetrustforge.vercel.app/payment-success/${user.id}/${user.fullName}/${ref}/${price}`
+    // `id=${user.id}&fullName=${user.fullName}&referenceId=${ref}&amount=${price}`
 
     const paymentData = {
       amount: price,
@@ -185,9 +186,16 @@ exports.initializeInvestementPaymentInvestor = async (req, res) => {
     }
     
     
-    const link = `https://thetrustforge.vercel.app/dashboard/investor/payment-success/${user.id}/${user.fullName}/${ref}/${price}`
-    const link3 = `https://thetrustforge.vercel.app/dashboard/investor/payment-success/4a277227-e3d3-4a59-8b1f-fcbe085b79f1/paula/TF-dv4l5vgxsgop-ININ/100000`
-    const link2 = `https://thetrustforge.vercel.app/dashboard/investor/payment-success?id=${user.id}&investorName=${user.fullName}&referenceId=${ref}&amount=${price}`
+    const link = `https://thetrustforge.vercel.app/dashboard/investor/payment-success?id=${user.id}&fullName=${user.fullName}&reference=${ref}&amount=${price}`
+    // const link3 = `https://thetrustforge.vercel.app/dashboard/investor/payment-success/4a277227-e3d3-4a59-8b1f-fcbe085b79f1/paula/TF-dv4l5vgxsgop-ININ/100000`
+    
+    
+    
+    
+    const link2 = `https://thetrustforge.vercel.app/dashboard/investor/payment-success?id=${user.id}&investorName=${user.fullName}&reference=${ref}&amount=${price}`
+    
+    
+    
     
 
     const paymentData = {
@@ -367,21 +375,24 @@ exports.webHook = async (req, res) => {
               
             }else if(payment.userType === 'businessOwner'){
               const targetB = await userModel.findByPk(payment.userId)
+              const business = await businessModel.findAll({where:{businessOwner:payment.userId}})
               if(payment.price === 10000){
                 targetB.subscribed = true
                 targetB.subscriptionTier = 'growth'
                 targetB.subscriptionStart = Date.now() 
-                targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 2)
+                // targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 2)
                 targetB.renew = false
-                // targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 24 * 30)
+                targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 24 * 30)
                 await targetB.save()
+                business.update({subscriptionTier : 'growth'})
               }else if(payment.price === 20000){
                 targetB.subscribed = true
                 targetB.subscriptionTier = 'premium'
                 targetB.subscriptionStart = Date.now() 
-                targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 2)
-                // targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 24 * 30)
+                // targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 2)
+                targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 24 * 30)
                 await targetB.save()
+                business.update({subscriptionTier : 'premium'})
               }
               await notificationModel.create({
               userId:payment.userId,

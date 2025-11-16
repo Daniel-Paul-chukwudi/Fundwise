@@ -1,4 +1,5 @@
 const userModel = require('../models/user')
+const businessModel = require('../models/business')
 const notify = require('../helper/notificationTemplate')
 
 exports.subEnder = async ()=>{
@@ -15,6 +16,11 @@ exports.subEnder = async ()=>{
         await userModel.update({subscriptionTier:'free',subscriptionEnd:0,subscriptionStart:0, renew:true},
             {where: {
                 id: clear.map((i)=> i.id)
+            }}
+        )
+        await businessModel.update({subscriptionTier:'free'},
+            {where: {
+                businessOwner: clear.map((i)=> i.id)
             }}
         )
         for(const y of clear){

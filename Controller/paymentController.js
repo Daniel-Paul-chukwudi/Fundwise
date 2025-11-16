@@ -28,9 +28,9 @@ exports.initializeSubscriptionPaymentInvestor = async (req, res) => {
         message: 'Investor not found'
       })
     }
-    const link = `https://thetrustforge.vercel.app/investor/subscription-success?id=${user.id}&fullName=${user.fullName}&referenceId=${ref}&amount=${price}`
+    // const link = `https://thetrustforge.vercel.app/investor/subscription-success?id=${user.id}&fullName=${user.fullName}&referenceId=${ref}&amount=${price}`
     
-    const redirect_url = `https://thetrustforge.vercel.app/investor/subscription-success?id=${encodeURIComponent(
+    const redirect_url = `https://thetrustforge.vercel.app/dashboard/investor/subscription-success?id=${encodeURIComponent(
       user.id
     )}&fullName=${encodeURIComponent(user.fullName)}&reference=${encodeURIComponent(
       ref
@@ -103,11 +103,11 @@ exports.initializeSubscriptionPaymentBusinessOwner = async (req, res) => {
         message: 'user not found'
       })
     }
-    const link = `https://thetrustforge.vercel.app/business_owner/subscription-success?id=${user.id}&fullName=${user.fullName}&referenceId=${ref}&amount=${price}`
+    // const link = `https://thetrustforge.vercel.app/business_owner/subscription-success?id=${user.id}&fullName=${user.fullName}&referenceId=${ref}&amount=${price}`
     // `https://thetrustforge.vercel.app/payment-success/${user.id}/${user.fullName}/${ref}/${price}`
     // `id=${user.id}&fullName=${user.fullName}&referenceId=${ref}&amount=${price}`
 
-    const redirect_url = `https://thetrustforge.vercel.app/business_owner/subscription-success?id=${encodeURIComponent(
+    const redirect_url = `https://thetrustforge.vercel.app/dashboard/business_owner/subscription-success?id=${encodeURIComponent(
       user.id
     )}&fullName=${encodeURIComponent(user.fullName)}&reference=${encodeURIComponent(
       ref

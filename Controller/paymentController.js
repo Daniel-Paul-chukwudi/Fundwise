@@ -229,7 +229,7 @@ exports.initializeInvestementPaymentInvestor = async (req, res) => {
     }
 
     // const link = data?.data?.checkout_url
-    res.redirect(link)
+    // res.redirect(link)
     res.status(200).json({
       message: 'Payment Initialized successfuly',
       data: {

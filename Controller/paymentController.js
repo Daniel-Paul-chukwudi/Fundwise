@@ -29,12 +29,18 @@ exports.initializeSubscriptionPaymentInvestor = async (req, res) => {
       })
     }
     const link = `https://thetrustforge.vercel.app/investor/subscription-success?id=${user.id}&fullName=${user.fullName}&referenceId=${ref}&amount=${price}`
+    
+    const redirect_url = `https://thetrustforge.vercel.app/investor/subscription-success?id=${encodeURIComponent(
+      user.id
+    )}&fullName=${encodeURIComponent(user.fullName)}&reference=${encodeURIComponent(
+      ref
+    )}&amount=${encodeURIComponent(price)}`;
 
     const paymentData = {
       amount: price,
       currency: 'NGN',
       reference: ref,
-      redirect_url:link,
+      redirect_url,
       customer: {
         email: user.email,
         name: `${user.fullName}`
@@ -48,6 +54,7 @@ exports.initializeSubscriptionPaymentInvestor = async (req, res) => {
         Authorization: `Bearer ${process.env.KORA_SECRET_KEY}`
       }
     });
+    
     
     // `https://thetrustforge.vercel.app/investor/subscription-success/:id/:fullName/:referenceId/:amount`
     // `https://thetrustforge.vercel.app/payment-success/${user.id}/${user.fullName}/${ref}/${price}`
@@ -100,11 +107,17 @@ exports.initializeSubscriptionPaymentBusinessOwner = async (req, res) => {
     // `https://thetrustforge.vercel.app/payment-success/${user.id}/${user.fullName}/${ref}/${price}`
     // `id=${user.id}&fullName=${user.fullName}&referenceId=${ref}&amount=${price}`
 
+    const redirect_url = `https://thetrustforge.vercel.app/business_owner/subscription-success?id=${encodeURIComponent(
+      user.id
+    )}&fullName=${encodeURIComponent(user.fullName)}&reference=${encodeURIComponent(
+      ref
+    )}&amount=${encodeURIComponent(price)}`;
+
     const paymentData = {
       amount: price,
       currency: 'NGN',
       reference: ref,
-      redirect_url:link,
+      redirect_url,
       customer: {
         email: user.email,
         name: `${user.fullName}`

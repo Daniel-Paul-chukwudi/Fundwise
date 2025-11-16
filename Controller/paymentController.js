@@ -150,103 +150,185 @@ exports.initializeSubscriptionPaymentBusinessOwner = async (req, res) => {
   }
 };
 
-exports.initializeInvestementPaymentInvestor = async (req, res) => {
-  try {
-      const { id } = req.user;
-      const user = await investorModel.findByPk(id);
-      const code = await otpGen.generate(12, { upperCaseAlphabets: false, lowerCaseAlphabets: true, digits: true, specialChars: false })
-      const ref = `TF-${code}-ININ`
-      const {price,businessId} = req.body
-      const business = await businessModel.findByPk(businessId)
+// exports.initializeInvestementPaymentInvestor = async (req, res) => {
+//   try {
+//       const { id } = req.user;
+//       const user = await investorModel.findByPk(id);
+//       const code = await otpGen.generate(12, { upperCaseAlphabets: false, lowerCaseAlphabets: true, digits: true, specialChars: false })
+//       const ref = `TF-${code}-ININ`
+//       const {price,businessId} = req.body
+//       const business = await businessModel.findByPk(businessId)
       
 
-    // if (user === null) {
-    //   return res.status(404).json({
-    //     message: 'User not found'
-    //   })
-    // }else if( user.kycStatus === 'not provided' ){
-    //   return res.status(401).json({
-    //     message: 'Please submit your KYC for verification before you can make an investment'
-    //   })
-    // }else if( user.kycStatus === 'under review' ){
-    //   return res.status(401).json({
-    //     message: 'Your KYC is currently under review, please wait for it to be verified before you can make an investment'
-    //   })
-    // }
+//     // if (user === null) {
+//     //   return res.status(404).json({
+//     //     message: 'User not found'
+//     //   })
+//     // }else if( user.kycStatus === 'not provided' ){
+//     //   return res.status(401).json({
+//     //     message: 'Please submit your KYC for verification before you can make an investment'
+//     //   })
+//     // }else if( user.kycStatus === 'under review' ){
+//     //   return res.status(401).json({
+//     //     message: 'Your KYC is currently under review, please wait for it to be verified before you can make an investment'
+//     //   })
+//     // }
     
-    const diff = business.fundingSought - business.fundRaised
-    if(diff === 0){
+//     const diff = business.fundingSought - business.fundRaised
+//     if(diff === 0){
+//       return res.status(403).json({
+//         message:"funding goal for this business already met"
+//       })
+//     }else if(price > diff){
+//       return res.status(403).json({
+//         message:`you can only invest ${diff} in order to meet the funding goal`
+//       })
+//     }
+    
+    
+//     const link = `https://thetrustforge.vercel.app/dashboard/investor/payment-success?id=${user.id}&fullName=${user.fullName}&reference=${ref}&amount=${price}`
+//     // const link3 = `https://thetrustforge.vercel.app/dashboard/investor/payment-success/4a277227-e3d3-4a59-8b1f-fcbe085b79f1/paula/TF-dv4l5vgxsgop-ININ/100000`
+    
+    
+    
+    
+//     // const link2 = `https://thetrustforge.vercel.app/dashboard/investor/payment-success?id=${user.id}&investorName=${user.fullName}&reference=${ref}&amount=${price}`
+    
+    
+    
+    
+
+//     const paymentData = {
+//       amount: price,
+//       currency: 'NGN',
+//       reference: ref,
+//       redirect_url:`https://thetrustforge.vercel.app/dashboard/investor/payment-success?id=${user.id}&fullName=${user.fullName}&reference=${ref}&amount=${price}`,
+//       customer: {
+//         email: user.email,
+//         name: `${user.fullName}`
+//       }
+//     }
+
+//     const { data } = await axios.post('https://api.korapay.com/merchant/api/v1/charges/initialize', paymentData, {
+//       headers: {
+//         Authorization: `Bearer ${process.env.KORA_SECRET_KEY}`
+//       }
+//     });
+
+//     const payment = new paymentModel({
+//       userId: id,
+//       paymentType:'investment',
+//       reference: ref,
+//       price,
+//       userType:"investor",
+//       businessId
+//     });
+
+//     if (data?.status === true) {
+//       await payment.save();
+//     }
+
+//     // const link = data?.data?.checkout_url
+//     // res.redirect(link)
+//     res.status(200).json({
+//       message: 'Payment Initialized successfuly',
+//       data: {
+//         reference: data?.data?.reference,
+//         url: data?.data?.checkout_url
+//       },
+//       payment,
+//       paymentData
+//     })
+//   } catch (error) {
+//     res.status(500).json({
+//       message: 'Error initializing payment: ' + error.message,
+//       error: error.response?.data
+//     })
+//   }
+// };
+
+
+exports.initializeInvestementPaymentInvestor = async (req, res) => {
+  try {
+    const { id } = req.user;
+    const user = await investorModel.findByPk(id);
+    const code = otpGen.generate(12, {
+      upperCaseAlphabets: false,
+      lowerCaseAlphabets: true,
+      digits: true,
+      specialChars: false,
+    });
+    const ref = `TF-${code}-ININ`;
+    const { price, businessId } = req.body;
+    const business = await businessModel.findByPk(businessId);
+
+    const diff = business.fundingSought - business.fundRaised;
+    if (diff === 0) {
       return res.status(403).json({
-        message:"funding goal for this business already met"
-      })
-    }else if(price > diff){
+        message: "Funding goal for this business already met",
+      });
+    } else if (price > diff) {
       return res.status(403).json({
-        message:`you can only invest ${diff} in order to meet the funding goal`
-      })
+        message: `You can only invest ${diff} to meet the funding goal`,
+      });
     }
-    
-    
-    const link = `https://thetrustforge.vercel.app/dashboard/investor/payment-success?id=${user.id}&fullName=${user.fullName}&reference=${ref}&amount=${price}`
-    // const link3 = `https://thetrustforge.vercel.app/dashboard/investor/payment-success/4a277227-e3d3-4a59-8b1f-fcbe085b79f1/paula/TF-dv4l5vgxsgop-ININ/100000`
-    
-    
-    
-    
-    // const link2 = `https://thetrustforge.vercel.app/dashboard/investor/payment-success?id=${user.id}&investorName=${user.fullName}&reference=${ref}&amount=${price}`
-    
-    
-    
-    
+
+    const redirect_url = `https://thetrustforge.vercel.app/dashboard/investor/payment-success?id=${encodeURIComponent(
+      user.id
+    )}&fullName=${encodeURIComponent(user.fullName)}&reference=${encodeURIComponent(
+      ref
+    )}&amount=${encodeURIComponent(price)}`;
 
     const paymentData = {
       amount: price,
-      currency: 'NGN',
+      currency: "NGN",
       reference: ref,
-      redirect_url:`https://thetrustforge.vercel.app/dashboard/investor/payment-success?id=${user.id}&fullName=${user.fullName}&reference=${ref}&amount=${price}`,
+      redirect_url,
       customer: {
         email: user.email,
-        name: `${user.fullName}`
-      }
-    }
+        name: user.fullName,
+      },
+    };
 
-    const { data } = await axios.post('https://api.korapay.com/merchant/api/v1/charges/initialize', paymentData, {
-      headers: {
-        Authorization: `Bearer ${process.env.KORA_SECRET_KEY}`
+    const { data } = await axios.post(
+      "https://api.korapay.com/merchant/api/v1/charges/initialize",
+      paymentData,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.KORA_SECRET_KEY}`,
+        },
       }
-    });
+    );
 
     const payment = new paymentModel({
       userId: id,
-      paymentType:'investment',
+      paymentType: "investment",
       reference: ref,
       price,
-      userType:"investor",
-      businessId
+      userType: "investor",
+      businessId,
     });
 
     if (data?.status === true) {
       await payment.save();
     }
 
-    // const link = data?.data?.checkout_url
-    // res.redirect(link)
     res.status(200).json({
-      message: 'Payment Initialized successfuly',
+      message: "Payment Initialized successfully",
       data: {
         reference: data?.data?.reference,
-        url: data?.data?.checkout_url
+        url: data?.data?.checkout_url,
       },
       payment,
-      paymentData
-    })
+      paymentData,
+    });
   } catch (error) {
     res.status(500).json({
-      message: 'Error initializing payment: ' + error.message,
-      error: error.response?.data
-    })
+      message: "Error initializing payment: " + error.message,
+      error: error.response?.data,
+    });
   }
 };
-
 exports.verifyPayment = async (req, res) => {
   try {
     const { reference } = req.query;

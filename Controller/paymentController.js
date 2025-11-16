@@ -192,7 +192,7 @@ exports.initializeInvestementPaymentInvestor = async (req, res) => {
     
     
     
-    const link2 = `https://thetrustforge.vercel.app/dashboard/investor/payment-success?id=${user.id}&investorName=${user.fullName}&reference=${ref}&amount=${price}`
+    // const link2 = `https://thetrustforge.vercel.app/dashboard/investor/payment-success?id=${user.id}&investorName=${user.fullName}&reference=${ref}&amount=${price}`
     
     
     
@@ -202,7 +202,7 @@ exports.initializeInvestementPaymentInvestor = async (req, res) => {
       amount: price,
       currency: 'NGN',
       reference: ref,
-      // redirect_url:link,
+      redirect_url:`https://thetrustforge.vercel.app/dashboard/investor/payment-success?id=${user.id}&fullName=${user.fullName}&reference=${ref}&amount=${price}`,
       customer: {
         email: user.email,
         name: `${user.fullName}`

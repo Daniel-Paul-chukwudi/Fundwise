@@ -106,6 +106,7 @@ exports.createBusiness = async (req, res) => {
       fundingStage,
       fundingSought,
       currentRevenue,
+      subscriptionTier:user.subscriptionTier,
       pitchDeck:responseP.secure_url,
       businessRegisterationCertificate:responseB.secure_url,
       pitchDeckPublicId:responseP.public_id,
@@ -271,9 +272,25 @@ exports.saveBusiness = async (req, res) => {
 exports.getBusiness = async (req, res) => {
   try {
     const businesses = await businessModel.findAll({where:{businessStatus:'verified'}});
+    // let target
+    // let premium = []
+    // let growth = []
+    // let free = []
+    // for (const x of businesses){
+    //   target = await userModel.findByPk(x.businessOwner)
+    //   if (target.subscriptionTier !== 'premium' && target.subscriptionTier !== 'growth'){
+    //     free.push(x)
+    //   }else if(target.subscriptionTier !== 'premium' && target.subscriptionTier === 'growth'){
+    //     growth.push(x)
+    //   }else{
+    //     premium.push(x)
+    //   }
+    // }
+
     res.status(200).json({
       message: "All businesses retrieved successfully",
-      data: businesses
+      data:businesses
+      
     });
   } catch (error) {
     res.status(500).json({

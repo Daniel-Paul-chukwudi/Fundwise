@@ -480,6 +480,7 @@ exports.webHook = async (req, res) => {
                 targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 24 * 30)
                 await targetB.save()
                 business.update({subscriptionTier : 'growth'})
+                business.save()
               }else if(payment.price === 20000){
                 targetB.subscribed = true
                 targetB.subscriptionTier = 'premium'
@@ -488,6 +489,7 @@ exports.webHook = async (req, res) => {
                 targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 24 * 30)
                 await targetB.save()
                 business.update({subscriptionTier : 'premium'})
+                business.save()
               }
               await notificationModel.create({
               userId:payment.userId,

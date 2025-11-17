@@ -3,7 +3,7 @@ require('dotenv').config()
 const userModel = require('../models/user')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
-const {verify,forgotPassword} = require('../Middleware/emailTemplates')
+const {verify,forgotPassword,verify2,forgotPassword2} = require('../Middleware/emailTemplates')
 const sendEmail = require('../Middleware/Bmail')
 const investorModel = require('../models/investor')
 const agreementModel = require('../models/agreement')
@@ -147,7 +147,7 @@ exports.signUp = async (req, res, next) => {
     const verifyMail = {
       email:newUser.email,
       subject:`Please verify your email ${newUser.fullName}`,
-      html:verify(newUser.fullName,newUser.otp)//email template 
+      html:verify2(newUser.fullName,newUser.otp)//email template 
     }
     sendEmail(verifyMail)
 
@@ -303,7 +303,7 @@ exports.resendOtp = async (req, res, next) => {
     const emailOptions = {
       email: user.email,
       subject: 'OTP Resent',
-      html: verify(newOtp, user.firstName),
+      html: verify2(newOtp, user.firstName),
     }
 
     await sendEmail(emailOptions)
@@ -379,7 +379,7 @@ exports.forgotPassword = async (req,res) => {
       // `
        await sendEmail({email,
         subject:'Password reset link',
-        html:forgotPassword(link,user.fullName)});
+        html:forgotPassword2(link,user.fullName)});
       
         res.status(200).json({
         message:'password reset email sent successfully',

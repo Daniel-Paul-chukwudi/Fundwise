@@ -5,7 +5,7 @@ const saveModel = require('../models/save')
 const meetingModel = require('../models/meeting')
 const investorModel = require('../models/investor')
 const jwt = require('jsonwebtoken')
-const {verify,forgotPassword}= require('../Middleware/emailTemplates')
+const {verify,forgotPassword,verify2,forgotPassword2}= require('../Middleware/emailTemplates')
 const sendEmail = require('../Middleware/Bmail')
 const bcrypt = require('bcrypt')
 const agreementModel = require('../models/agreement')
@@ -79,7 +79,7 @@ exports.signUp = async (req, res, next) => {
     const verifyMail = {
       email:newUser.email,
       subject:`Please verify your email ${newUser.fullName}`,
-      html:verify(newUser.fullName,newUser.otp)
+      html:verify2(newUser.fullName,newUser.otp)
     }
     sendEmail(verifyMail)
 
@@ -194,7 +194,7 @@ exports.userResendOtp = async (req, res, next) => {
     const emailOptions = {
       email: user.email,
       subject: 'OTP Resent',
-      html: verify(newOtp, user.fullName),
+      html: verify2(newOtp, user.fullName),
     }
 
     await sendEmail(emailOptions)
@@ -272,7 +272,7 @@ exports.forgotPassword = async (req,res) => {
    
        await sendEmail({email,
         subject:'Password reset link',
-        html:forgotPassword(link,user.fullName)});
+        html:forgotPassword2(link,user.fullName)});
       
         res.status(200).json({
         message:'password reset email sent successfully',link

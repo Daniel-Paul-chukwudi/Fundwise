@@ -256,27 +256,36 @@ exports.forgotPassword = async (req,res) => {
     try {
       const {email} = req.body
       const user = await userModel.findOne({where:{email:email.toLowerCase()}});
-      // const investor = await investorModel.findOne({where:{email:email.toLowerCase()}});
-      if (!user ) {
-        return res.status(404).json({
-            message:'user not found'
-        })
-      }
-      const token = jwt.sign({id:user.id}, process.env.JWT_SECRET,{
-        expiresIn:'10m',
-      });
-      const link = `${req.protocol}://${req.get('host')}/reset-password/${token}`
-      // `http://localhost:5173/resetpassword/${token}`;
-      // http://localhost:5173
-      
-   
-       await sendEmail({email,
+      const investor = await investorModel.findOne({where:{email:email.toLowerCase()}});
+      if (!user && investor) {
+        const token = jwt.sign({id:investor.id}, process.env.JWT_SECRET,{
+          expiresIn:'10m',
+          });
+        const link = `${req.protocol}://${req.get('host')}/reset-password/${token}`   
+        await sendEmail({email,
         subject:'Password reset link',
-        html:forgotPassword2(link,user.fullName)});
-      
-        res.status(200).json({
-        message:'password reset email sent successfully',link
+        html:forgotPassword2(link,investor.fullName)});
+
+        return res.status(404).json({
+            message:'password reset email sent successfully',link
         })
+      }else if(user && !investor){
+        const token = jwt.sign({id:user.id}, process.env.JWT_SECRET,{
+          expiresIn:'10m',
+        });
+        const link = `${req.protocol}://${req.get('host')}/reset-password/${token}`   
+         await sendEmail({email,
+          subject:'Password reset link',
+          html:forgotPassword2(link,user.fullName)});
+
+          return res.status(200).json({
+          message:'password reset email sent successfully',link
+          })
+      }else{
+        return res.status(404).json({
+          message:"user not found"
+          })
+      }
 
     } catch (error) {
     res.status(500).json({

@@ -27,12 +27,12 @@ exports.signUp = async (req, res, next) => {
     
     if (user !== null) {
       return res.status(403).json({
-        message: 'User already exists, Log in to your account',
+        message: 'email already exists, Log in to your account',
       })
       return next(createError(404, "User not found"));
     }else if(investor !==null){
       return res.status(403).json({
-        message: 'User already exists, Log in to your account',
+        message: 'email already exists, Log in to your account',
       })
     }
     if(password !== confirmPassword){   
@@ -142,7 +142,7 @@ exports.loginUser = async (req, res, next) => {
     const user = await userModel.findOne({ where: { email: email.toLowerCase() } });
     if (user === null) {
       return res.status(404).json({ 
-        message: 'User not found' });
+        message: 'Invalid login details' });
     }
     if(user.isVerified === false){
       return res.status(401).json({

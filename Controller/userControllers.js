@@ -5,7 +5,7 @@ const saveModel = require('../models/save')
 const meetingModel = require('../models/meeting')
 const investorModel = require('../models/investor')
 const jwt = require('jsonwebtoken')
-const {verify,forgotPassword}= require('../Middleware/emailTemplates')
+const {verify,forgotPassword,verify2,forgotPassword2}= require('../Middleware/emailTemplates')
 const sendEmail = require('../Middleware/Bmail')
 const bcrypt = require('bcrypt')
 const agreementModel = require('../models/agreement')
@@ -79,7 +79,7 @@ exports.signUp = async (req, res, next) => {
     const verifyMail = {
       email:newUser.email,
       subject:`Please verify your email ${newUser.fullName}`,
-      html:verify(newUser.fullName,newUser.otp)
+      html:verify2(newUser.fullName,newUser.otp)
     }
     sendEmail(verifyMail)
 
@@ -194,7 +194,7 @@ exports.userResendOtp = async (req, res, next) => {
     const emailOptions = {
       email: user.email,
       subject: 'OTP Resent',
-      html: verify(newOtp, user.fullName),
+      html: verify2(newOtp, user.fullName),
     }
 
     await sendEmail(emailOptions)
@@ -256,27 +256,36 @@ exports.forgotPassword = async (req,res) => {
     try {
       const {email} = req.body
       const user = await userModel.findOne({where:{email:email.toLowerCase()}});
-      // const investor = await investorModel.findOne({where:{email:email.toLowerCase()}});
-      if (!user ) {
-        return res.status(404).json({
-            message:'user not found'
-        })
-      }
-      const token = jwt.sign({id:user.id}, process.env.JWT_SECRET,{
-        expiresIn:'10m',
-      });
-      const link = `${req.protocol}://${req.get('host')}/reset-password/${token}`
-      // `http://localhost:5173/resetpassword/${token}`;
-      // http://localhost:5173
-      
-   
-       await sendEmail({email,
+      const investor = await investorModel.findOne({where:{email:email.toLowerCase()}});
+      if (!user && investor) {
+        const token = jwt.sign({id:investor.id}, process.env.JWT_SECRET,{
+          expiresIn:'10m',
+          });
+        const link = `${req.protocol}://${req.get('host')}/reset-password/${token}`   
+        await sendEmail({email,
         subject:'Password reset link',
-        html:forgotPassword(link,user.fullName)});
-      
-        res.status(200).json({
-        message:'password reset email sent successfully',link
+        html:forgotPassword2(link,investor.fullName)});
+
+        return res.status(404).json({
+            message:'password reset email sent successfully',link
         })
+      }else if(user && !investor){
+        const token = jwt.sign({id:user.id}, process.env.JWT_SECRET,{
+          expiresIn:'10m',
+        });
+        const link = `${req.protocol}://${req.get('host')}/reset-password/${token}`   
+         await sendEmail({email,
+          subject:'Password reset link',
+          html:forgotPassword2(link,user.fullName)});
+
+          return res.status(200).json({
+          message:'password reset email sent successfully',link
+          })
+      }else{
+        return res.status(404).json({
+          message:"user not found"
+          })
+      }
 
     } catch (error) {
     res.status(500).json({

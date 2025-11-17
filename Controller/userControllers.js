@@ -11,6 +11,7 @@ const bcrypt = require('bcrypt')
 const agreementModel = require('../models/agreement')
 const notificationModel = require('../models/notification')
 const paymentModel = require('../models/payment')
+const kycModel = require('../models/kyc-businessOwner')
 
 
 
@@ -373,6 +374,7 @@ exports.getOne = async(req,res)=>{
         const meetings = await meetingModel.findAll({where:{guest:id}})
         const agreements = await agreementModel.findAll({where:{businessOwner:id}})
         const notifications = await notificationModel.findAll({where:{userId:id}})
+        const kyc = await kycModel.findOne({where:{userId:id}})
         const response = {
           user,
           businesscount:businesses.length,
@@ -381,7 +383,8 @@ exports.getOne = async(req,res)=>{
           businesses,
           meetings,
           investorInterests:agreements.length,
-          notifications
+          notifications,
+          kyc
         }
 
 

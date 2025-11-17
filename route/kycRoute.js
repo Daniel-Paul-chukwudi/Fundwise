@@ -4,6 +4,7 @@ const {createKycI,getAllKycs,getKycByUserId,updateKyc,deleteKyc} = require('../C
 const {createKyc} = require('../Controller/kycControllerBusinessOwner');
 const { checkLogin,checkInvestorLogin } = require('../Middleware/authentication');
 const {uploads} = require('../Middleware/multer')
+const {kycValidator,createKycIValidator} = require('../Middleware/validator')
 
 
 /**
@@ -154,7 +155,7 @@ const {uploads} = require('../Middleware/multer')
  *                   type: string
  *                   example: Cannot read properties of undefined
  */
-router.post('/kyc',checkLogin,uploads.fields([
+router.post('/kyc',kycValidator,checkLogin,uploads.fields([
     { name: 'governmentId', maxCount: 1 },
     { name: 'proofOfAddress', maxCount: 1 },
     { name: 'profilePic', maxCount: 1 }
@@ -305,7 +306,7 @@ router.post('/kyc',checkLogin,uploads.fields([
  *                   type: string
  *                   example: Cannot read properties of undefined
  */
-router.post('/kycI',checkInvestorLogin,uploads.fields([
+router.post('/kycI',createKycIValidator,checkInvestorLogin,uploads.fields([
     { name: 'governmentId', maxCount: 1 },
     { name: 'proofOfAddress', maxCount: 1 },
     { name: 'profilePic', maxCount: 1 }

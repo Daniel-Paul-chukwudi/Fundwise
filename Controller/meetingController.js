@@ -30,19 +30,19 @@ exports.createMeetingInvestor = async (req, res) => {
       });
     }
     const UserI = await investorModel.findByPk(id)
-    // if (!UserI) {
-    //   return res.status(404).json({ 
-    //     message: 'Investor not found' 
-    //   });
-    // }else if( UserI.kycStatus === 'not provided' ){
-    //   return res.status(401).json({
-    //     message: 'Please submit your KYC for verification before you can schedule a meeting '
-    //   })
-    // }else if( UserI.kycStatus === 'under review' ){
-    //   return res.status(401).json({
-    //     message: 'Your KYC is currently under review, please wait for it to be verified before you can schedule a meeting'
-    //   })
-    // }
+    if (!UserI) {
+      return res.status(404).json({ 
+        message: 'Investor not found' 
+      });
+    }else if( UserI.kycStatus === 'not provided' ){
+      return res.status(401).json({
+        message: 'Please submit your KYC for verification before you can schedule a meeting '
+      })
+    }else if( UserI.kycStatus === 'under review' ){
+      return res.status(401).json({
+        message: 'Your KYC is currently under review, please wait for it to be verified before you can schedule a meeting'
+      })
+    }
     const LINK = links[Math.floor(Math.random() * links.length)]
     
     const meeting = await meetingModel.create({

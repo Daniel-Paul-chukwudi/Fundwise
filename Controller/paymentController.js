@@ -274,6 +274,15 @@ exports.initializeInvestementPaymentInvestor = async (req, res) => {
     const ref = `TF-${code}-ININ`;
     const { price, businessId } = req.body;
     const business = await businessModel.findByPk(businessId);
+    if(price < 10000 ){
+      return res.status(403).json({
+        message:"The minimum amount you can invest is 10,000"
+      })
+    }else if (price > 900000){
+      return res.status(403).json({
+        message:"The maximum amount you can invest is 900,000"
+      })
+    }
 
     const diff = business.fundingSought - business.fundRaised;
     if (diff === 0) {
@@ -488,7 +497,7 @@ exports.webHook = async (req, res) => {
                 // targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 2)
                 targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 24 * 30)
                 await targetB.save()
-                business.update({subscriptionTier : 'premium'})
+                business.update({subscriptionTier:'premium'})
                 business.save()
               }
               await notificationModel.create({

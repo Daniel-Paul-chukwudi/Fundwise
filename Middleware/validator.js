@@ -1,6 +1,6 @@
 const Joi = require('joi');
 
-// Helper function for validation
+
 function validate(schema, req, res, next) {
   const { error } = schema.validate(req.body, { abortEarly: true });
   if (error) {
@@ -9,27 +9,110 @@ function validate(schema, req, res, next) {
   next();
 }
 
-//USER VALIDATORS
-// Register Validator
 exports.registerValidator = (req, res, next) => {
+const signUpSchema = Joi.object({
+  fullName: Joi.string()
+    .min(3)
+    .max(50)
+    .required(),
+
+  phoneNumber: Joi.string()
+    .pattern(/^[0-9]{11}$/) // adjust based on country format
+    .required(),
+
+  email: Joi.string()
+    .email()
+    .required(),
+
+  subscriptionTier: Joi.string()
+    .valid("free", "growth", "premium")
+    .default("free"),
+
+  password: Joi.string()
+    .min(6)
+    .max(100)
+    .required(),
+
+  confirmPassword: Joi.string()
+    .valid(Joi.ref("password"))
+    .required()
+    .messages({
+      "any.only": "Passwords do not match"
+    }),
+});
+validate(schema, req, res, next);
+}
+
+exports.kycValidator = (req, res, next) => {
   const schema = Joi.object({
-    fullName: Joi.string().min(2).trim().required(),
-    phoneNumber: Joi.string().required()
-      .messages({ "string.pattern.base": "Phone number must be 11 digits" }),
-    email: Joi.string().email().trim().required(),
-    password: Joi.string()
-      // .pattern(/^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[@$!%*#?&-])[A-Za-z\d@$!%*#?&-]{8,}$/)
+    firstName: Joi.string().min(2).max(50).required(),
+    lastName: Joi.string().min(2).max(50).required(),
+
+    dateOfBirth: Joi.date().iso().required(),
+
+    phoneNumber: Joi.string()
+      .pattern(/^[0-9]{11}$/)
       .required()
       .messages({
-        "string.pattern.base": "Password must be at least 8 chars long with upper, lower, number & special character"
+        "string.pattern.base": "Phone number must be 11 digits"
       }),
-    confirmPassword: Joi.string().valid(Joi.ref("password")).required()
-      .messages({ "any.only": "Passwords do not match" })
+
+    email: Joi.string().email().required(),
+
+    nationality: Joi.string().min(2).max(50).required(),
+
+    residentialAddress: Joi.string().min(5).required(),
+    city: Joi.string().min(2).required(),
+    state: Joi.string().min(2).required(),
+
+    accountName: Joi.string().min(3).max(100).required(),
+
+    accountNumber: Joi.string()
+      .pattern(/^[0-9]{10}$/)
+      .required()
+      .messages({
+        "string.pattern.base": "Account number must be 10 digits"
+      }),
+
+    accountType: Joi.string()
+      .valid("savings", "current", "domiciliary")
+      .required(),
+
+    bankName: Joi.string().min(3).required(),
   });
   validate(schema, req, res, next);
 };
 
-// Login Validator
+exports.createKycIValidator = (req, res, next) => {
+  const schema = Joi.object({
+    firstName: Joi.string().min(2).max(50).required(),
+    lastName: Joi.string().min(2).max(50).required(),
+    dateOfBirth: Joi.date().iso().required(),
+
+    phoneNumber: Joi.string()
+      .pattern(/^[0-9]{11}$/)
+      .required(),
+
+    email: Joi.string().email().required(),
+    nationality: Joi.string().min(2).max(50).required(),
+
+    residentialAddress: Joi.string().min(5).max(200).required(),
+    city: Joi.string().min(2).max(50).required(),
+    state: Joi.string().min(2).max(50).required(),
+
+    investmentType: Joi.string()
+      .valid("real_estate", "agro", "tech", "forex", "crypto") // edit as needed
+      .required(),
+
+    governmentId: Joi.string().optional(), 
+    proofOfAddress: Joi.string().optional(),
+    profilePic: Joi.string().optional()
+  });
+  validate(schema, req, res, next);
+};
+
+
+
 exports.loginValidator = (req, res, next) => {
   const schema = Joi.object({
     email: Joi.string().email().trim().required(),
@@ -38,7 +121,6 @@ exports.loginValidator = (req, res, next) => {
   validate(schema, req, res, next);
 };
 
-// Verify OTP
 exports.verifyValidator = (req, res, next) => {
   const schema = Joi.object({
     email: Joi.string().email().required(),
@@ -47,7 +129,6 @@ exports.verifyValidator = (req, res, next) => {
   validate(schema, req, res, next);
 };
 
-// Resend OTP
 exports.resendValidator = (req, res, next) => {
   const schema = Joi.object({
     email: Joi.string().email().required()
@@ -55,12 +136,11 @@ exports.resendValidator = (req, res, next) => {
   validate(schema, req, res, next);
 };
 
-// Change Password
 exports.changePasswordValidator = (req, res, next) => {
   const schema = Joi.object({
     oldPassword: Joi.string().required(),
     newPassword: Joi.string()
-      // .pattern(/^(?=.[A-Z])(?=.[a-z])(?=.*\d).{8,}$/)
+      .pattern(/^(?=.[A-Z])(?=.[a-z])(?=.*\d).{8,}$/)
       .required(),
     confirmPassword: Joi.string().valid(Joi.ref("newPassword")).required()
       .messages({ "any.only": "Passwords do not match" })
@@ -68,7 +148,6 @@ exports.changePasswordValidator = (req, res, next) => {
   validate(schema, req, res, next);
 };
 
-// Forgot Password
 exports.forgotPasswordValidator = (req, res, next) => {
   const schema = Joi.object({
     email: Joi.string().email().required()
@@ -76,11 +155,10 @@ exports.forgotPasswordValidator = (req, res, next) => {
   validate(schema, req, res, next);
 };
 
-// Reset Password
 exports.resetPasswordValidator = (req, res, next) => {
   const schema = Joi.object({
     newPassword: Joi.string()
-      // .pattern(/^(?=.[A-Z])(?=.[a-z])(?=.*\d).{8,}$/)
+      .pattern(/^(?=.[A-Z])(?=.[a-z])(?=.*\d).{8,}$/)
       .required(),
     confirmPassword: Joi.string().valid(Joi.ref("newPassword")).required()
       .messages({ "any.only": "Passwords do not match" })
@@ -88,7 +166,6 @@ exports.resetPasswordValidator = (req, res, next) => {
   validate(schema, req, res, next);
 };
 
-// Delete User
 exports.deleteUserValidator = (req, res, next) => {
   const schema = Joi.object({
     email: Joi.string().email().required()
@@ -96,7 +173,6 @@ exports.deleteUserValidator = (req, res, next) => {
   validate(schema, req, res, next);
 };
 
-// BUSINESS VALIDATOR
 exports.createBusinessValidator = (req, res, next) => {
   const schema = Joi.object({
     businessName: Joi.string().min(3).required(),
@@ -107,7 +183,6 @@ exports.createBusinessValidator = (req, res, next) => {
   validate(schema, req, res, next);
 };
 
-//MEETING VALIDATOR
 exports.meetingValidator = (req, res, next) => {
   const schema = Joi.object({
     meetingTitle: Joi.string().required().messages({
@@ -127,7 +202,6 @@ exports.meetingValidator = (req, res, next) => {
   validate(schema, req, res, next);
 };
 
-//PAYMENT VALIDATOR
 exports.paymentValidator = (req, res, next) => {
   const schema = Joi.object({
     userId: Joi.string().optional(),
@@ -135,13 +209,10 @@ exports.paymentValidator = (req, res, next) => {
       "number.positive": "Amount must be greater than 0",
       "any.required": "Amount is required"
     }),
-    method: Joi.string().valid("card", "bank", "transfer").optional(),
-    reference: Joi.string().optional()
   });
   validate(schema, req, res, next);
 };
 
-//INVESTOR VALIDATOR =======================
 exports.investorValidator = (req, res, next) => {
   const schema = Joi.object({
     investorName: Joi.string().min(3).required(),

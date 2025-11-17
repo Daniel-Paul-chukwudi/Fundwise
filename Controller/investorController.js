@@ -11,6 +11,7 @@ const saveModel = require("../models/save")
 const businessModel = require('../models/business')
 const meetingModel = require('../models/meeting')
 const notificationModel = require('../models/notification')
+const kycModel = require('../models/kyc-investor')
 
 
 
@@ -468,17 +469,17 @@ exports.getOne = async(req,res)=>{
         const id  = req.params.id
         const user = await investorModel.findByPk(id)
         const savedBusinesses = await saveModel.findAll({where:{userId:id}})
-        // console.log(savedBusinesses);
         const meetings = await meetingModel.findAll({where:{host:id}})
         const notifications = await notificationModel.findAll({where:{userId:id}})
-        
+        const kyc = await kycModel.findOne({where:{userId:id}})
         
         const response = {
           user,
           savecount:savedBusinesses.length,
           savedBusinesses,
           meetings,
-          notifications
+          notifications,
+          kyc
         }
 
 

@@ -17,7 +17,7 @@ const signUpSchema = Joi.object({
     .required(),
 
   phoneNumber: Joi.string()
-    .pattern(/^[0-9]{11,14}$/)
+    // .pattern(/^[0-9]{11,14}$/)
     .required(),
 
   email: Joi.string()
@@ -51,7 +51,7 @@ exports.kycValidator = (req, res, next) => {
     dateOfBirth: Joi.date().iso().required(),
 
     phoneNumber: Joi.string()
-      .pattern(/^[0-9]{11}$/)
+      // .pattern(/^[0-9]{11}$/)
       .required()
       .messages({
         "string.pattern.base": "Phone number must be 11 digits"

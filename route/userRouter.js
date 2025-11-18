@@ -98,7 +98,7 @@ const router = express.Router()
  *                   type: string
  *                   example: Internal server error
  */
-router.post('/user',registerValidator, signUp);
+router.post('/user', signUp);
 
 /**
  * @swagger

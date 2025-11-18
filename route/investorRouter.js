@@ -157,7 +157,7 @@ router.post('/makeDeal/:id',checkInvestorLogin, makeDeal)
  *                   type: string
  *                   example: "Internal server error"
  */
-router.post('/investor', registerValidator,signUp);
+router.post('/investor',signUp);
 
 /**
  * @swagger

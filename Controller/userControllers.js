@@ -24,6 +24,13 @@ exports.signUp = async (req, res, next) => {
     const user = await userModel.findOne({where:{ email: email.toLowerCase() }})
     const investor = await investorModel.findOne({where:{email:email.toLowerCase()}})
     // console.log(user);
+
+    if( !fullName|| !phoneNumber || !email || !password || !confirmPassword ){
+      return res.status(403).json({
+        message: 'fill all required filleds to continue',
+      })
+    }   
+    
     
     if (user !== null) {
       return res.status(403).json({

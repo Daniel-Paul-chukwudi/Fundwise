@@ -46,8 +46,7 @@ validate(signUpSchema, req, res, next);
 
 exports.kycValidator = (req, res, next) => {
   const schema = Joi.object({
-    firstName: Joi.string().min(2).max(50).required(),
-    lastName: Joi.string().min(2).max(50).required(),
+    fullName: Joi.string().min(2).max(50).required(),
 
     dateOfBirth: Joi.date().iso().required(),
 
@@ -86,8 +85,7 @@ exports.kycValidator = (req, res, next) => {
 
 exports.createKycIValidator = (req, res, next) => {
   const schema = Joi.object({
-    firstName: Joi.string().min(2).max(50).required(),
-    lastName: Joi.string().min(2).max(50).required(),
+    fullName: Joi.string().min(2).max(50).required(),
     dateOfBirth: Joi.date().iso().required(),
 
     phoneNumber: Joi.string()
@@ -102,7 +100,6 @@ exports.createKycIValidator = (req, res, next) => {
     state: Joi.string().min(2).max(50).required(),
 
     investmentType: Joi.string()
-      .valid("real_estate", "agro", "tech", "forex", "crypto") // edit as needed
       .required(),
 
     governmentId: Joi.string().optional(), 

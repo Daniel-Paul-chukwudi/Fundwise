@@ -16,11 +16,7 @@ module.exports = {
       userId: {
         type: Sequelize.UUID
       },
-      firstName: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      lastName: {
+      fullName: {
         type: Sequelize.STRING,
         allowNull: false
       },

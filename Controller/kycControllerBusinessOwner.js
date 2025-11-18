@@ -23,8 +23,7 @@ exports.createKyc = async (req, res) => {
 
     const {
       profilePic,
-      firstName,
-      lastName,
+      fullName,
       dateOfBirth,
       phoneNumber,
       email,
@@ -55,8 +54,7 @@ exports.createKyc = async (req, res) => {
     const newKyc = new KycModel({
       profilePic:resultPP.secure_url,
       userId,
-      firstName,
-      lastName,
+      fullName,
       dateOfBirth,
       phoneNumber,
       email,
@@ -79,7 +77,7 @@ exports.createKyc = async (req, res) => {
     notify({
       userId:userId,
       title:`Your kyc has been submitted successfully`,
-      description:`hello ${newKyc.firstName} your kyc has been submitted and is awaiting approval .\n
+      description:`hello ${newKyc.fullName} your kyc has been submitted and is awaiting approval.
       Thank you for putting your trust in TrustForge 👊😁`
     })
 

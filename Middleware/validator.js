@@ -25,8 +25,7 @@ const signUpSchema = Joi.object({
     .required(),
 
   subscriptionTier: Joi.string()
-    .valid("free", "growth", "premium")
-    .default("free"),
+    .optional(),
 
   password: Joi.string()
     .min(6)

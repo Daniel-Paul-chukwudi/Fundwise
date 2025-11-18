@@ -234,8 +234,9 @@ exports.verifyOtp = async (req, res, next) => {
         return res.status(200).json({ 
           message: 'Email verified successfully',
           data:user ,
+          role:user.role,
+          kycStatus:user.kycStatus,
           token,
-          role:user.role
         });
   } catch (error) {
     next(error);
@@ -271,7 +272,8 @@ exports.logininvestor = async (req, res, next) => {
 
     const response = {
       id:user.id,
-      role:user.role
+      role:user.role,
+      kycStatus:user.kycStatus
     }
     
    

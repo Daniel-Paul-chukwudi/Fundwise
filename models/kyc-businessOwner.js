@@ -17,11 +17,7 @@ kycbusinessowner.init(
     userId: {
       type: DataTypes.UUID
     },
-    firstName: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    lastName: {
+    fullName: {
       type: DataTypes.STRING,
       allowNull: false
     },

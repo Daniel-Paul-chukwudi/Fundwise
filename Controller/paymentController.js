@@ -479,7 +479,7 @@ exports.webHook = async (req, res) => {
               
             }else if(payment.userType === 'businessOwner'){
               const targetB = await userModel.findByPk(payment.userId)
-              const business = await businessModel.findAll({where:{businessOwner:payment.userId}})
+              // const business = await businessModel.findAll({where:{businessOwner:payment.userId}})
               if(payment.price === 10000){
                 targetB.subscribed = true
                 targetB.subscriptionTier = 'growth'
@@ -488,8 +488,7 @@ exports.webHook = async (req, res) => {
                 targetB.renew = false
                 targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 24 * 30)
                 await targetB.save()
-                business.update({subscriptionTier : 'growth'})
-                business.save()
+                businessModel.update({subscriptionTier:'growth'},{where:{businessOwner:payment.userId}})
               }else if(payment.price === 20000){
                 targetB.subscribed = true
                 targetB.subscriptionTier = 'premium'
@@ -497,8 +496,7 @@ exports.webHook = async (req, res) => {
                 // targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 2)
                 targetB.subscriptionEnd = (Date.now() + 1000 * 60 * 60 * 24 * 30)
                 await targetB.save()
-                business.update({subscriptionTier:'premium'})
-                business.save()
+                businessModel.update({subscriptionTier:'premium'},{where:{businessOwner:payment.userId}})
               }
               await notificationModel.create({
               userId:payment.userId,

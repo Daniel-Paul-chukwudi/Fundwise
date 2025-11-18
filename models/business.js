@@ -94,7 +94,7 @@ Business.init(
       type: DataTypes.ENUM('active','disabled')
     },
     subscriptionTier:{
-        type: DataTypes.ENUM('free','growth','premium'),
+      type: DataTypes.ENUM('free','growth','premium'),
       defaultValue:'free'
     }
   },

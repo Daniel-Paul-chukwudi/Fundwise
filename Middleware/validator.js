@@ -17,7 +17,7 @@ const signUpSchema = Joi.object({
     .required(),
 
   phoneNumber: Joi.string()
-    .pattern(/^[0-9]{11}$/) // adjust based on country format
+    .pattern(/^[0-9]{11}$/)
     .required(),
 
   email: Joi.string()
@@ -40,7 +40,7 @@ const signUpSchema = Joi.object({
       "any.only": "Passwords do not match"
     }),
 });
-validate(schema, req, res, next);
+validate(signUpSchema, req, res, next);
 }
 
 exports.kycValidator = (req, res, next) => {

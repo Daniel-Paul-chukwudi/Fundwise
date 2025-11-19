@@ -546,6 +546,6 @@ router.get('/allNotificationsI',checkInvestorLogin,allNotificationsById)
  *                   type: string
  *                   example: Notification not found
  */
-router.delete('/KillN',deleteNotification)
+router.delete('/KillN/:id',deleteNotification)
 
 module.exports = router

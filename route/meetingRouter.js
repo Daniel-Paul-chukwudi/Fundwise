@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {meetingValidator} = require('../Middleware/validator');
-const {getAllMeetings,getMeetingById,updateMeeting,deleteMeeting, createMeetingInvestor,approveMeeting,requestReschedule,respondReschedule, declineMeeting, rescheduleMeeting,getMeetingByUserId} = require('../Controller/meetingController');
+const {getAllMeetings,getMeetingById,updateMeeting,deleteMeeting, createMeetingInvestor,approveMeeting,requestReschedule,respondReschedule, declineMeeting, rescheduleMeeting,getMeetingByUserId, concludeMeeting} = require('../Controller/meetingController');
 const {checkInvestorLogin, checkLogin, checkAdmin, checkKyc, checkLoginUniversal} = require('../Middleware/authentication')
 
 
@@ -276,6 +276,8 @@ router.post('/reschedule-meeting',checkLoginUniversal,rescheduleMeeting)
  *                   example: Oops it seems like the meeting does not exist
  */
 router.post('/decline-meeting',checkLoginUniversal,declineMeeting)
+
+router.post('/end-meeting',checkLoginUniversal,concludeMeeting)
 
 /**
  * @swagger

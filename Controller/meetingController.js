@@ -314,6 +314,31 @@ exports.deleteMeeting = async (req, res) => {
   }
 };
 
+exports.concludeMeeting = async(req,res)=>{
+   try {
+    const {id} = req.user
+    const {meetingId}  = req.body
+    const target = await meetingModel.findOne({where:{id:meetingId}})
+
+    if(!target){
+      return res.status(404).json({
+        message:"Oops it seems like the meeting does not exist "
+      })
+    }
+    await target.update({meetingStatus:"Concluded"})
+
+    res.status(200).json({
+      message:"meeting concluded",
+      data:target
+    })
+  } catch (error) {
+    res.status(500).json({ 
+      message: 'Error concluding meeting', 
+      error: error.message 
+    });
+  }
+}
+
 // exports.requestReschedule = async (req, res) => {
 //   try {
 //     const { id } = req.user;  

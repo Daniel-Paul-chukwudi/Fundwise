@@ -374,7 +374,8 @@ exports.forgotPassword = async (req,res) => {
         const token = jwt.sign({id:investor.id}, process.env.JWT_SECRET,{
           expiresIn:'10m',
           });
-        const link = `${req.protocol}://${req.get('host')}/reset-password/${token}`   
+        const link = `https://thetrustforge.vercel.app/reset-password/${token}`
+        // `${req.protocol}://${req.get('host')}/reset-password/${token}`   
         await sendEmail({email,
         subject:'Password reset link',
         html:forgotPassword2(link,investor.fullName)});
@@ -386,7 +387,8 @@ exports.forgotPassword = async (req,res) => {
         const token = jwt.sign({id:user.id}, process.env.JWT_SECRET,{
           expiresIn:'10m',
         });
-        const link = `${req.protocol}://${req.get('host')}/reset-password/${token}`   
+        const link = `https://thetrustforge.vercel.app/resetpassword/${token}`
+        // `${req.protocol}://${req.get('host')}/reset-password/${token}`   
          await sendEmail({email,
           subject:'Password reset link',
           html:forgotPassword2(link,user.fullName)});

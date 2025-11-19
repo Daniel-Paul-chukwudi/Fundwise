@@ -54,7 +54,7 @@ exports.createBusiness = async (req, res) => {
       fs.unlinkSync(pitchD[0].path)
       fs.unlinkSync(businessReg[0].path)
       return res.status(401).json({
-        message:'Sorry you have already reached the maximum number of businesses for this subscription tier. Please upgrade in order add more businesses.'
+        message:'Sorry you have already reached the maximum number of businesses for this subscription tier. Please upgrade in order to add more businesses.'
       })
     }else if (user.subscriptionTier === 'growth' && businessCount.length == 3){
       fs.unlinkSync(pitchD[0].path)

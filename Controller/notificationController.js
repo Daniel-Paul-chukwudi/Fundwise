@@ -129,3 +129,18 @@ exports.deleteNotification = async (req,res)=>{
         });
     }
 }
+
+exports.deleteAllNotifications = async (req,res)=>{
+    try {
+        const id = req.user
+        const notifications = await notificationModel.destroy({where:{userId:id,status:'read'}})
+        res.status(200).json({
+            message:"notifications deleted"
+        })
+    } catch (error) {
+        res.status(500).json({ 
+            message: 'internal server error', 
+            error: error.message 
+        });
+    }
+}

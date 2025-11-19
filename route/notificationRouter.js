@@ -1,5 +1,5 @@
-const {markAllRead,allNotifications,allNotificationsById,deleteNotification, createNofification,oneNotification,readOneNotification} = require('../Controller/notificationController')
-const { checkLogin, checkInvestorLogin } = require('../Middleware/authentication')
+const {markAllRead,allNotifications,allNotificationsById,deleteNotification, createNofification,oneNotification,readOneNotification, deleteAllNotifications} = require('../Controller/notificationController')
+const { checkLogin, checkInvestorLogin, checkLoginUniversal } = require('../Middleware/authentication')
 
 const router = require('express').Router()
 
@@ -547,5 +547,7 @@ router.get('/allNotificationsI',checkInvestorLogin,allNotificationsById)
  *                   example: Notification not found
  */
 router.delete('/KillN/:id',deleteNotification)
+
+router.delete('/clear',checkLoginUniversal,deleteAllNotifications)
 
 module.exports = router

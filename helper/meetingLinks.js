@@ -18,39 +18,39 @@ const SCOPES = ["https://www.googleapis.com/auth/calendar"];
 //   scopes: SCOPES,
 // }); 
 
-async function createGoogleMeetLink(email, summary ) {
-  const authClient = await auth.getClient();
-  const calendar = google.calendar({ version: "v3", auth: authClient });
+// async function createGoogleMeetLink(email, summary ) {
+//   const authClient = await auth.getClient();
+//   const calendar = google.calendar({ version: "v3", auth: authClient });
 
-  const event = {
-    summary,
-    start: {
-      dateTime: new Date(Date.now() + 5 * 60000).toISOString(),
-      timeZone: "Africa/Lagos",
-    },
-    end: {
-      dateTime: new Date(Date.now() + 35 * 60000).toISOString(),
-      timeZone: "Africa/Lagos",
-    },
-    attendees: [{ email }],
-    conferenceData: {
-      createRequest: {
-        requestId: `meet-${Date.now()}`,
-        conferenceSolutionKey: { type: "hangoutsMeet" },
-      },
-    },
-  };
+//   const event = {
+//     summary,
+//     start: {
+//       dateTime: new Date(Date.now() + 5 * 60000).toISOString(),
+//       timeZone: "Africa/Lagos",
+//     },
+//     end: {
+//       dateTime: new Date(Date.now() + 35 * 60000).toISOString(),
+//       timeZone: "Africa/Lagos",
+//     },
+//     attendees: [{ email }],
+//     conferenceData: {
+//       createRequest: {
+//         requestId: `meet-${Date.now()}`,
+//         conferenceSolutionKey: { type: "hangoutsMeet" },
+//       },
+//     },
+//   };
 
-  const response = await calendar.events.insert({
-    calendarId: "primary",
-    resource: event,
-    conferenceDataVersion: 1,
-  });
+//   const response = await calendar.events.insert({
+//     calendarId: "primary",
+//     resource: event,
+//     conferenceDataVersion: 1,
+//   });
 
-  const meetLink = response.data.conferenceData.entryPoints[0].uri;
-  console.log("Google Meet Link:", meetLink);
-  return meetLink;
-}
+//   const meetLink = response.data.conferenceData.entryPoints[0].uri;
+//   console.log("Google Meet Link:", meetLink);
+//   return meetLink;
+// }
 
 
-module.exports = {meetingLinks,createGoogleMeetLink}
+module.exports = meetingLinks

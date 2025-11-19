@@ -278,11 +278,11 @@ exports.initializeInvestementPaymentInvestor = async (req, res) => {
     const meeting = await meetingModel.findOne({where:{businessName:business.businessName,host:id,meetingStatus:'Concluded'}})
     // console.log(meeting);
     
-    if(!meeting){
-      return res.status(401).json({
-        message:`You need to have a meeting with the business owner before you can make an investment`
-      })
-    }
+    // if(!meeting){
+    //   return res.status(401).json({
+    //     message:`You need to have a meeting with the business owner before you can make an investment`
+    //   })
+    // }
     if(price < 10000 ){
       return res.status(403).json({
         message:"The minimum amount you can invest is 10,000"

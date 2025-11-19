@@ -254,8 +254,8 @@ exports.getOneKyc = async (req,res)=>{
 exports.getAllKyc = async (req,res)=>{
     try {
         let KYC = []
-        const kycs = await KycModel.findAll()
-        const kycs2 = await KycModelI.findAll()
+        const kycs = await KycModel.findAll({where:{verificationStatus: "under review"}})
+        const kycs2 = await KycModelI.findAll({where:{verificationStatus: "under review"}})
 
         res.status(200).json({
             message:"All kys in the DB",

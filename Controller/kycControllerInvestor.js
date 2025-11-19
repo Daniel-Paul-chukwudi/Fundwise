@@ -101,7 +101,7 @@ exports.createKycI = async (req, res) => {
 };
 exports.getAllKycs = async (req, res) => {
   try {
-    const kycs = await KycModel.findAll();
+    const kycs = await KycModel.findAll({where:{verificationStatus: "under review"}});
 
     res.status(200).json({
       message: 'All KYCs fetched successfully',

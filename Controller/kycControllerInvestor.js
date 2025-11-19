@@ -38,17 +38,26 @@ exports.createKycI = async (req, res) => {
     } = req.body;
     
     let file
-      file = govFile
-      const resultG = await cloudinary.uploader.upload(file.path, {resource_type: "auto"});
-      fs.unlinkSync(govFile.path);
+    let resultG
+    let resultP
+    let resultPP
+      if(govFile){
+        file = govFile
+        resultG = await cloudinary.uploader.upload(file.path, {resource_type: "auto"});
+        fs.unlinkSync(govFile.path);
+      }
     
-      file = proofFile
-      const resultP = await cloudinary.uploader.upload(file.path, {resource_type: "auto"});
-      fs.unlinkSync(proofFile.path);
+      if(proofFile){
+        file = proofFile
+        resultP = await cloudinary.uploader.upload(file.path, {resource_type: "auto"});
+        fs.unlinkSync(proofFile.path);
+      }
 
-      file = proPic
-      const resultPP = await cloudinary.uploader.upload(file.path, {resource_type: "auto"});
-      fs.unlinkSync(proPic.path);
+      if(proPic){
+        file = proPic
+        resultPP = await cloudinary.uploader.upload(file.path, {resource_type: "auto"});
+        fs.unlinkSync(proPic.path);
+      }
     
 
     const newKyc = new KycModel({

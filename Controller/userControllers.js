@@ -325,20 +325,29 @@ exports.resetPassword = async (req,res) => {
      }
 
     const user = await userModel.findOne({where:{id:decoded.id}});
-    if (!user) {
-      return res.status(404).json({
-          message:'user not found'
-      });
-    }
-    const salt = await bcrypt.genSalt(10);
-    const hash = await  bcrypt.hash(newPassword, salt);
-
-    await user.update({password:hash})
-
+    const investor = await investorModel.findOne({where:{id:decoded.id}});
+    if (user && !investor) {
+      const salt = await bcrypt.genSalt(10);
+      const hash = await  bcrypt.hash(newPassword, salt);
+      await user.update({password:hash})
       res.status(200).json({
           message:'password reset successful, try and login again',
           data:user
       });
+    }else if (investor && !user){
+      const salt = await bcrypt.genSalt(10);
+      const hash = await  bcrypt.hash(newPassword, salt);
+      await investor.update({password:hash})
+      res.status(200).json({
+          message:'password reset successful, try and login again',
+          data:investor
+      });
+    }else{
+      res.status(404).json({
+          message:"User not found"
+      });
+    }
+    
   }catch(error){
       res.status(500).json({
           message:'internal server error',

@@ -3,7 +3,7 @@ const meetingModel = require('../models/meeting')
 const userModel = require('../models/user')
 const investorModel = require('../models/investor')
 const businessModel = require('../models/business')
-const links = require('../helper/meetingLinks') 
+const {meetingLinks} = require('../helper/meetingLinks') 
 const meeting = require('../models/meeting')
 const notificationModel = require('../models/notification')
 const {notify} = require('../helper/notificationTemplate')
@@ -43,7 +43,7 @@ exports.createMeetingInvestor = async (req, res) => {
         message: 'Your KYC is currently under review, please wait for it to be verified before you can schedule a meeting'
       })
     }
-    const LINK = links[Math.floor(Math.random() * links.length)]
+    const LINK = meetingLinks[Math.floor(Math.random() * links.length)]
     
     const meeting = await meetingModel.create({
       host:id,

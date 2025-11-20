@@ -539,20 +539,12 @@ exports.webHook = async (req, res) => {
           description:`hello ${Business.businessOwnerName} your ${Business.businessName} was just funded with the sum of ${payment.price} by ${targetI.fullName}.
           Thank you for putting your trust in TrustForge 👊😁`
             })
-          const notificationMail = {
-            email:targetB.email,
-            subject:`Congratulations on recent funding ${targetB.fullName}`,
-            html:investmentNotificationMail(targetB.fullName,targetI.fullName,Business.businessName)
-          }
-          sendEmail(notificationMail)
           
-
-        
           const targetBusiness = await agreementModel.findOne({where:{businessId:payment.businessId,investorId:targetI.id}})
           if(targetBusiness){
             await agreementModel.update({totalInvestment: targetBusiness.totalInvestment += payment.price,agrementStatus:"ongoing"},
             {where:{businessId:payment.businessId,investorId:targetI.id}})
-          }else if(!targetBusiness){
+          }else{
             await agreementModel.create({
               businessName:Business.businessName,
               businessOwnerName:Business.businessOwnerName,
@@ -563,6 +555,12 @@ exports.webHook = async (req, res) => {
               agrementStatus:"ongoing"
             })
           }
+          const notificationMail = {
+            email:targetB.email,
+            subject:`Congratulations on recent funding ${targetB.fullName}`,
+            html:investmentNotificationMail(targetB.fullName,targetI.fullName,Business.businessName)
+          }
+          sendEmail(notificationMail)
           
         }
       res.status(200).json({

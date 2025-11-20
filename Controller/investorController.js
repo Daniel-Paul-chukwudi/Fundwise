@@ -190,7 +190,7 @@ exports.fundingHistory = async (req,res)=>{
     res.status(200).json({
       message:"all of the users investments",
       totalInvestment:totInvestment,
-      activeInvestments:investments.length,
+      activeInvestments:investments.length ?? 0,
       investments:ans
     })
     

@@ -372,3 +372,89 @@ exports.forgotPassword2 = (link, firstName) => {
   </html>
   `)
 };
+exports.investmentNotificationMail = (fullName,InvestorName,BusinessName) => {
+  return (`
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reset Your Password - Trustforge</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f5f7;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 40px auto;
+        background: #ffffff;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+      }
+      .header {
+        text-align: center;
+        padding-bottom: 10px;
+      }
+      .logo {
+        font-size: 28px;
+        color: #1e40af;
+        font-weight: bold;
+      }
+      .content {
+        text-align: left;
+        color: #333;
+        line-height: 1.6;
+      }
+      .button-container {
+        text-align: center;
+        margin: 25px 0;
+      }
+      .button {
+        display: inline-block;
+        background-color: #1e40af;
+        color: #ffffff;
+        padding: 12px 25px;
+        font-size: 16px;
+        text-decoration: none;
+        border-radius: 6px;
+      }
+      .button:hover {
+        background-color: #1d4ed8;
+        }
+      .footer {
+        text-align: center;
+        font-size: 13px;
+        color: #666;
+        margin-top: 25px;
+        border-top: 1px solid #eee;
+        padding-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="logo">🔷 TRUSTFORGE</div>
+      </div>
+      <div class="content">
+        <p>Dear ${fullName},
+        <p>We’re pleased to inform you that ${InvestorName} has expressed clear interest in supporting ${BusinessName}. This is an important milestone, and we wanted you to be the first to know.</p>
+        <p>This interest reflects the strength of your vision, the value your business creates, and the potential others see in the work you’re building. Moments like this remind us why we do what we do — to help driven founders like you move closer to the opportunities you deserve.</p>
+        <p>At TrustForge, we believe deeply in your progress, and we’re proud to stand beside you as you take this next step. Stay focused, stay confident, and keep the momentum going — you’re on the right path.</p>
+        <p>We’ll share additional details and next steps shortly.</p>
+        <p>If you need anything in the meantime, we’re here to support you.</p>
+        <p>Warm regards,</p>
+        <p>TrustForge Team</p>
+      </div>
+      <div class="footer">
+        &copy; ${new Date().getFullYear()} Trustforge. All rights reserved.
+      </div>
+    </div>
+  </body>
+  </html>
+  `)
+};

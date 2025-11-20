@@ -7,6 +7,7 @@ const investorModel = require('../models/investor')
 const agreementModel = require('../models/agreement')
 const notificationModel = require('../models/notification')
 const meetingModel = require('../models/meeting')
+const {investmentNotificationMail}= require('../Middleware/emailTemplates')
 const {notify} = require('../helper/notificationTemplate')
 
 
@@ -260,7 +261,6 @@ exports.initializeSubscriptionPaymentBusinessOwner = async (req, res) => {
 //     })
 //   }
 // };
-
 
 exports.initializeInvestementPaymentInvestor = async (req, res) => {
   try {
@@ -524,6 +524,7 @@ exports.webHook = async (req, res) => {
           const Business = await businessModel.findByPk(payment.businessId)
           Business.fundRaised += payment.price
           Business.save()
+          const targetB = await userModel.findByPk(Business.businessOwner)
           await notificationModel.create({
           userId:payment.userId,
           businessId:payment.businessId,
@@ -538,6 +539,14 @@ exports.webHook = async (req, res) => {
           description:`hello ${Business.businessOwnerName} your ${Business.businessName} was just funded with the sum of ${payment.price} by ${targetI.fullName}.
           Thank you for putting your trust in TrustForge 👊😁`
             })
+          const notificationMail = {
+            email:targetB.email,
+            subject:`Congratulations on recent funding ${targetB.fullName}`,
+            html:investmentNotificationMail(targetB.fullName,targetI.fullName,Business.businessName)
+          }
+          sendEmail(notificationMail)
+          
+
         
           const targetBusiness = await agreementModel.findOne({where:{businessId:payment.businessId,investorId:targetI.id}})
           if(targetBusiness){

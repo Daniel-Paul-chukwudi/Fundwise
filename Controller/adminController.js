@@ -270,4 +270,21 @@ exports.getAllKyc = async (req,res)=>{
     }
 }
 
+exports.getbusy = async (req,res)=>{
+     try {
+        let KYC = []
+        const businesses = await businessModel.findAll({where:{businessStatus: "under review"}})
+
+        res.status(200).json({
+            message:"All businesses in the DB",
+            businesses
+        })
+    } catch (error) {
+        res.status(500).json({
+            message:"Internal server error",
+            error:error.message
+        })
+    }
+}
+
 

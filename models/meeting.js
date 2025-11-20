@@ -35,7 +35,6 @@ meeting.init(
       meetingTitle: {
         type: DataTypes.STRING,
         allowNull:false,
-        unique:true,
       },
       date:{
         type:DataTypes.STRING,

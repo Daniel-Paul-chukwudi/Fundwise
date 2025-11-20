@@ -148,7 +148,7 @@ exports.signUp = async (req, res, next) => {
     const verifyMail = {
       email:newUser.email,
       subject:`Please verify your email ${newUser.fullName}`,
-      html:verify2(newUser.fullName,newUser.otp)//email template 
+      html:verify2(newUser.fullName,newUser.otp)
     }
     sendEmail(verifyMail)
 

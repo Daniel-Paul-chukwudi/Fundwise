@@ -29,7 +29,6 @@ module.exports = {
       meetingTitle: {
         type: Sequelize.STRING,
         allowNull:false,
-        unique:true,
       },
       date:{
         type:Sequelize.STRING,

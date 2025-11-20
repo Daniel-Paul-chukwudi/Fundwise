@@ -74,7 +74,7 @@ exports.createMeetingInvestor = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ 
-      message: 'Error creating meeting', 
+      message: 'Error creating meeting ', 
       error: error.message 
     });
   }

@@ -560,7 +560,7 @@ exports.webHook = async (req, res) => {
             subject:`Congratulations on recent funding ${targetB.fullName}`,
             html:investmentNotificationMail(targetB.fullName,targetI.fullName,Business.businessName)
           }
-          sendEmail(notificationMail)
+          await sendEmail(notificationMail)
           
         }
       res.status(200).json({

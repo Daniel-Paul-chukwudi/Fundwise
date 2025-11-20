@@ -9,6 +9,7 @@ const notificationModel = require('../models/notification')
 const meetingModel = require('../models/meeting')
 const {investmentNotificationMail}= require('../Middleware/emailTemplates')
 const {notify} = require('../helper/notificationTemplate')
+const sendEmail = require('../Middleware/Bmail')
 
 
 
